@@ -21,14 +21,14 @@
 
 1. 只能接收lottie的压缩包（.zip）
 
-2. 文件内容需要保持一致：
+2. 文件内容需要跟以下规格保持一致：
 
 ```swift
 lottie:
     - data.json
     - images
         - img_0.png
-          img_0.png
-          img_0.png
+          img_1.png
+          img_2.png
           ...
 ```
