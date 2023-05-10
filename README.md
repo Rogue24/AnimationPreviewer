@@ -5,7 +5,7 @@
     Feature：
         ✅ 可立即预览lottie的动画效果；
         ✅ 可截取动画任意一帧生成图片；
-        ✅ 可导出视频。
+        ✅ 可导出动画视频。
 
 ## 使用效果
 
@@ -24,9 +24,9 @@
 2. 文件内容需要跟以下规格保持一致：
 
 ```swift
-lottie:
+lottie_dir:
     - data.json
-    - images
+    - images:
         - img_0.png
           img_1.png
           img_2.png
