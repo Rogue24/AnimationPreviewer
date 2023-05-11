@@ -65,7 +65,7 @@ enum LottieStore {
         File.manager.clearDirectory(tmpDirPath)
         
         let tmpFilePath = getTmpFilePath("jp123")
-        let tmpFileURL = URL(filePath: tmpFilePath)
+        let tmpFileURL = URL(fileURLWithPath: tmpFilePath)
         do {
             try zipData.write(to: tmpFileURL)
         } catch {
@@ -85,6 +85,30 @@ enum LottieStore {
         do {
             let fileURLs = try FileManager.default.contentsOfDirectory(at: URL(fileURLWithPath: unzipDirPath), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             
+            // 如果就是lottie文件
+            var isLottieDir: (hadJsonFile: Bool, hadImagesDir: Bool) = (false, false)
+            for fileURL in fileURLs {
+                if fileURL.lastPathComponent == "data.json" {
+                    isLottieDir.hadJsonFile = true
+                } else if fileURL.lastPathComponent == "images" {
+                    isLottieDir.hadImagesDir = true
+                }
+            }
+            if isLottieDir.hadJsonFile, isLottieDir.hadImagesDir {
+                let contents = try FileManager.default.contentsOfDirectory(atPath: cacheDirPath)
+                for oldFileName in contents {
+                    let oldFilePath = (cacheDirPath as NSString).appendingPathComponent(oldFileName)
+                    try FileManager.default.removeItem(atPath: oldFilePath)
+                }
+                
+                let fileName = "jp_lottie"
+                try FileManager.default.moveItem(at: URL(fileURLWithPath: unzipDirPath), to: URL(fileURLWithPath: getCacheFilePath(fileName)))
+                lottieName = fileName
+                
+                return
+            }
+            
+            // 或者是套了一层
             for fileURL in fileURLs {
                 let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
                 guard let isDirectory = resourceValues.isDirectory, isDirectory else {
