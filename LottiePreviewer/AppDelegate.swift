@@ -28,8 +28,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JPProgressHUD.setMaxSupportedWindowLevel(.alert)
         JPProgressHUD.setMinimumDismissTimeInterval(1.5)
         
-        LottieStore.setup()
-        
         return true
     }
 

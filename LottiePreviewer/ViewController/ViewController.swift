@@ -8,8 +8,6 @@
 import UIKit
 import SnapKit
 
-typealias LottieTuple = (animation: LottieAnimation, provider: FilepathImageProvider)
-
 class ViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
     
@@ -47,7 +45,6 @@ class ViewController: UIViewController {
     
     let sfConfig = UIImage.SymbolConfiguration(
         pointSize: 31, weight: .medium, scale: .default)
-    var isAppear: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,19 +52,15 @@ class ViewController: UIViewController {
         addSubviews()
         setupSubviewsLayout()
         addSubviewsTarget()
+        // 初始化缓存
+        AnimationStore.setup() { [weak self] in
+            guard let self, let store = AnimationStore.cache else { return }
+            self.replaceAnimation(store)
+        }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        guard !isAppear else { return }
-        isAppear = true
-        
-        // 初始化缓存
-        guard let lottiePath = LottieStore.lottieFilePath,
-              let animation = LottieAnimation.filepath("\(lottiePath)/data.json", animationCache: LRUAnimationCache.sharedCache) else { return }
-        let provider = FilepathImageProvider(filepath: lottiePath)
-        replaceLottie((animation, provider))
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        JPProgressHUD.positionHUD()
     }
 }
 
@@ -219,18 +212,18 @@ extension ViewController {
     @objc func videoAction(_ sender: UIButton) {
         guard animView.isEnable else { return }
         JPProgressHUD.show(withStatus: "视频制作中...")
-        animView.makeVideo { progressStr in
-            JPProgressHUD.show(withStatus: progressStr)
+        animView.makeVideo { progress in
+            JPProgressHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))
         } completion: { videoPath in
             guard let videoPath = videoPath, File.manager.fileExists(videoPath) else {
-                JPProgressHUD.showError(withStatus: "视频制作失败", userInteractionEnabled: true)
+                JPProgressHUD.showError(withStatus: "视频制作失败")
                 return
             }
             MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
                 if isSuccess {
                     JPProgressHUD.dismiss()
                 } else {
-                    JPProgressHUD.showError(withStatus: "视频制作失败", userInteractionEnabled: true)
+                    JPProgressHUD.showError(withStatus: "视频制作失败")
                 }
                 File.manager.deleteFile(videoPath)
             }
@@ -240,8 +233,8 @@ extension ViewController {
     // MARK: 删除
     @objc func deleteAction(_ sender: UIButton) {
         guard animView.isEnable else { return }
-        replaceLottie(nil)
-        LottieStore.clearCache()
+        replaceAnimation(nil)
+        AnimationStore.clearCache()
     }
     
     // MARK: 截取当前帧生成图片
@@ -250,14 +243,14 @@ extension ViewController {
         JPProgressHUD.show()
         imageView.getCurrentImage() { image in
             guard let image = image, let data = image.pngData() else {
-                JPProgressHUD.showError(withStatus: "图片截取失败", userInteractionEnabled: true)
+                JPProgressHUD.showError(withStatus: "图片截取失败")
                 return
             }
             MacChannel.shared().saveImage(data) { isSuccess in
                 if isSuccess {
                     JPProgressHUD.dismiss()
                 } else {
-                    JPProgressHUD.showError(withStatus: "图片截取失败", userInteractionEnabled: true)
+                    JPProgressHUD.showError(withStatus: "图片截取失败")
                 }
             }
         }
@@ -273,19 +266,30 @@ extension ViewController {
 
 // MARK: - 替换/移除Lottie
 extension ViewController {
-    func replaceLottie(_ tuple: LottieTuple?) {
-        animView.replaceLottie(tuple)
-        imageView.replaceLottie(tuple)
-        if let tuple = tuple {
-            playBtn.isSelected = true
-            slider.minimumValue = Float(tuple.animation.startFrame)
-            slider.maximumValue = Float(tuple.animation.endFrame)
-        } else {
+    func replaceAnimation(_ store: AnimationStore?) {
+        animView.replaceAnimation(store)
+        imageView.replaceAnimation(store)
+        
+        defer {
+            slider.value = slider.minimumValue
+            valueLabel.text = "0"
+        }
+        
+        guard let store else {
             playBtn.isSelected = false
             slider.minimumValue = 0
             slider.maximumValue = 1
+            return
         }
-        slider.value = slider.minimumValue
-        valueLabel.text = String(format: "%0.lf", slider.value)
+        
+        playBtn.isSelected = true
+        switch store {
+        case let .lottie(animation, _):
+            slider.minimumValue = Float(animation.startFrame)
+            slider.maximumValue = Float(animation.endFrame)
+        case let .svga(entity):
+            slider.minimumValue = 0
+            slider.maximumValue = Float(entity.frames)
+        }
     }
 }

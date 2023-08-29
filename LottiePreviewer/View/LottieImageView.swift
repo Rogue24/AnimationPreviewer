@@ -9,23 +9,48 @@ import UIKit
 import SnapKit
 
 class LottieImageView: UIView {
-    private let animView = LottieAnimationView(animation: nil, imageProvider: nil)
+    private var store: AnimationStore?
+    
+    private let placeholderView = UIView()
+    private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
+    private let svgaView = SVGAParsePlayer()
     
     var isEnable: Bool {
-        animView.animation != nil
+        store != nil
     }
     
     var currentFrame: CGFloat {
-        set { animView.currentFrame = newValue }
-        get { animView.currentFrame }
+        set {
+            if !lottieView.isHidden {
+                lottieView.currentFrame = newValue
+            } else if !svgaView.isHidden {
+                svgaView.play(fromFrame: Int(newValue), isAutoPlay: false)
+            }
+        }
+        get {
+            if !lottieView.isHidden {
+                return lottieView.currentFrame
+            } else if !svgaView.isHidden {
+                return CGFloat(svgaView.currFrame)
+            }
+            return 0
+        }
     }
     
     init() {
         super.init(frame: .zero)
         
-        animView.contentMode = .scaleAspectFit
-        addSubview(animView)
-        animView.snp.makeConstraints { make in
+        lottieView.isHidden = true
+        lottieView.contentMode = .scaleAspectFit
+        addSubview(lottieView)
+        lottieView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        svgaView.isHidden = true
+        svgaView.contentMode = .scaleAspectFit
+        addSubview(svgaView)
+        svgaView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         
@@ -40,55 +65,113 @@ class LottieImageView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func replaceLottie(_ tuple: LottieTuple?) {
-        animView.currentProgress = 0
-        if let tuple = tuple {
-            animView.animation = tuple.animation
-            animView.imageProvider = tuple.provider
-            animView.isHidden = false
-        } else {
-            animView.animation = nil
-            animView.isHidden = true
+    
+    func getCurrentImage(completion: @escaping (_ image: UIImage?) -> ()) {
+        guard let store else {
+            completion(nil)
+            return
         }
         
-        animView.layoutIfNeeded()
+        switch store {
+        case let .lottie(animation, provider):
+            let animationLayer = MainThreadAnimationLayer(animation: animation, imageProvider: provider, textProvider: DefaultTextProvider(), fontProvider: DefaultFontProvider(), logger: LottieLogger.shared)
+    
+            animationLayer.frame = animation.bounds
+            animationLayer.renderScale = UIScreen.mainScale
+            animationLayer.setNeedsDisplay()
+    
+            animationLayer.currentFrame = lottieView.currentFrame
+            animationLayer.display()
+    
+            var newImage: UIImage?
+            Asyncs.async {
+                UIGraphicsBeginImageContextWithOptions(animation.bounds.size, false, 0)
+                guard let ctx = UIGraphicsGetCurrentContext() else {
+                    UIGraphicsEndImageContext()
+                    return
+                }
+    
+                animationLayer.render(in: ctx)
+    
+                newImage = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+            } mainTask: {
+                completion(newImage)
+            }
+    
+        case let .svga(entity):
+            completion(nil)
+        }
+
+    }
+    
+    func replaceAnimation(_ store: AnimationStore?) {
+        self.store = store
+        guard let store else {
+            removeAnimation()
+            return
+        }
         
-        UIView.transition(with: animView,
+        switch store {
+        case let .lottie(animation, provider):
+            replaceLottie(animation, provider)
+        case let .svga(entity):
+            replaceSVGA(entity)
+        }
+    }
+}
+
+private extension LottieImageView {
+    func removeAnimation() {
+        lottieView.stop()
+        lottieView.animation = nil
+        lottieView.isHidden = true
+        
+        svgaView.stop(isClear: true)
+        svgaView.isHidden = true
+        
+        updateLayout()
+    }
+    
+    func updateLayout() {
+        lottieView.layoutIfNeeded()
+        svgaView.layoutIfNeeded()
+        
+        UIView.transition(with: lottieView,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: {})
+        
+        UIView.transition(with: svgaView,
                           duration: 0.25,
                           options: .transitionCrossDissolve,
                           animations: {})
     }
-    
-    func getCurrentImage(completion: @escaping (_ image: UIImage?) -> ()) {
-        guard let animation = animView.animation else {
-            completion(nil)
-            return
-        }
-        let provider = animView.imageProvider
-        
-        let animationLayer = MainThreadAnimationLayer(animation: animation, imageProvider: provider, textProvider: DefaultTextProvider(), fontProvider: DefaultFontProvider(), logger: LottieLogger.shared)
-        
-        animationLayer.frame = animation.bounds
-        animationLayer.renderScale = UIScreen.mainScale
-        animationLayer.setNeedsDisplay()
+}
 
-        animationLayer.currentFrame = animView.currentFrame
-        animationLayer.display()
+private extension LottieImageView {
+    func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
+        svgaView.stop(isClear: true)
+        svgaView.isHidden = true
         
-        var newImage: UIImage?
-        Asyncs.async {
-            UIGraphicsBeginImageContextWithOptions(animation.bounds.size, false, 0)
-            guard let ctx = UIGraphicsGetCurrentContext() else {
-                UIGraphicsEndImageContext()
-                return
-            }
-            
-            animationLayer.render(in: ctx)
-            
-            newImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-        } mainTask: {
-            completion(newImage)
-        }
+        lottieView.animation = animation
+        lottieView.imageProvider = provider
+        lottieView.isHidden = false
+        
+        updateLayout()
     }
 }
+
+extension LottieImageView {
+    func replaceSVGA(_ entity: SVGAVideoEntity) {
+        lottieView.stop()
+        lottieView.animation = nil
+        lottieView.isHidden = true
+        
+        svgaView.play(with: entity, fromFrame: 0, isAutoPlay: false)
+        svgaView.isHidden = false
+        
+        updateLayout()
+    }
+}
+

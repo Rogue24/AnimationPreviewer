@@ -7,6 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		001AB9332A9DC2B800C09045 /* SVRadialGradientLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB92A2A9DC2B800C09045 /* SVRadialGradientLayer.m */; };
+		001AB9342A9DC2B800C09045 /* SVProgressAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB92D2A9DC2B800C09045 /* SVProgressAnimatedView.m */; };
+		001AB9352A9DC2B800C09045 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 001AB92E2A9DC2B800C09045 /* SVProgressHUD.bundle */; };
+		001AB9362A9DC2B800C09045 /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB92F2A9DC2B800C09045 /* SVIndefiniteAnimatedView.m */; };
+		001AB9372A9DC2B800C09045 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9322A9DC2B800C09045 /* SVProgressHUD.m */; };
+		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
+		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
+		009F1DA22A97327A009C9FF4 /* SVGAParsePlayer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */; };
+		009F1DA32A97327A009C9FF4 /* SVGAParsePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */; };
+		009F1DA52A974291009C9FF4 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA42A974291009C9FF4 /* Data+.swift */; };
+		009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA62A984A21009C9FF4 /* AnimationStore.swift */; };
+		009F1DCE2A98B174009C9FF4 /* SVGAExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB02A98B173009C9FF4 /* SVGAExporter.m */; };
+		009F1DCF2A98B174009C9FF4 /* SVGAVectorLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */; };
+		009F1DD02A98B174009C9FF4 /* SVGAAudioLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */; };
+		009F1DD12A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */; };
+		009F1DD22A98B174009C9FF4 /* SVGABitmapLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */; };
+		009F1DD32A98B174009C9FF4 /* SVGAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBC2A98B173009C9FF4 /* SVGAParser.m */; };
+		009F1DD42A98B174009C9FF4 /* SVGABezierPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */; };
+		009F1DD52A98B174009C9FF4 /* SVGAPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */; };
+		009F1DD62A98B174009C9FF4 /* SVGAVideoSpriteEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */; };
+		009F1DD72A98B174009C9FF4 /* SVGA.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC02A98B174009C9FF4 /* SVGA.m */; };
+		009F1DD82A98B174009C9FF4 /* SVGAVideoEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */; };
+		009F1DD92A98B174009C9FF4 /* Svga.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		009F1DDA2A98B174009C9FF4 /* SVGAAudioEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */; };
+		009F1DDB2A98B174009C9FF4 /* SVGAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */; };
+		009F1DDC2A98B174009C9FF4 /* SVGAContentLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */; };
 		1A64F9512A085DE7000F979B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9502A085DE7000F979B /* AppDelegate.swift */; };
 		1A64F9532A085DE7000F979B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9522A085DE7000F979B /* SceneDelegate.swift */; };
 		1A64F9552A085DE7000F979B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9542A085DE7000F979B /* ViewController.swift */; };
@@ -193,7 +219,7 @@
 		1A64FB452A08F221000F979B /* KeyframeInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64FA902A08F220000F979B /* KeyframeInterpolator.swift */; };
 		1A64FB462A08F221000F979B /* KeyframeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64FA912A08F220000F979B /* KeyframeExtensions.swift */; };
 		1A64FB472A08F221000F979B /* AnimationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64FA932A08F220000F979B /* AnimationContext.swift */; };
-		1A880DB32A0B6C7A00BE7F16 /* ViewController.Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A880DB22A0B6C7A00BE7F16 /* ViewController.Drop.swift */; };
+		1A880DB32A0B6C7A00BE7F16 /* ViewController+Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A880DB22A0B6C7A00BE7F16 /* ViewController+Drop.swift */; };
 		1A95CC3B2A093C44006E3102 /* MacPlugin.bundle in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = 1A95CC372A093B90006E3102 /* MacPlugin.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A95CC3F2A093C85006E3102 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC3E2A093C85006E3102 /* Channel.swift */; };
 		1A95CC412A097DC8006E3102 /* MacPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC402A097DC7006E3102 /* MacPlugin.swift */; };
@@ -205,11 +231,11 @@
 		1A95CC982A0A05D9006E3102 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */; };
 		1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */; };
 		1A95CC9A2A0A05D9006E3102 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4F2A0A05D8006E3102 /* ImagePicker.API.swift */; };
-		1A95CCA62A0A05D9006E3102 /* Literal.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC5F2A0A05D8006E3102 /* Literal.Extension.swift */; };
-		1A95CCA72A0A05D9006E3102 /* UIView.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC602A0A05D8006E3102 /* UIView.Extension.swift */; };
-		1A95CCA92A0A05D9006E3102 /* Bundle.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC622A0A05D8006E3102 /* Bundle.Extension.swift */; };
-		1A95CCAE2A0A05D9006E3102 /* UIColor.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC672A0A05D8006E3102 /* UIColor.Extension.swift */; };
-		1A95CCB22A0A05D9006E3102 /* UIScreen.Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC6B2A0A05D8006E3102 /* UIScreen.Extension.swift */; };
+		1A95CCA62A0A05D9006E3102 /* Literal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC5F2A0A05D8006E3102 /* Literal+.swift */; };
+		1A95CCA72A0A05D9006E3102 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC602A0A05D8006E3102 /* UIView+.swift */; };
+		1A95CCA92A0A05D9006E3102 /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC622A0A05D8006E3102 /* Bundle+.swift */; };
+		1A95CCAE2A0A05D9006E3102 /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC672A0A05D8006E3102 /* UIColor+.swift */; };
+		1A95CCB22A0A05D9006E3102 /* UIScreen+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC6B2A0A05D8006E3102 /* UIScreen+.swift */; };
 		1A95CCB42A0A05D9006E3102 /* JP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC6E2A0A05D8006E3102 /* JP.swift */; };
 		1A95CCB62A0A05D9006E3102 /* Bindable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC702A0A05D8006E3102 /* Bindable.swift */; };
 		1A95CCB72A0A05D9006E3102 /* Hookable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC712A0A05D8006E3102 /* Hookable.swift */; };
@@ -228,10 +254,8 @@
 		1A95CCD12A0A05D9006E3102 /* Asyncs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC912A0A05D8006E3102 /* Asyncs.swift */; };
 		1A95CCD22A0A05D9006E3102 /* VideoMaker.ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC922A0A05D8006E3102 /* VideoMaker.ImageInfo.swift */; };
 		1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */; };
-		1A95CCD72A0A51BA006E3102 /* JPProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CCD62A0A51BA006E3102 /* JPProgressHUD.m */; };
 		1A95CD852A0AA1A6006E3102 /* LottieAnimView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD842A0AA1A6006E3102 /* LottieAnimView.swift */; };
 		1A95CD872A0AA1B9006E3102 /* LottieImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD862A0AA1B9006E3102 /* LottieImageView.swift */; };
-		1A95CD892A0AA1D0006E3102 /* LottieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD882A0AA1D0006E3102 /* LottieStore.swift */; };
 		1A95CD952A0B6134006E3102 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A95CD942A0B6134006E3102 /* background.jpg */; };
 		E781FA263E1C13465F54338C /* Pods_LottiePreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71F478A3E17984209F54073C /* Pods_LottiePreviewer.framework */; };
 /* End PBXBuildFile section */
@@ -251,6 +275,51 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		001AB92A2A9DC2B800C09045 /* SVRadialGradientLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVRadialGradientLayer.m; sourceTree = "<group>"; };
+		001AB92B2A9DC2B800C09045 /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
+		001AB92C2A9DC2B800C09045 /* SVRadialGradientLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVRadialGradientLayer.h; sourceTree = "<group>"; };
+		001AB92D2A9DC2B800C09045 /* SVProgressAnimatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressAnimatedView.m; sourceTree = "<group>"; };
+		001AB92E2A9DC2B800C09045 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
+		001AB92F2A9DC2B800C09045 /* SVIndefiniteAnimatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVIndefiniteAnimatedView.m; sourceTree = "<group>"; };
+		001AB9302A9DC2B800C09045 /* SVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressHUD.h; sourceTree = "<group>"; };
+		001AB9312A9DC2B800C09045 /* SVProgressAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressAnimatedView.h; sourceTree = "<group>"; };
+		001AB9322A9DC2B800C09045 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
+		001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPProgressHUD.swift; sourceTree = "<group>"; };
+		009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationData.swift; sourceTree = "<group>"; };
+		009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SVGAParsePlayer+.swift"; sourceTree = "<group>"; };
+		009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGAParsePlayer.swift; sourceTree = "<group>"; };
+		009F1DA42A974291009C9FF4 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
+		009F1DA62A984A21009C9FF4 /* AnimationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationStore.swift; sourceTree = "<group>"; };
+		009F1DAF2A98B173009C9FF4 /* SVGAAudioEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAAudioEntity.h; sourceTree = "<group>"; };
+		009F1DB02A98B173009C9FF4 /* SVGAExporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAExporter.m; sourceTree = "<group>"; };
+		009F1DB12A98B173009C9FF4 /* SVGAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAImageView.h; sourceTree = "<group>"; };
+		009F1DB22A98B173009C9FF4 /* SVGABezierPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGABezierPath.h; sourceTree = "<group>"; };
+		009F1DB32A98B173009C9FF4 /* SVGAVideoSpriteEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoSpriteEntity.h; sourceTree = "<group>"; };
+		009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVectorLayer.m; sourceTree = "<group>"; };
+		009F1DB52A98B173009C9FF4 /* SVGAVectorLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVectorLayer.h; sourceTree = "<group>"; };
+		009F1DB62A98B173009C9FF4 /* SVGAVideoEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoEntity.h; sourceTree = "<group>"; };
+		009F1DB72A98B173009C9FF4 /* SVGAExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAExporter.h; sourceTree = "<group>"; };
+		009F1DB82A98B173009C9FF4 /* SVGA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGA.h; sourceTree = "<group>"; };
+		009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAAudioLayer.m; sourceTree = "<group>"; };
+		009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoSpriteFrameEntity.m; sourceTree = "<group>"; };
+		009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGABitmapLayer.m; sourceTree = "<group>"; };
+		009F1DBC2A98B173009C9FF4 /* SVGAParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAParser.m; sourceTree = "<group>"; };
+		009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGABezierPath.m; sourceTree = "<group>"; };
+		009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAPlayer.m; sourceTree = "<group>"; };
+		009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoSpriteEntity.m; sourceTree = "<group>"; };
+		009F1DC02A98B174009C9FF4 /* SVGA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGA.m; sourceTree = "<group>"; };
+		009F1DC12A98B174009C9FF4 /* SVGAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAParser.h; sourceTree = "<group>"; };
+		009F1DC22A98B174009C9FF4 /* SVGABitmapLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGABitmapLayer.h; sourceTree = "<group>"; };
+		009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoEntity.m; sourceTree = "<group>"; };
+		009F1DC42A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoSpriteFrameEntity.h; sourceTree = "<group>"; };
+		009F1DC52A98B174009C9FF4 /* SVGAPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAPlayer.h; sourceTree = "<group>"; };
+		009F1DC62A98B174009C9FF4 /* SVGAAudioLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAAudioLayer.h; sourceTree = "<group>"; };
+		009F1DC82A98B174009C9FF4 /* Svga.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Svga.pbobjc.h; sourceTree = "<group>"; };
+		009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Svga.pbobjc.m; sourceTree = "<group>"; };
+		009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAAudioEntity.m; sourceTree = "<group>"; };
+		009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAImageView.m; sourceTree = "<group>"; };
+		009F1DCC2A98B174009C9FF4 /* SVGAContentLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAContentLayer.h; sourceTree = "<group>"; };
+		009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAContentLayer.m; sourceTree = "<group>"; };
 		1574B047E304CC5B0B582CD3 /* Pods-LottiePreviewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.release.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.release.xcconfig"; sourceTree = "<group>"; };
 		1A64F94D2A085DE7000F979B /* LottiePreviewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LottiePreviewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A64F9502A085DE7000F979B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -442,7 +511,7 @@
 		1A64FA902A08F220000F979B /* KeyframeInterpolator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyframeInterpolator.swift; sourceTree = "<group>"; };
 		1A64FA912A08F220000F979B /* KeyframeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyframeExtensions.swift; sourceTree = "<group>"; };
 		1A64FA932A08F220000F979B /* AnimationContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationContext.swift; sourceTree = "<group>"; };
-		1A880DB22A0B6C7A00BE7F16 /* ViewController.Drop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.Drop.swift; sourceTree = "<group>"; };
+		1A880DB22A0B6C7A00BE7F16 /* ViewController+Drop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+Drop.swift"; sourceTree = "<group>"; };
 		1A880DB62A0B7AD800BE7F16 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1A95CC372A093B90006E3102 /* MacPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MacPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A95CC3D2A093C84006E3102 /* MacPlugin-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MacPlugin-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -455,11 +524,11 @@
 		1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
 		1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1A95CC4F2A0A05D8006E3102 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
-		1A95CC5F2A0A05D8006E3102 /* Literal.Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Literal.Extension.swift; sourceTree = "<group>"; };
-		1A95CC602A0A05D8006E3102 /* UIView.Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIView.Extension.swift; sourceTree = "<group>"; };
-		1A95CC622A0A05D8006E3102 /* Bundle.Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bundle.Extension.swift; sourceTree = "<group>"; };
-		1A95CC672A0A05D8006E3102 /* UIColor.Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.Extension.swift; sourceTree = "<group>"; };
-		1A95CC6B2A0A05D8006E3102 /* UIScreen.Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIScreen.Extension.swift; sourceTree = "<group>"; };
+		1A95CC5F2A0A05D8006E3102 /* Literal+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Literal+.swift"; sourceTree = "<group>"; };
+		1A95CC602A0A05D8006E3102 /* UIView+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
+		1A95CC622A0A05D8006E3102 /* Bundle+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
+		1A95CC672A0A05D8006E3102 /* UIColor+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
+		1A95CC6B2A0A05D8006E3102 /* UIScreen+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+.swift"; sourceTree = "<group>"; };
 		1A95CC6E2A0A05D8006E3102 /* JP.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JP.swift; sourceTree = "<group>"; };
 		1A95CC702A0A05D8006E3102 /* Bindable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bindable.swift; sourceTree = "<group>"; };
 		1A95CC712A0A05D8006E3102 /* Hookable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hookable.swift; sourceTree = "<group>"; };
@@ -478,11 +547,8 @@
 		1A95CC912A0A05D8006E3102 /* Asyncs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asyncs.swift; sourceTree = "<group>"; };
 		1A95CC922A0A05D8006E3102 /* VideoMaker.ImageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.ImageInfo.swift; sourceTree = "<group>"; };
 		1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenRotator.swift; sourceTree = "<group>"; };
-		1A95CCD52A0A51BA006E3102 /* JPProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPProgressHUD.h; sourceTree = "<group>"; };
-		1A95CCD62A0A51BA006E3102 /* JPProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JPProgressHUD.m; sourceTree = "<group>"; };
 		1A95CD842A0AA1A6006E3102 /* LottieAnimView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieAnimView.swift; sourceTree = "<group>"; };
 		1A95CD862A0AA1B9006E3102 /* LottieImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieImageView.swift; sourceTree = "<group>"; };
-		1A95CD882A0AA1D0006E3102 /* LottieStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LottieStore.swift; sourceTree = "<group>"; };
 		1A95CD942A0B6134006E3102 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 		4D515DBDAA677B02FBB660A4 /* Pods-LottiePreviewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.debug.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.debug.xcconfig"; sourceTree = "<group>"; };
 		71F478A3E17984209F54073C /* Pods_LottiePreviewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LottiePreviewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -507,6 +573,85 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		001AB91B2A9DC28100C09045 /* SVProgressHUD_source */ = {
+			isa = PBXGroup;
+			children = (
+				001AB92E2A9DC2B800C09045 /* SVProgressHUD.bundle */,
+				001AB9302A9DC2B800C09045 /* SVProgressHUD.h */,
+				001AB9322A9DC2B800C09045 /* SVProgressHUD.m */,
+				001AB92B2A9DC2B800C09045 /* SVIndefiniteAnimatedView.h */,
+				001AB92F2A9DC2B800C09045 /* SVIndefiniteAnimatedView.m */,
+				001AB9312A9DC2B800C09045 /* SVProgressAnimatedView.h */,
+				001AB92D2A9DC2B800C09045 /* SVProgressAnimatedView.m */,
+				001AB92C2A9DC2B800C09045 /* SVRadialGradientLayer.h */,
+				001AB92A2A9DC2B800C09045 /* SVRadialGradientLayer.m */,
+			);
+			path = SVProgressHUD_source;
+			sourceTree = "<group>";
+		};
+		009F1C692A94ABC1009C9FF4 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */,
+				009F1DA62A984A21009C9FF4 /* AnimationStore.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		009F1D9F2A97327A009C9FF4 /* SVGAParsePlayer */ = {
+			isa = PBXGroup;
+			children = (
+				009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */,
+				009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */,
+			);
+			path = SVGAParsePlayer;
+			sourceTree = "<group>";
+		};
+		009F1DAE2A98ACCE009C9FF4 /* SVGAPlayer_source */ = {
+			isa = PBXGroup;
+			children = (
+				009F1DC72A98B174009C9FF4 /* pbobjc */,
+				009F1DB82A98B173009C9FF4 /* SVGA.h */,
+				009F1DC02A98B174009C9FF4 /* SVGA.m */,
+				009F1DAF2A98B173009C9FF4 /* SVGAAudioEntity.h */,
+				009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */,
+				009F1DC62A98B174009C9FF4 /* SVGAAudioLayer.h */,
+				009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */,
+				009F1DB22A98B173009C9FF4 /* SVGABezierPath.h */,
+				009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */,
+				009F1DC22A98B174009C9FF4 /* SVGABitmapLayer.h */,
+				009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */,
+				009F1DCC2A98B174009C9FF4 /* SVGAContentLayer.h */,
+				009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */,
+				009F1DB72A98B173009C9FF4 /* SVGAExporter.h */,
+				009F1DB02A98B173009C9FF4 /* SVGAExporter.m */,
+				009F1DB12A98B173009C9FF4 /* SVGAImageView.h */,
+				009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */,
+				009F1DC12A98B174009C9FF4 /* SVGAParser.h */,
+				009F1DBC2A98B173009C9FF4 /* SVGAParser.m */,
+				009F1DC52A98B174009C9FF4 /* SVGAPlayer.h */,
+				009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */,
+				009F1DB52A98B173009C9FF4 /* SVGAVectorLayer.h */,
+				009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */,
+				009F1DB62A98B173009C9FF4 /* SVGAVideoEntity.h */,
+				009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */,
+				009F1DB32A98B173009C9FF4 /* SVGAVideoSpriteEntity.h */,
+				009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */,
+				009F1DC42A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.h */,
+				009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */,
+			);
+			path = SVGAPlayer_source;
+			sourceTree = "<group>";
+		};
+		009F1DC72A98B174009C9FF4 /* pbobjc */ = {
+			isa = PBXGroup;
+			children = (
+				009F1DC82A98B174009C9FF4 /* Svga.pbobjc.h */,
+				009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */,
+			);
+			path = pbobjc;
+			sourceTree = "<group>";
+		};
 		08CCA5ECE0B15A647A716A41 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -545,8 +690,12 @@
 				1A95CC432A0985D7006E3102 /* MacChannel.swift */,
 				1A880DB12A0B6C6300BE7F16 /* ViewController */,
 				1A95CCD82A0A52DF006E3102 /* View */,
+				009F1C692A94ABC1009C9FF4 /* Data */,
 				1A880DB42A0B74A600BE7F16 /* Commons */,
+				009F1D9F2A97327A009C9FF4 /* SVGAParsePlayer */,
 				1A64F9AC2A08F21E000F979B /* lottie_source */,
+				009F1DAE2A98ACCE009C9FF4 /* SVGAPlayer_source */,
+				001AB91B2A9DC28100C09045 /* SVProgressHUD_source */,
 				1A95CD8B2A0AA346006E3102 /* Supporting Files */,
 			);
 			path = LottiePreviewer;
@@ -1151,7 +1300,7 @@
 			isa = PBXGroup;
 			children = (
 				1A64F9542A085DE7000F979B /* ViewController.swift */,
-				1A880DB22A0B6C7A00BE7F16 /* ViewController.Drop.swift */,
+				1A880DB22A0B6C7A00BE7F16 /* ViewController+Drop.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -1159,9 +1308,7 @@
 		1A880DB42A0B74A600BE7F16 /* Commons */ = {
 			isa = PBXGroup;
 			children = (
-				1A95CD882A0AA1D0006E3102 /* LottieStore.swift */,
-				1A95CCD52A0A51BA006E3102 /* JPProgressHUD.h */,
-				1A95CCD62A0A51BA006E3102 /* JPProgressHUD.m */,
+				001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */,
 				1A95CC452A0A05D8006E3102 /* Neves */,
 			);
 			path = Commons;
@@ -1229,11 +1376,12 @@
 		1A95CC5B2A0A05D8006E3102 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				1A95CC622A0A05D8006E3102 /* Bundle.Extension.swift */,
-				1A95CC5F2A0A05D8006E3102 /* Literal.Extension.swift */,
-				1A95CC672A0A05D8006E3102 /* UIColor.Extension.swift */,
-				1A95CC6B2A0A05D8006E3102 /* UIScreen.Extension.swift */,
-				1A95CC602A0A05D8006E3102 /* UIView.Extension.swift */,
+				1A95CC622A0A05D8006E3102 /* Bundle+.swift */,
+				1A95CC5F2A0A05D8006E3102 /* Literal+.swift */,
+				1A95CC672A0A05D8006E3102 /* UIColor+.swift */,
+				1A95CC6B2A0A05D8006E3102 /* UIScreen+.swift */,
+				1A95CC602A0A05D8006E3102 /* UIView+.swift */,
+				009F1DA42A974291009C9FF4 /* Data+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1310,8 +1458,8 @@
 				1A64F9592A085DE9000F979B /* Assets.xcassets */,
 				1A64F95E2A085DE9000F979B /* Info.plist */,
 				1A64F95B2A085DE9000F979B /* LaunchScreen.storyboard */,
-				1A64F9A62A08EF00000F979B /* LottiePreviewer-Bridging-Header.h */,
 				1A64F9562A085DE7000F979B /* Main.storyboard */,
+				1A64F9A62A08EF00000F979B /* LottiePreviewer-Bridging-Header.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1412,6 +1560,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				001AB9352A9DC2B800C09045 /* SVProgressHUD.bundle in Resources */,
 				1A64F95D2A085DE9000F979B /* LaunchScreen.storyboard in Resources */,
 				1A95CD952A0B6134006E3102 /* background.jpg in Resources */,
 				1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */,
@@ -1477,6 +1626,7 @@
 			files = (
 				1A64FB342A08F221000F979B /* CGFloatExtensions.swift in Sources */,
 				1A64FAC12A08F220000F979B /* CachedImageProvider.swift in Sources */,
+				009F1DDB2A98B174009C9FF4 /* SVGAImageView.m in Sources */,
 				1A64FAE62A08F221000F979B /* RenderNode.swift in Sources */,
 				1A64FB2C2A08F221000F979B /* CALayer+addAnimation.swift in Sources */,
 				1A64FB252A08F221000F979B /* CombinedShapeAnimation.swift in Sources */,
@@ -1492,6 +1642,7 @@
 				1A64FB102A08F221000F979B /* LayerModel+makeAnimationLayer.swift in Sources */,
 				1A64FAF12A08F221000F979B /* Repeater.swift in Sources */,
 				1A64FB142A08F221000F979B /* ShapeItemLayer.swift in Sources */,
+				009F1DA22A97327A009C9FF4 /* SVGAParsePlayer+.swift in Sources */,
 				1A64FAE32A08F221000F979B /* ShapeRenderLayer.swift in Sources */,
 				1A64FABE2A08F220000F979B /* LayerFontProvider.swift in Sources */,
 				1A64FA9F2A08F220000F979B /* UIColorExtension.swift in Sources */,
@@ -1502,10 +1653,11 @@
 				1A64FB072A08F221000F979B /* TextAnimator.swift in Sources */,
 				1A64FB472A08F221000F979B /* AnimationContext.swift in Sources */,
 				1A64FB0E2A08F221000F979B /* TextLayer.swift in Sources */,
-				1A95CCA72A0A05D9006E3102 /* UIView.Extension.swift in Sources */,
-				1A880DB32A0B6C7A00BE7F16 /* ViewController.Drop.swift in Sources */,
+				1A95CCA72A0A05D9006E3102 /* UIView+.swift in Sources */,
+				1A880DB32A0B6C7A00BE7F16 /* ViewController+Drop.swift in Sources */,
 				1A64FB3D2A08F221000F979B /* CompoundBezierPath.swift in Sources */,
 				1A64FAFA2A08F221000F979B /* TextLayerModel.swift in Sources */,
+				009F1DCF2A98B174009C9FF4 /* SVGAVectorLayer.m in Sources */,
 				1A64FAE12A08F221000F979B /* GroupInterpolator.swift in Sources */,
 				1A64FB112A08F221000F979B /* MaskCompositionLayer.swift in Sources */,
 				1A64FAC82A08F221000F979B /* GradientFillRenderer.swift in Sources */,
@@ -1516,21 +1668,25 @@
 				1A64FB2A2A08F221000F979B /* StarAnimation.swift in Sources */,
 				1A64FAD92A08F221000F979B /* GradientStrokeNode.swift in Sources */,
 				1A95CC972A0A05D9006E3102 /* Buttons.swift in Sources */,
-				1A95CD892A0AA1D0006E3102 /* LottieStore.swift in Sources */,
 				1A64FAF52A08F221000F979B /* Rectangle.swift in Sources */,
 				1A64FB092A08F221000F979B /* DictionaryInitializable.swift in Sources */,
 				1A64FACA2A08F221000F979B /* FillRenderer.swift in Sources */,
 				1A64FB292A08F221000F979B /* EllipseAnimation.swift in Sources */,
 				1A64FB332A08F221000F979B /* AnimatorNodeDebugging.swift in Sources */,
-				1A95CCAE2A0A05D9006E3102 /* UIColor.Extension.swift in Sources */,
+				001AB9362A9DC2B800C09045 /* SVIndefiniteAnimatedView.m in Sources */,
+				1A95CCAE2A0A05D9006E3102 /* UIColor+.swift in Sources */,
+				009F1DD72A98B174009C9FF4 /* SVGA.m in Sources */,
 				1A64FAF92A08F221000F979B /* ImageLayerModel.swift in Sources */,
+				009F1DD32A98B174009C9FF4 /* SVGAParser.m in Sources */,
 				1A64FAD22A08F221000F979B /* RectNode.swift in Sources */,
 				1A95CC422A097E24006E3102 /* Channel.swift in Sources */,
 				1A95CCCF2A0A05D9006E3102 /* Done.swift in Sources */,
 				1A95CCBE2A0A05D9006E3102 /* VideoMaker.Layer.swift in Sources */,
+				009F1DD82A98B174009C9FF4 /* SVGAVideoEntity.m in Sources */,
 				1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */,
 				1A64FAB62A08F220000F979B /* CompositionLayer.swift in Sources */,
 				1A64FAB42A08F220000F979B /* AnimationFontProvider.swift in Sources */,
+				001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */,
 				1A64FB0B2A08F221000F979B /* PrecompAsset.swift in Sources */,
 				1A64FB182A08F221000F979B /* ShapeLayer.swift in Sources */,
 				1A64FADF2A08F221000F979B /* AnyValueContainer.swift in Sources */,
@@ -1538,6 +1694,7 @@
 				1A64FB312A08F221000F979B /* LayerDebugging.swift in Sources */,
 				1A64FAB72A08F220000F979B /* NullCompositionLayer.swift in Sources */,
 				1A64FB322A08F221000F979B /* TestHelpers.swift in Sources */,
+				009F1DD42A98B174009C9FF4 /* SVGABezierPath.m in Sources */,
 				1A64FADA2A08F221000F979B /* ValueContainer.swift in Sources */,
 				1A95CD872A0AA1B9006E3102 /* LottieImageView.swift in Sources */,
 				1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */,
@@ -1556,6 +1713,7 @@
 				1A95CC9A2A0A05D9006E3102 /* ImagePicker.API.swift in Sources */,
 				1A64FAA12A08F220000F979B /* AnimatedButton.swift in Sources */,
 				1A64FAF62A08F221000F979B /* Star.swift in Sources */,
+				009F1DD02A98B174009C9FF4 /* SVGAAudioLayer.m in Sources */,
 				1A64FAFF2A08F221000F979B /* Mask.swift in Sources */,
 				1A64FB372A08F221000F979B /* AnimationKeypathExtension.swift in Sources */,
 				1A95CCC92A0A05D9006E3102 /* File.swift in Sources */,
@@ -1571,6 +1729,8 @@
 				1A64FB2E2A08F221000F979B /* VisibilityAnimation.swift in Sources */,
 				1A64FAD42A08F221000F979B /* StarNode.swift in Sources */,
 				1A64FB002A08F221000F979B /* Marker.swift in Sources */,
+				009F1DCE2A98B174009C9FF4 /* SVGAExporter.m in Sources */,
+				009F1DD62A98B174009C9FF4 /* SVGAVideoSpriteEntity.m in Sources */,
 				1A95CD852A0AA1A6006E3102 /* LottieAnimView.swift in Sources */,
 				1A64FB352A08F221000F979B /* CGColor+RGB.swift in Sources */,
 				1A64FAC42A08F221000F979B /* LayerTextProvider.swift in Sources */,
@@ -1582,7 +1742,7 @@
 				1A64F9552A085DE7000F979B /* ViewController.swift in Sources */,
 				1A64FAB02A08F220000F979B /* FloatValueProvider.swift in Sources */,
 				1A64FAEC2A08F221000F979B /* ShapeItem.swift in Sources */,
-				1A95CCA92A0A05D9006E3102 /* Bundle.Extension.swift in Sources */,
+				1A95CCA92A0A05D9006E3102 /* Bundle+.swift in Sources */,
 				1A64FAD62A08F221000F979B /* GradientFillNode.swift in Sources */,
 				1A64FB0D2A08F221000F979B /* Asset.swift in Sources */,
 				1A64FAF42A08F221000F979B /* Stroke.swift in Sources */,
@@ -1592,24 +1752,32 @@
 				1A64FA9B2A08F220000F979B /* CompatibleAnimationView.swift in Sources */,
 				1A64FA952A08F220000F979B /* LottieAnimationView.swift in Sources */,
 				1A64FAFD2A08F221000F979B /* DashPattern.swift in Sources */,
+				001AB9332A9DC2B800C09045 /* SVRadialGradientLayer.m in Sources */,
 				1A64FB3B2A08F221000F979B /* BezierPath.swift in Sources */,
 				1A64F9512A085DE7000F979B /* AppDelegate.swift in Sources */,
 				1A95CCBF2A0A05D9006E3102 /* VideoMaker.Lottie.swift in Sources */,
 				1A64FB0F2A08F221000F979B /* GradientRenderLayer.swift in Sources */,
 				1A64FA9C2A08F220000F979B /* FilepathImageProvider.swift in Sources */,
 				1A64FB1E2A08F221000F979B /* ValueProviderStore.swift in Sources */,
+				009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */,
 				1A95CC442A0985D7006E3102 /* MacChannel.swift in Sources */,
 				1A64FB062A08F221000F979B /* Glyph.swift in Sources */,
 				1A64FAD32A08F221000F979B /* ShapeNode.swift in Sources */,
 				1A64FAA22A08F220000F979B /* AnimationSubview.swift in Sources */,
 				1A64FB172A08F221000F979B /* AnimationLayer.swift in Sources */,
 				1A64FB3C2A08F221000F979B /* CGPointExtension.swift in Sources */,
+				001AB9372A9DC2B800C09045 /* SVProgressHUD.m in Sources */,
 				1A64FAE22A08F221000F979B /* ItemsExtension.swift in Sources */,
+				009F1DDA2A98B174009C9FF4 /* SVGAAudioEntity.m in Sources */,
 				1A64FAA02A08F220000F979B /* LottieAnimationViewBase.swift in Sources */,
+				009F1DD92A98B174009C9FF4 /* Svga.pbobjc.m in Sources */,
+				009F1DA32A97327A009C9FF4 /* SVGAParsePlayer.swift in Sources */,
 				1A64FAB22A08F220000F979B /* GradientValueProvider.swift in Sources */,
+				009F1DD52A98B174009C9FF4 /* SVGAPlayer.m in Sources */,
 				1A64FAA82A08F220000F979B /* Keyframe.swift in Sources */,
 				1A64FAF32A08F221000F979B /* GradientStroke.swift in Sources */,
 				1A64FB022A08F221000F979B /* Bundle.swift in Sources */,
+				009F1DDC2A98B174009C9FF4 /* SVGAContentLayer.m in Sources */,
 				1A95CCB42A0A05D9006E3102 /* JP.swift in Sources */,
 				1A64FAEE2A08F221000F979B /* Group.swift in Sources */,
 				1A95CCB72A0A05D9006E3102 /* Hookable.swift in Sources */,
@@ -1617,7 +1785,6 @@
 				1A64FB272A08F221000F979B /* RectangleAnimation.swift in Sources */,
 				1A64FB1B2A08F221000F979B /* BaseAnimationLayer.swift in Sources */,
 				1A64FAD72A08F221000F979B /* StrokeNode.swift in Sources */,
-				1A95CCD72A0A51BA006E3102 /* JPProgressHUD.m in Sources */,
 				1A64FAAD2A08F220000F979B /* AnimationKeypath.swift in Sources */,
 				1A64FAE92A08F221000F979B /* Fill.swift in Sources */,
 				1A95CCD22A0A05D9006E3102 /* VideoMaker.ImageInfo.swift in Sources */,
@@ -1626,6 +1793,7 @@
 				1A64FABB2A08F220000F979B /* ImageCompositionLayer.swift in Sources */,
 				1A64FB232A08F221000F979B /* CAAnimation+TimingConfiguration.swift in Sources */,
 				1A64FAED2A08F221000F979B /* Shape.swift in Sources */,
+				009F1DD12A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.m in Sources */,
 				1A64FAAB2A08F220000F979B /* AnimationTextProvider.swift in Sources */,
 				1A64FAEA2A08F221000F979B /* Ellipse.swift in Sources */,
 				1A95CCC02A0A05D9006E3102 /* VideoMaker.swift in Sources */,
@@ -1635,9 +1803,10 @@
 				1A64FABF2A08F220000F979B /* CoreTextRenderLayer.swift in Sources */,
 				1A64FB152A08F221000F979B /* RepeaterLayer.swift in Sources */,
 				1A64FB042A08F221000F979B /* KeyframeData.swift in Sources */,
-				1A95CCA62A0A05D9006E3102 /* Literal.Extension.swift in Sources */,
+				1A95CCA62A0A05D9006E3102 /* Literal+.swift in Sources */,
 				1A64FB1F2A08F221000F979B /* CALayer+fillBounds.swift in Sources */,
-				1A95CCB22A0A05D9006E3102 /* UIScreen.Extension.swift in Sources */,
+				1A95CCB22A0A05D9006E3102 /* UIScreen+.swift in Sources */,
+				009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */,
 				1A64FAC02A08F220000F979B /* LayerTransformNode.swift in Sources */,
 				1A64FAC62A08F221000F979B /* TrimPathNode.swift in Sources */,
 				1A95CCC72A0A05D9006E3102 /* DecodeImageProvider.swift in Sources */,
@@ -1648,9 +1817,11 @@
 				1A64FADB2A08F221000F979B /* NodeProperty.swift in Sources */,
 				1A64FAA72A08F220000F979B /* Interpolatable.swift in Sources */,
 				1A64FAFB2A08F221000F979B /* PreCompLayerModel.swift in Sources */,
+				001AB9342A9DC2B800C09045 /* SVProgressAnimatedView.m in Sources */,
 				1A64FADC2A08F221000F979B /* AnyNodeProperty.swift in Sources */,
 				1A64FAF72A08F221000F979B /* SolidLayerModel.swift in Sources */,
 				1A64FAA92A08F220000F979B /* AnimationCacheProvider.swift in Sources */,
+				009F1DA52A974291009C9FF4 /* Data+.swift in Sources */,
 				1A64FB132A08F221000F979B /* SolidLayer.swift in Sources */,
 				1A64FAB12A08F220000F979B /* SizeValueProvider.swift in Sources */,
 				1A64FAA32A08F220000F979B /* AnimatedControl.swift in Sources */,
@@ -1694,6 +1865,7 @@
 				1A64FAD02A08F221000F979B /* EllipseNode.swift in Sources */,
 				1A64FAAF2A08F220000F979B /* ColorValueProvider.swift in Sources */,
 				1A64FB1A2A08F221000F979B /* CALayer+setupLayerHierarchy.swift in Sources */,
+				009F1DD22A98B174009C9FF4 /* SVGABitmapLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

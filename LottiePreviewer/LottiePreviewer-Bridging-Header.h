@@ -3,4 +3,5 @@
 //
 
 #import <SSZipArchive/SSZipArchive.h>
-#import "JPProgressHUD.h"
+#import "SVGA.h"
+#import "SVProgressHUD.h"

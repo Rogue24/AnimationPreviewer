@@ -4,11 +4,11 @@ platform :ios, '15.0'
 target 'LottiePreviewer' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
-  pod 'SVProgressHUD'
+  
   pod 'SSZipArchive'
   pod 'SnapKit'
-
+  pod 'Protobuf', '= 3.22.1'
+  
   post_install do |installer|
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
