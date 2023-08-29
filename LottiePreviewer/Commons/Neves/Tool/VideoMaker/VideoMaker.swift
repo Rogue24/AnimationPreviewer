@@ -18,8 +18,15 @@ class VideoMaker {
     typealias Completion = (Result<String, MakeError>) -> ()
     
     
-    enum MakeError: Error {
+    enum MakeError: Swift.Error, LocalizedError {
         case writerError
+        
+        var errorDescription: String? {
+            switch self {
+            case .writerError:
+                return "写入发生错误"
+            }
+        }
     }
     
     var videoSize: CGSize = [700, 700 / (16.0 / 9.0)]

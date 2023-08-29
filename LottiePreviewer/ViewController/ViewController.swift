@@ -11,7 +11,7 @@ import SnapKit
 class ViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
     
-    let animView = LottieAnimView()
+    let playView = AnimationPlayView()
     let stackView: UIStackView = {
         let s = UIStackView()
         s.backgroundColor = .clear
@@ -30,7 +30,7 @@ class ViewController: UIViewController {
     lazy var videoBtn = createBtn("arrow.down.left.video")
     lazy var trashBtn = createBtn("trash")
     
-    let imageView = LottieImageView()
+    let imageView = AnimationImageView()
     lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
     let slider = UISlider()
     let valueLabel: UILabel = {
@@ -48,10 +48,12 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupBgView()
         addSubviews()
         setupSubviewsLayout()
         addSubviewsTarget()
+        
         // 初始化缓存
         AnimationStore.setup() { [weak self] in
             guard let self, let store = AnimationStore.cache else { return }
@@ -65,7 +67,7 @@ class ViewController: UIViewController {
 }
 
 // MARK: - UI工厂
-extension ViewController {
+private extension ViewController {
     func createBtn(_ sfName: String) -> UIButton {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: sfName, withConfiguration: sfConfig), for: .normal)
@@ -90,7 +92,7 @@ extension ViewController {
     }
     
     func addSubviews() {
-        contentView.addSubview(animView)
+        contentView.addSubview(playView)
         contentView.addSubview(stackView)
         
         stackView.addArrangedSubview(playBtn)
@@ -105,14 +107,14 @@ extension ViewController {
     }
     
     func setupSubviewsLayout() {
-        animView.snp.makeConstraints { make in
+        playView.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.top.equalTo(20)
             make.right.equalTo(imageView.snp.left).offset(-20)
         }
         stackView.snp.makeConstraints { make in
-            make.left.right.equalTo(animView)
-            make.top.equalTo(animView.snp.bottom).offset(10)
+            make.left.right.equalTo(playView)
+            make.top.equalTo(playView.snp.bottom).offset(10)
             make.bottom.equalTo(-20)
             make.height.equalTo(51)
         }
@@ -132,8 +134,8 @@ extension ViewController {
         imageView.snp.makeConstraints { make in
             make.right.equalTo(-20)
             make.top.equalTo(20)
-            make.width.equalTo(animView)
-            make.height.equalTo(animView)
+            make.width.equalTo(playView)
+            make.height.equalTo(playView)
         }
         imgBtn.snp.makeConstraints { make in
             make.left.equalTo(imageView).offset(20)
@@ -160,29 +162,33 @@ extension ViewController {
         imgBtn.addTarget(self, action: #selector(imageAction(_:)), for: .touchUpInside)
         slider.addTarget(self, action: #selector(sliderDidChanged(_:)), for: .valueChanged)
         
-        animView.addInteraction(dropInteraction)
+        playView.addInteraction(dropInteraction)
     }
 }
 
 // MARK: - Actions
 extension ViewController {
-    
-    // MARK: 播放/暂停
+    /// 播放/暂停
     @objc func playAction(_ sender: UIButton) {
-        guard animView.isEnable else { return }
+        guard playView.isEnable else { return }
         sender.isSelected.toggle()
         if sender.isSelected {
-            animView.play()
+            playView.play()
         } else {
-            animView.pause()
+            playView.pause()
         }
     }
     
-    // MARK: 播放模式
+    /// 播放模式
     @objc func modeAction(_ sender: UIButton) {
-        guard animView.isEnable else { return }
+        guard let store = playView.store else { return }
+        guard store.isLottie else {
+            JPProgressHUD.showInfo(withStatus: "暂不支持SVGA")
+            return
+        }
+        
         let alertCtr = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        for loopMode in LottieAnimView.LoopMode.allCases {
+        for loopMode in AnimationPlayView.LoopMode.allCases {
             let title: String
             switch loopMode {
             case .forward:
@@ -194,7 +200,7 @@ extension ViewController {
             }
             alertCtr.addAction(
                 UIAlertAction(title: title, style: .default) { _ in
-                    self.animView.loopMode = loopMode
+                    self.playView.loopMode = loopMode
                     self.playBtn.isSelected = true
                 }
             )
@@ -208,66 +214,88 @@ extension ViewController {
         present(alertCtr, animated: true)
     }
     
-    // MARK: 制作视频
+    /// 制作视频
     @objc func videoAction(_ sender: UIButton) {
-        guard animView.isEnable else { return }
+        guard let store = playView.store else { return }
+        guard store.isLottie else {
+            JPProgressHUD.showInfo(withStatus: "暂不支持SVGA")
+            return
+        }
+        
         JPProgressHUD.show(withStatus: "视频制作中...")
-        animView.makeVideo { progress in
+        playView.makeVideo { progress in
             JPProgressHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))
-        } completion: { videoPath in
-            guard let videoPath = videoPath, File.manager.fileExists(videoPath) else {
-                JPProgressHUD.showError(withStatus: "视频制作失败")
-                return
-            }
-            MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
-                if isSuccess {
-                    JPProgressHUD.dismiss()
-                } else {
-                    JPProgressHUD.showError(withStatus: "视频制作失败")
-                }
-                File.manager.deleteFile(videoPath)
+        } completion: { result in
+            switch result {
+            case let .success(videoPath):
+                Self.saveVideo(videoPath)
+            case let .failure(reason):
+                JPProgressHUD.showError(withStatus: reason)
             }
         }
     }
     
-    // MARK: 删除
+    /// 删除
     @objc func deleteAction(_ sender: UIButton) {
-        guard animView.isEnable else { return }
+        guard playView.isEnable else { return }
         replaceAnimation(nil)
         AnimationStore.clearCache()
     }
     
-    // MARK: 截取当前帧生成图片
+    /// 截取当前帧生成图片
     @objc func imageAction(_ sender: UIButton) {
         guard imageView.isEnable else { return }
         JPProgressHUD.show()
-        imageView.getCurrentImage() { image in
-            guard let image = image, let data = image.pngData() else {
-                JPProgressHUD.showError(withStatus: "图片截取失败")
-                return
-            }
-            MacChannel.shared().saveImage(data) { isSuccess in
-                if isSuccess {
-                    JPProgressHUD.dismiss()
-                } else {
-                    JPProgressHUD.showError(withStatus: "图片截取失败")
-                }
+        imageView.getCurrentImage() { result in
+            switch result {
+            case let .success(image):
+                Self.saveImage(image)
+            case let .failure(reason):
+                JPProgressHUD.showError(withStatus: reason)
             }
         }
     }
     
-    // MARK: 滑动浏览帧
+    /// 滑动浏览帧
     @objc func sliderDidChanged(_ slider: UISlider) {
         imageView.currentFrame = CGFloat(slider.value)
         valueLabel.text = String(format: "%0.lf", slider.value)
     }
 }
 
+// MARK: - 保存视频/图片
+private extension ViewController {
+    static func saveVideo(_ videoPath: String) {
+        MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
+            if isSuccess {
+                JPProgressHUD.dismiss()
+            } else {
+                JPProgressHUD.showError(withStatus: "视频保存失败")
+            }
+            File.manager.deleteFile(videoPath)
+        }
+    }
+    
+    static func saveImage(_ image: UIImage) {
+        guard let data = image.pngData() else {
+            JPProgressHUD.showError(withStatus: "图片生成失败")
+            return
+        }
+        
+        MacChannel.shared().saveImage(data) { isSuccess in
+            if isSuccess {
+                JPProgressHUD.dismiss()
+            } else {
+                JPProgressHUD.showError(withStatus: "图片保存失败")
+            }
+        }
+    }
+}
 
 // MARK: - 替换/移除Lottie
 extension ViewController {
     func replaceAnimation(_ store: AnimationStore?) {
-        animView.replaceAnimation(store)
+        playView.replaceAnimation(store)
         imageView.replaceAnimation(store)
         
         defer {

@@ -18,7 +18,9 @@
 
 @interface SVGAPlayer ()
 
-@property (nonatomic, strong) CALayer *drawLayer;
+#warning JP_我需要用到drawLayer
+//@property (nonatomic, strong) CALayer *drawLayer;
+
 @property (nonatomic, strong) NSArray<SVGAAudioLayer *> *audioLayers;
 @property (nonatomic, strong) CADisplayLink *displayLink;
 @property (nonatomic, assign) NSInteger currentFrame;

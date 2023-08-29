@@ -8,8 +8,6 @@
 import Foundation
 import SSZipArchive
 
-typealias LottieTuple = (animation: LottieAnimation, provider: FilepathImageProvider)
-
 enum AnimationType: Int {
     case lottie = 1
     case svga = 2
@@ -36,9 +34,7 @@ enum AnimationStore {
             return true
         }
     }
-}
-
-extension AnimationStore {
+    
     enum Error: Swift.Error, LocalizedError {
         /// 文件解压失败
         case unzipFailed
@@ -61,15 +57,7 @@ extension AnimationStore {
 }
 
 extension AnimationStore {
-    static var tmpDirPath: String { File.tmpFilePath("AnimationStore") }
-    static var cacheDirPath: String { File.cacheFilePath("AnimationStore") }
-    
-    static func getTmpFilePath(_ fileName: String) -> String { tmpDirPath + "/" + fileName }
-    static func getCacheFilePath(_ fileName: String) -> String { cacheDirPath + "/" + fileName }
-    
-    @UserDefault("AnimationStore") static var cacheType: AnimationType.RawValue?
-    static var cacheFilePath: String { getCacheFilePath("jp_animation") }
-    static var cache: AnimationStore? = nil
+    static private(set) var cache: AnimationStore? = nil
     
     static func setup(completion: @escaping () -> Void) {
         doInMyQueue {
@@ -80,46 +68,6 @@ extension AnimationStore {
         }
     }
     
-    private static func setupCache() {
-        asyncTag = nil
-        cache = nil
-        
-        let filePath = cacheFilePath
-        guard let cacheType = AnimationType(rawValue: cacheType ?? 0), File.manager.fileExists(filePath) else {
-            return
-        }
-        
-        switch cacheType {
-        case .lottie:
-            guard let animation = LottieAnimation.filepath("\(filePath)/data.json", animationCache: LRUAnimationCache.sharedCache) else { return }
-            
-            // animation 和 provider 是必须的
-            let provider = FilepathImageProvider(filepath: filePath)
-            cache = .lottie(animation: animation, provider: provider)
-            
-        case .svga:
-            guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else { return }
-            
-            let newTag = UUID()
-            asyncTag = newTag
-            
-            var entity: SVGAVideoEntity?
-            let lock = DispatchSemaphore(value: 0)
-            SVGAParser().parse(with: data, cacheKey: "") {
-                entity = $0
-                lock.signal()
-            } failureBlock: { _ in
-                lock.signal()
-            }
-            lock.wait()
-            
-            if asyncTag == newTag, let entity {
-                cache = .svga(entity: entity)
-            }
-            asyncTag = nil
-        }
-    }
-    
     static func clearCache() {
         doInMyQueue {
             asyncTag = nil
@@ -127,26 +75,6 @@ extension AnimationStore {
             try? clearCacheFile()
         }
     }
-}
-
-extension AnimationStore {
-    private static var myQueueKey = DispatchSpecificKey<UUID>()
-    private static let myQueueID = UUID()
-    private static let myQueue: DispatchQueue = {
-        let queue = DispatchQueue(label: "com.zhoujianping.animationstore")
-        queue.setSpecific(key: myQueueKey, value: myQueueID)
-        return queue
-    }()
-    private static var isInMyQueue: Bool { DispatchQueue.getSpecific(key: myQueueKey) == myQueueID }
-    private static func doInMyQueue(_ handler: @escaping () -> Void) {
-        guard isInMyQueue else {
-            myQueue.async { handler() }
-            return
-        }
-        handler()
-    }
-    
-    private static var asyncTag: UUID?
     
     static func loadData(_ data: Data,
                          success: @escaping (_ store: AnimationStore) -> Void,
@@ -211,9 +139,104 @@ extension AnimationStore {
 }
 
 private extension AnimationStore {
+    static var myQueueKey = DispatchSpecificKey<UUID>()
+    static let myQueueID = UUID()
     
+    static let myQueue: DispatchQueue = {
+        let queue = DispatchQueue(label: "com.zhoujianping.animationstore")
+        queue.setSpecific(key: myQueueKey, value: myQueueID)
+        return queue
+    }()
+    
+    static var isInMyQueue: Bool { DispatchQueue.getSpecific(key: myQueueKey) == myQueueID }
+    static func doInMyQueue(_ handler: @escaping () -> Void) {
+        if isInMyQueue {
+            handler()
+        } else {
+            myQueue.async { handler() }
+        }
+    }
+    
+    static var asyncTag: UUID?
 }
- 
+
+private extension AnimationStore {
+    static var tmpDirPath: String { File.tmpFilePath("AnimationStore") }
+    static var cacheDirPath: String { File.cacheFilePath("AnimationStore") }
+    
+    static func getTmpFilePath(_ fileName: String) -> String { tmpDirPath + "/" + fileName }
+    static func getCacheFilePath(_ fileName: String) -> String { cacheDirPath + "/" + fileName }
+    
+    @UserDefault("AnimationStore") static var cacheType: AnimationType.RawValue?
+    static var cacheFilePath: String { getCacheFilePath("jp_animation") }
+    
+    static func setupCache() {
+        asyncTag = nil
+        cache = nil
+        
+        let filePath = cacheFilePath
+        guard let cacheType = AnimationType(rawValue: cacheType ?? 0), File.manager.fileExists(filePath) else {
+            return
+        }
+        
+        switch cacheType {
+        case .lottie:
+            guard let animation = LottieAnimation.filepath("\(filePath)/data.json", animationCache: LRUAnimationCache.sharedCache) else { return }
+            // animation 和 provider 是必须的
+            let provider = FilepathImageProvider(filepath: filePath)
+            cache = .lottie(animation: animation, provider: provider)
+            
+        case .svga:
+            guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else { return }
+            
+            let newTag = UUID()
+            asyncTag = newTag
+            
+            var entity: SVGAVideoEntity?
+            let lock = DispatchSemaphore(value: 0)
+            SVGAParser().parse(with: data, cacheKey: "") {
+                entity = $0
+                lock.signal()
+            } failureBlock: { _ in
+                lock.signal()
+            }
+            lock.wait()
+            
+            if asyncTag == newTag {
+                asyncTag = nil
+                
+                if let entity {
+                    cache = .svga(entity: entity)
+                }
+            }
+        }
+    }
+}
+
+private extension AnimationStore {
+    static func clearCacheFile() throws {
+        cacheType = nil
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(atPath: cacheDirPath)
+            for oldFileName in contents {
+                let oldFilePath = (cacheDirPath as NSString).appendingPathComponent(oldFileName)
+                try FileManager.default.removeItem(atPath: oldFilePath)
+            }
+        } catch {
+            throw error
+        }
+    }
+    
+    static func cacheFile(_ fileURL: URL) throws {
+        do {
+            try clearCacheFile()
+            try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: cacheFilePath))
+        } catch {
+            throw error
+        }
+    }
+}
+
 private extension AnimationStore {
     static func loadSVGAData(_ tmpFileURL: URL,
                              success: @escaping (_ store: AnimationStore) -> Void,
@@ -257,10 +280,12 @@ private extension AnimationStore {
     }
     
     static func loadLottieData(_ tmpFileURL: URL,
-                                       success: @escaping (_ store: AnimationStore) -> Void,
-                                       failure: @escaping (_ error: Swift.Error) -> Void) {
+                               success: @escaping (_ store: AnimationStore) -> Void,
+                               failure: @escaping (_ error: Swift.Error) -> Void) {
         do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: tmpFileURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let fileURLs = try FileManager.default.contentsOfDirectory(at: tmpFileURL,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: .skipsHiddenFiles)
 
             // 如果就是lottie文件
             var isLottieDir: (hadJsonFile: Bool, hadImagesDir: Bool) = (false, false)
@@ -273,7 +298,9 @@ private extension AnimationStore {
             }
             if isLottieDir.hadJsonFile, isLottieDir.hadImagesDir {
                 let jsonPath = tmpFileURL.appendingPathComponent("data.json").path
-                guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else { throw Self.Error.unzipFailed }
+                guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+                    throw Self.Error.unzipFailed
+                }
                 
                 try cacheFile(tmpFileURL)
                 cacheType = AnimationType.lottie.rawValue
@@ -285,8 +312,7 @@ private extension AnimationStore {
                 Asyncs.main { success(store) }
                 return
             }
-
-
+            
             // 或者是套了一层
             for fileURL in fileURLs {
                 let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
@@ -304,7 +330,9 @@ private extension AnimationStore {
                     throw Self.Error.withoutImagesDir
                 }
                 
-                guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else { throw Self.Error.unzipFailed }
+                guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+                    throw Self.Error.unzipFailed
+                }
                 
                 try cacheFile(fileURL)
                 cacheType = AnimationType.lottie.rawValue
@@ -318,30 +346,9 @@ private extension AnimationStore {
             }
 
             throw Self.Error.unzipFailed
+            
         } catch {
             Asyncs.main { failure(error) }
-        }
-    }
-    
-    static func clearCacheFile() throws {
-        cacheType = nil
-        do {
-            let contents = try FileManager.default.contentsOfDirectory(atPath: cacheDirPath)
-            for oldFileName in contents {
-                let oldFilePath = (cacheDirPath as NSString).appendingPathComponent(oldFileName)
-                try FileManager.default.removeItem(atPath: oldFilePath)
-            }
-        } catch {
-            throw error
-        }
-    }
-    
-    static func cacheFile(_ fileURL: URL) throws {
-        do {
-            try clearCacheFile()
-            try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: cacheFilePath))
-        } catch {
-            throw error
         }
     }
 }

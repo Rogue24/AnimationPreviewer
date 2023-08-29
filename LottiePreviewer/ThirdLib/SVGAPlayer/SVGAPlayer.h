@@ -27,6 +27,9 @@ typedef void(^SVGAPlayerDynamicDrawingBlock)(CALayer *contentLayer, NSInteger fr
 
 @interface SVGAPlayer : UIView
 
+#warning JP_我需要用到drawLayer
+@property (nonatomic, strong) CALayer *drawLayer;
+
 @property (nonatomic, weak) id<SVGAPlayerDelegate> delegate;
 @property (nonatomic, strong) SVGAVideoEntity *videoItem;
 @property (nonatomic, assign) IBInspectable int loops;

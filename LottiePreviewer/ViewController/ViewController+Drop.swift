@@ -35,14 +35,9 @@ extension ViewController: UIDropInteractionDelegate {
             }
             
             JPProgressHUD.show()
-            
             AnimationStore.loadData(animData.rawData) { [weak self] store in
                 JPProgressHUD.dismiss()
-                
-                guard let self else { return }
-                
-                self.replaceAnimation(store)
-                
+                self?.replaceAnimation(store)
             } failure: { error in
                 JPProgressHUD.showError(withStatus: error.localizedDescription)
             }
