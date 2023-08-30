@@ -96,7 +96,7 @@ private extension ViewController {
             make.edges.equalToSuperview()
         }
         
-        let bgImgView = UIImageView(image: UIImage(contentsOfFile: Bundle.jp.resourcePath(withName: "background", type: "jpg")))
+        let bgImgView = UIImageView(image: UIImage(contentsOfFile: Bundle.jp.resourcePath(withName: "background2", type: "jpg")))
         bgImgView.contentMode = .scaleAspectFill
         view.insertSubview(bgImgView, at: 0)
         bgImgView.snp.makeConstraints { make in

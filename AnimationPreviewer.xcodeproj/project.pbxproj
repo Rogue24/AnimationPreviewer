@@ -259,6 +259,7 @@
 		1A95CD852A0AA1A6006E3102 /* AnimationPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */; };
 		1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */; };
 		1A95CD952A0B6134006E3102 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A95CD942A0B6134006E3102 /* background.jpg */; };
+		1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ADCAD7C2A9FA8B800D939FC /* background2.jpg */; };
 		A7F300AD6649580DA732C31C /* Pods_AnimationPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D7A399D7C16BC354CD1DBF /* Pods_AnimationPreviewer.framework */; };
 /* End PBXBuildFile section */
 
@@ -554,6 +555,7 @@
 		1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationPlayView.swift; sourceTree = "<group>"; };
 		1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationImageView.swift; sourceTree = "<group>"; };
 		1A95CD942A0B6134006E3102 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
+		1ADCAD7C2A9FA8B800D939FC /* background2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background2.jpg; sourceTree = "<group>"; };
 		4D515DBDAA677B02FBB660A4 /* Pods-LottiePreviewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.debug.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.debug.xcconfig"; sourceTree = "<group>"; };
 		E5D7A399D7C16BC354CD1DBF /* Pods_AnimationPreviewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnimationPreviewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA6BB4D60DE145A62F321B0C /* Pods-AnimationPreviewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimationPreviewer.release.xcconfig"; path = "Target Support Files/Pods-AnimationPreviewer/Pods-AnimationPreviewer.release.xcconfig"; sourceTree = "<group>"; };
@@ -1463,6 +1465,7 @@
 			children = (
 				1A64F9642A085F9E000F979B /* AnimationPreviewer.entitlements */,
 				1A95CD942A0B6134006E3102 /* background.jpg */,
+				1ADCAD7C2A9FA8B800D939FC /* background2.jpg */,
 				1A64F9592A085DE9000F979B /* Assets.xcassets */,
 				1A64F95E2A085DE9000F979B /* Info.plist */,
 				1A64F95B2A085DE9000F979B /* LaunchScreen.storyboard */,
@@ -1568,6 +1571,7 @@
 				1A64F95D2A085DE9000F979B /* LaunchScreen.storyboard in Resources */,
 				1A95CD952A0B6134006E3102 /* background.jpg in Resources */,
 				1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */,
+				1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */,
 				1A64F9582A085DE7000F979B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -166,13 +166,10 @@ private extension AnimationStore {
             return try loadLottieData(tmpFileURL)
         }
         
+        try cacheFile(tmpFileURL, for: .svga)
+        
         let store = AnimationStore.svga(entity: entity)
-        
-        clearCacheFile()
-        try cacheFile(tmpFileURL)
-        
         cache = store
-        cacheType = AnimationType.svga.rawValue
         
         return store
     }
@@ -201,14 +198,11 @@ private extension AnimationStore {
                 throw Self.Error.lottieWithoutJsonFile
             }
             
+            try cacheFile(tmpFileURL, for: .lottie)
+            
             let provider = FilepathImageProvider(filepath: cacheFilePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
-            
-            clearCacheFile()
-            try cacheFile(tmpFileURL)
-            
             cache = store
-            cacheType = AnimationType.lottie.rawValue
             
             return store
         }
@@ -234,14 +228,11 @@ private extension AnimationStore {
                 throw Self.Error.unzipFailed
             }
             
+            try cacheFile(fileURL, for: .lottie)
+            
             let provider = FilepathImageProvider(filepath: cacheFilePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
-            
-            clearCacheFile()
-            try cacheFile(fileURL)
-            
             cache = store
-            cacheType = AnimationType.lottie.rawValue
             
             return store
         }
@@ -260,6 +251,18 @@ private extension AnimationStore {
     
     @UserDefault(.animationType) static var cacheType: AnimationType.RawValue = 0
     static var cacheFilePath: String { getCacheFilePath("jp_animation") }
+    
+    static func clearCacheFile() {
+        cache = nil
+        cacheType = 0
+        File.manager.clearDirectory(cacheDirPath)
+    }
+    
+    static func cacheFile(_ fileURL: URL, for type: AnimationType) throws {
+        clearCacheFile()
+        try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: cacheFilePath))
+        cacheType = type.rawValue
+    }
     
     static func loadCacheData() {
         let filePath = cacheFilePath
@@ -303,20 +306,6 @@ private extension AnimationStore {
             
             cache = .svga(entity: entity)
         }
-    }
-    
-    static func cacheFile(_ fileURL: URL) throws {
-        do {
-            try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: cacheFilePath))
-        } catch {
-            throw error
-        }
-    }
-    
-    static func clearCacheFile() {
-        cache = nil
-        cacheType = 0
-        File.manager.clearDirectory(cacheDirPath)
     }
 }
 
