@@ -13,6 +13,7 @@
 		001AB9362A9DC2B800C09045 /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB92F2A9DC2B800C09045 /* SVIndefiniteAnimatedView.m */; };
 		001AB9372A9DC2B800C09045 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9322A9DC2B800C09045 /* SVProgressHUD.m */; };
 		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
+		001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */; };
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA22A97327A009C9FF4 /* SVGAParsePlayer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */; };
 		009F1DA32A97327A009C9FF4 /* SVGAParsePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */; };
@@ -285,6 +286,7 @@
 		001AB9312A9DC2B800C09045 /* SVProgressAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressAnimatedView.h; sourceTree = "<group>"; };
 		001AB9322A9DC2B800C09045 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPProgressHUD.swift; sourceTree = "<group>"; };
+		001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
 		009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationData.swift; sourceTree = "<group>"; };
 		009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SVGAParsePlayer+.swift"; sourceTree = "<group>"; };
 		009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGAParsePlayer.swift; sourceTree = "<group>"; };
@@ -702,10 +704,10 @@
 				1A64F9502A085DE7000F979B /* AppDelegate.swift */,
 				1A64F9522A085DE7000F979B /* SceneDelegate.swift */,
 				1A95CC432A0985D7006E3102 /* MacChannel.swift */,
+				009F1C692A94ABC1009C9FF4 /* Data */,
 				1A880DB12A0B6C6300BE7F16 /* ViewController */,
 				1A95CCD82A0A52DF006E3102 /* View */,
-				009F1C692A94ABC1009C9FF4 /* Data */,
-				1A880DB42A0B74A600BE7F16 /* Commons */,
+				1A95CC452A0A05D8006E3102 /* Neves */,
 				009F1D9F2A97327A009C9FF4 /* SVGAParsePlayer */,
 				001AB93A2A9E0C5D00C09045 /* ThirdLib */,
 				1A95CD8B2A0AA346006E3102 /* Supporting Files */,
@@ -1317,15 +1319,6 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
-		1A880DB42A0B74A600BE7F16 /* Commons */ = {
-			isa = PBXGroup;
-			children = (
-				001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */,
-				1A95CC452A0A05D8006E3102 /* Neves */,
-			);
-			path = Commons;
-			sourceTree = "<group>";
-		};
 		1A95CC3C2A093C56006E3102 /* MacPlugin */ = {
 			isa = PBXGroup;
 			children = (
@@ -1394,6 +1387,7 @@
 				1A95CC6B2A0A05D8006E3102 /* UIScreen+.swift */,
 				1A95CC602A0A05D8006E3102 /* UIView+.swift */,
 				009F1DA42A974291009C9FF4 /* Data+.swift */,
+				001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1426,6 +1420,7 @@
 				1A95CC882A0A05D8006E3102 /* File.swift */,
 				1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */,
 				1A95CC792A0A05D8006E3102 /* UserDefault.swift */,
+				001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -1753,6 +1748,7 @@
 				1A95CCA92A0A05D9006E3102 /* Bundle+.swift in Sources */,
 				1A64FAD62A08F221000F979B /* GradientFillNode.swift in Sources */,
 				1A64FB0D2A08F221000F979B /* Asset.swift in Sources */,
+				001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */,
 				1A64FAF42A08F221000F979B /* Stroke.swift in Sources */,
 				1A64FB442A08F221000F979B /* InterpolatableExtensions.swift in Sources */,
 				1A64FAD12A08F221000F979B /* PolygonNode.swift in Sources */,

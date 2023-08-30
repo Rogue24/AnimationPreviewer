@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         JPProgressHUD.setMaxSupportedWindowLevel(.alert)
-        JPProgressHUD.setMinimumDismissTimeInterval(1.5)
+        JPProgressHUD.setMinimumDismissTimeInterval(1.3)
         
         return true
     }

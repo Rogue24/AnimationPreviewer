@@ -10,13 +10,13 @@ import UniformTypeIdentifiers
 
 // MARK: - <UIDropInteractionDelegate>
 extension ViewController: UIDropInteractionDelegate {
+    // 确定传入的物体是否为`AnimationData`对象
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
-        // 用来确定传入的物体是否是`AnimationData`对象
         return session.canLoadObjects(ofClass: AnimationData.self)
     }
     
+    // 提取数据
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        // 提取数据
 //        let dropLocation = session.location(in: animView)
         let operation: UIDropOperation
         if session.canLoadObjects(ofClass: AnimationData.self) {
@@ -27,14 +27,14 @@ extension ViewController: UIDropInteractionDelegate {
         return UIDropProposal(operation: operation)
     }
     
+    // 加载数据
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
-        // 加载数据
         session.loadObjects(ofClass: AnimationData.self) { [weak self] items in
             guard let self = self, let animData = items.first as? AnimationData else {
                 return
             }
             
-            JPProgressHUD.show()
+            JPProgressHUD.show(withStatus: "Loding...")
             AnimationStore.loadData(animData.rawData) { [weak self] store in
                 JPProgressHUD.dismiss()
                 self?.replaceAnimation(store)
@@ -44,9 +44,8 @@ extension ViewController: UIDropInteractionDelegate {
         }
     }
     
-    func dropInteraction(_ interaction: UIDropInteraction, sessionDidExit session: UIDropSession) {
-        // 数据划出
-    }
+    // 数据划出
+    func dropInteraction(_ interaction: UIDropInteraction, sessionDidExit session: UIDropSession) {}
 }
 
 

@@ -143,7 +143,7 @@ typedef void (^SVProgressHUDDismissCompletion)(void);
 
 + (NSTimeInterval)displayDurationForString:(nullable NSString*)string;
 
-#warning JP_我这里需要手动调整布局
+#warning JP修改_我这里需要手动刷新布局
 + (void)positionHUD;
 @end
 

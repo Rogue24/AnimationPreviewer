@@ -1153,7 +1153,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     return [self sharedView].backgroundView.alpha > 0.0f;
 }
 
-#warning JP_我这里需要手动调整布局
+#warning JP修改_我这里需要手动刷新布局
 + (void)positionHUD {
     [[self sharedView] positionHUD:nil];
 }
@@ -1355,7 +1355,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 //    }
 //#endif
 //    return nil;
-#warning JP_我这里直接使用App窗口
+#warning JP修改_我这里直接使用App窗口
     return UIApplication.sharedApplication.delegate.window;
 }
     

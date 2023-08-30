@@ -202,7 +202,7 @@ static NSOperationQueue *unzipQueue;
              cacheKey:(nonnull NSString *)cacheKey
       completionBlock:(void ( ^ _Nullable)(SVGAVideoEntity * _Nonnull videoItem))completionBlock
          failureBlock:(void ( ^ _Nullable)(NSError * _Nonnull error))failureBlock {
-#warning JP_我这里不需要用到缓存
+#warning JP修改_我这里不需要用到他的缓存
 //    SVGAVideoEntity *cacheItem = [SVGAVideoEntity readCache:cacheKey];
 //    if (cacheItem != nil) {
 //        if (completionBlock) {

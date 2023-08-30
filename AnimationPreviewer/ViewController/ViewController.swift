@@ -11,29 +11,40 @@ import SnapKit
 class ViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
     
-    let playView = AnimationPlayView()
-    let stackView: UIStackView = {
+    lazy var dropInteraction = UIDropInteraction(delegate: self)
+    
+    private let playView = AnimationPlayView()
+    private let stackView: UIStackView = {
         let s = UIStackView()
         s.backgroundColor = .clear
         s.axis = .horizontal
         s.distribution = .fillEqually
         return s
     }()
-    lazy var playBtn: NoHighlightButton = {
+    private lazy var playBtn: NoHighlightButton = {
         let b = NoHighlightButton(type: .custom)
         b.setImage(UIImage(systemName: "play.circle", withConfiguration: sfConfig), for: .normal)
         b.setImage(UIImage(systemName: "pause.circle", withConfiguration: sfConfig), for: .selected)
         b.tintColor = UIColor(white: 1, alpha: 0.8)
         return b
     }()
-    lazy var modeBtn = createBtn("repeat.circle")
-    lazy var videoBtn = createBtn("arrow.down.left.video")
-    lazy var trashBtn = createBtn("trash")
+    private lazy var modeBtn = createBtn("repeat.circle")
+    private lazy var videoBtn = createBtn("arrow.down.left.video")
+    private lazy var volumeBtn: NoHighlightButton = {
+        let b = NoHighlightButton(type: .custom)
+        b.setImage(UIImage(systemName: "speaker.wave.2", withConfiguration: sfConfig), for: .normal)
+        b.setImage(UIImage(systemName: "speaker.slash", withConfiguration: sfConfig), for: .selected)
+        b.tintColor = UIColor(white: 1, alpha: 0.8)
+        b.isSelected = playView.isSVGAMute
+        b.isHidden = true
+        return b
+    }()
+    private lazy var trashBtn = createBtn("trash")
     
-    let imageView = AnimationImageView()
-    lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
-    let slider = UISlider()
-    let valueLabel: UILabel = {
+    private let imageView = AnimationImageView()
+    private lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
+    private let slider = UISlider()
+    private let valueLabel: UILabel = {
         let l = UILabel()
         l.font = .systemFont(ofSize: 17)
         l.textAlignment = .center
@@ -41,10 +52,7 @@ class ViewController: UIViewController {
         return l
     }()
     
-    lazy var dropInteraction = UIDropInteraction(delegate: self)
-    
-    let sfConfig = UIImage.SymbolConfiguration(
-        pointSize: 31, weight: .medium, scale: .default)
+    private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,6 +106,7 @@ private extension ViewController {
         stackView.addArrangedSubview(playBtn)
         stackView.addArrangedSubview(modeBtn)
         stackView.addArrangedSubview(videoBtn)
+        stackView.addArrangedSubview(volumeBtn)
         stackView.addArrangedSubview(trashBtn)
         
         contentView.addSubview(imageView)
@@ -125,6 +134,9 @@ private extension ViewController {
             make.width.height.equalTo(51)
         }
         videoBtn.snp.makeConstraints { make in
+            make.width.height.equalTo(51)
+        }
+        volumeBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
         trashBtn.snp.makeConstraints { make in
@@ -158,6 +170,7 @@ private extension ViewController {
         playBtn.addTarget(self, action: #selector(playAction(_:)), for: .touchUpInside)
         modeBtn.addTarget(self, action: #selector(modeAction(_:)), for: .touchUpInside)
         videoBtn.addTarget(self, action: #selector(videoAction(_:)), for: .touchUpInside)
+        volumeBtn.addTarget(self, action: #selector(volumeAction(_:)), for: .touchUpInside)
         trashBtn.addTarget(self, action: #selector(deleteAction(_:)), for: .touchUpInside)
         imgBtn.addTarget(self, action: #selector(imageAction(_:)), for: .touchUpInside)
         slider.addTarget(self, action: #selector(sliderDidChanged(_:)), for: .valueChanged)
@@ -235,6 +248,12 @@ extension ViewController {
         }
     }
     
+    /// 声音设置
+    @objc func volumeAction(_ sender: UIButton) {
+        sender.isSelected.toggle()
+        playView.isSVGAMute = sender.isSelected
+    }
+    
     /// 删除
     @objc func deleteAction(_ sender: UIButton) {
         guard playView.isEnable else { return }
@@ -305,6 +324,7 @@ extension ViewController {
         
         guard let store else {
             playBtn.isSelected = false
+            volumeBtn.isHidden = true
             slider.minimumValue = 0
             slider.maximumValue = 1
             return
@@ -313,9 +333,11 @@ extension ViewController {
         playBtn.isSelected = true
         switch store {
         case let .lottie(animation, _):
+            volumeBtn.isHidden = true
             slider.minimumValue = Float(animation.startFrame)
             slider.maximumValue = Float(animation.endFrame)
         case let .svga(entity):
+            volumeBtn.isHidden = false
             slider.minimumValue = 0
             slider.maximumValue = Float(entity.frames)
         }

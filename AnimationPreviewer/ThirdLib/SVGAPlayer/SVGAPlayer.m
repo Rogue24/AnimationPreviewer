@@ -18,7 +18,7 @@
 
 @interface SVGAPlayer ()
 
-#warning JP_我需要用到drawLayer
+#warning JP修改_我需要用到drawLayer
 //@property (nonatomic, strong) CALayer *drawLayer;
 
 @property (nonatomic, strong) NSArray<SVGAAudioLayer *> *audioLayers;
@@ -348,6 +348,7 @@
     if (self.forwardAnimating && self.audioLayers.count > 0) {
         for (SVGAAudioLayer *layer in self.audioLayers) {
             if (!layer.audioPlaying && layer.audioItem.startFrame <= self.currentFrame && self.currentFrame <= layer.audioItem.endFrame) {
+                layer.audioPlayer.volume = self.isMute ? 0 : 1;
                 [layer.audioPlayer setCurrentTime:(NSTimeInterval)(layer.audioItem.startTime / 1000)];
                 [layer.audioPlayer play];
                 layer.audioPlaying = YES;
@@ -419,6 +420,17 @@
         [self clear];
         [self draw];
     }];
+}
+
+#warning JP修改_我需要设置静音
+- (void)setIsMute:(BOOL)isMute {
+    if (_isMute == isMute) return;
+    _isMute = isMute;
+    
+    float volume = isMute ? 0 : 1;
+    for (SVGAAudioLayer *layer in self.audioLayers) {
+        layer.audioPlayer.volume = volume;
+    }
 }
 
 #pragma mark - Dynamic Object

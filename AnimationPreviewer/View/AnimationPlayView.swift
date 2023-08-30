@@ -55,6 +55,15 @@ class AnimationPlayView: UIView {
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
     private let svgaView = SVGAParsePlayer()
     
+    @UserDefault(.isSVGAMute) private var _isSVGAMute: Bool = false
+    var isSVGAMute: Bool {
+        get { _isSVGAMute }
+        set {
+            _isSVGAMute = newValue
+            svgaView.isMute = newValue
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         
@@ -67,7 +76,7 @@ class AnimationPlayView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .medium)
         label.textColor = UIColor(white: 1, alpha: 0.8)
-        label.text = "把Lottie/SVGA的文件丢到这里来吧"
+        label.text = "把「Lottie/SVGA的文件」丢到这里来吧"
         
         placeholderView.clipsToBounds = false
         placeholderView.addSubview(dragIcon)
@@ -99,6 +108,7 @@ class AnimationPlayView: UIView {
         
         svgaView.isHidden = true
         svgaView.contentMode = .scaleAspectFit
+        svgaView.isMute = isSVGAMute
         addSubview(svgaView)
         svgaView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -109,16 +119,6 @@ class AnimationPlayView: UIView {
         layer.borderWidth = 4
         layer.cornerRadius = 16
         layer.masksToBounds = true
-        
-        //        guard SVGAParsePlayer.loader == nil else { return }
-        //        SVGAParsePlayer.loader = { svgaSource, success, failure, _, _ in
-        //            if let data = AnimationStore.cacheSVGAData {
-        //                success(data)
-        //            } else {
-        //                let error = NSError(domain: "AnimationData", code: -2, userInfo: [NSLocalizedDescriptionKey: "数据为空"])
-        //                failure(error)
-        //            }
-        //        }
     }
     
     required init?(coder: NSCoder) {
