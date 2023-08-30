@@ -1,6 +1,6 @@
 //
 //  JPProgressHUD.swift
-//  LottiePreviewer
+//  AnimationPreviewer
 //
 //  Created by aa on 2023/8/29.
 //

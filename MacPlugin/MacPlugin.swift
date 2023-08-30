@@ -19,7 +19,7 @@ class MacPlugin: NSObject, Channel {
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem.button {
-            let image = NSImage(named: NSImage.applicationIconName)
+            let image = NSImage(named: NSImage.Name("bar_cat"))
             button.image = image
             button.action = #selector(openMainWindow)
             button.target = self

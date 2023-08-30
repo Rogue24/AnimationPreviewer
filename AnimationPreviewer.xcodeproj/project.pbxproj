@@ -14,6 +14,7 @@
 		001AB9372A9DC2B800C09045 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9322A9DC2B800C09045 /* SVProgressHUD.m */; };
 		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
 		001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */; };
+		001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA22A97327A009C9FF4 /* SVGAParsePlayer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA02A97327A009C9FF4 /* SVGAParsePlayer+.swift */; };
 		009F1DA32A97327A009C9FF4 /* SVGAParsePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA12A97327A009C9FF4 /* SVGAParsePlayer.swift */; };
@@ -1575,6 +1576,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2025,6 +2027,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = AnimationPreviewer/AnimationPreviewer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -2063,6 +2066,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = AnimationPreviewer/AnimationPreviewer.entitlements;
 				CODE_SIGN_STYLE = Automatic;

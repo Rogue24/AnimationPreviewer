@@ -1,6 +1,6 @@
 //
 //  AnimationPlayView.swift
-//  LottiePreviewer
+//  AnimationPreviewer
 //
 //  Created by 周健平 on 2023/5/9.
 //
