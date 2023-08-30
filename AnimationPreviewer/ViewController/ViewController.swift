@@ -43,13 +43,18 @@ class ViewController: UIViewController {
     
     private let imageView = AnimationImageView()
     private lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
-    private let slider = UISlider()
+    private let slider: UISlider = {
+        let slider = UISlider()
+        slider.maximumTrackTintColor = UIColor(white: 1, alpha: 0.25)
+        return slider
+    }()
     private let valueLabel: UILabel = {
-        let l = UILabel()
-        l.font = .systemFont(ofSize: 17)
-        l.textAlignment = .center
-        l.text = "0"
-        return l
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 17)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.text = "0"
+        return label
     }()
     
     private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
