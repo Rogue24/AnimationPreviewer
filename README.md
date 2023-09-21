@@ -1,6 +1,6 @@
 # AnimationPreviewer
 
-![icon](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/icon.png)一个用于快速预览`Lottie`&`SVGA`的Mac小工具。
+![icon](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/icon.png) 一个用于快速预览`Lottie`&`SVGA`的Mac小工具。
 
     Feature：
         ✅ 可立即预览 Lottie & SVGA 的动画效果；
