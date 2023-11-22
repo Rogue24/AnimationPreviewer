@@ -53,7 +53,7 @@ class AnimationPlayView: UIView {
     
     private let placeholderView = UIView()
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
-    private let svgaView = SVGAParsePlayer()
+    private let svgaView = SVGAExPlayer()
     
     @UserDefault(.isSVGAMute) private var _isSVGAMute: Bool = false
     var isSVGAMute: Bool {
@@ -109,6 +109,7 @@ class AnimationPlayView: UIView {
         svgaView.isHidden = true
         svgaView.contentMode = .scaleAspectFit
         svgaView.isMute = isSVGAMute
+        svgaView.exDelegate = self
         addSubview(svgaView)
         svgaView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -123,6 +124,15 @@ class AnimationPlayView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: - <SVGAExPlayerDelegate>
+extension AnimationPlayView: SVGAExPlayerDelegate {
+    func svgaExPlayer(_ player: SVGAExPlayer, svga source: String, animationDidFinishedOnce loopCount: Int) {
+        if loopMode == .reverse {
+            player.isReversing.toggle()
+        }
     }
 }
 
@@ -149,7 +159,7 @@ private extension AnimationPlayView {
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
         placeholderView.isHidden = true
         
-        svgaView.stop(isClear: true)
+        svgaView.clean()
         svgaView.isHidden = true
         
         lottieView.animation = animation
@@ -179,7 +189,7 @@ private extension AnimationPlayView {
         lottieView.animation = nil
         lottieView.isHidden = true
         
-        svgaView.stop(isClear: true)
+        svgaView.clean()
         svgaView.isHidden = true
         
         placeholderView.isHidden = false
@@ -218,6 +228,11 @@ extension AnimationPlayView {
                 lottieView.play(fromProgress: 0, toProgress: 1, loopMode: lottieView.loopMode)
             }
         } else if !svgaView.isHidden {
+            if loopMode == .forward {
+                svgaView.isReversing = false
+            } else if loopMode == .backwards {
+                svgaView.isReversing = true
+            }
             svgaView.play()
         }
     }
@@ -234,7 +249,7 @@ extension AnimationPlayView {
         if !lottieView.isHidden {
             lottieView.stop()
         } else if !svgaView.isHidden {
-            svgaView.stop(isClear: false)
+            svgaView.stop()
         }
     }
 }

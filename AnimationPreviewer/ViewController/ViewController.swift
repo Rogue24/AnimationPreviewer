@@ -13,7 +13,11 @@ class ViewController: UIViewController {
     
     lazy var dropInteraction = UIDropInteraction(delegate: self)
     
+    private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
+    
+    // ================ 左边区域 ================
     private let playView = AnimationPlayView()
+    
     private let stackView: UIStackView = {
         let s = UIStackView()
         s.backgroundColor = .clear
@@ -21,6 +25,7 @@ class ViewController: UIViewController {
         s.distribution = .fillEqually
         return s
     }()
+    
     private lazy var playBtn: NoHighlightButton = {
         let b = NoHighlightButton(type: .custom)
         b.setImage(UIImage(systemName: "play.circle", withConfiguration: sfConfig), for: .normal)
@@ -28,8 +33,11 @@ class ViewController: UIViewController {
         b.tintColor = UIColor(white: 1, alpha: 0.8)
         return b
     }()
+    
     private lazy var modeBtn = createBtn("repeat.circle")
+    
     private lazy var videoBtn = createBtn("arrow.down.left.video")
+    
     private lazy var volumeBtn: NoHighlightButton = {
         let b = NoHighlightButton(type: .custom)
         b.setImage(UIImage(systemName: "speaker.wave.2", withConfiguration: sfConfig), for: .normal)
@@ -39,15 +47,20 @@ class ViewController: UIViewController {
         b.isHidden = true
         return b
     }()
+    
     private lazy var trashBtn = createBtn("trash")
     
+    // ================ 右边区域 ================
     private let imageView = AnimationImageView()
+    
     private lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
+    
     private let slider: UISlider = {
         let slider = UISlider()
         slider.maximumTrackTintColor = UIColor(white: 1, alpha: 0.25)
         return slider
     }()
+    
     private let valueLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17)
@@ -57,8 +70,7 @@ class ViewController: UIViewController {
         return label
     }()
     
-    private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
-    
+    // MARK: - 生命周期
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -79,7 +91,7 @@ class ViewController: UIViewController {
     }
 }
 
-// MARK: - UI工厂
+// MARK: - UI Build & Setup
 private extension ViewController {
     func createBtn(_ sfName: String) -> UIButton {
         let btn = UIButton(type: .system)
@@ -121,49 +133,60 @@ private extension ViewController {
     }
     
     func setupSubviewsLayout() {
+        // ================ 左边区域 ================
         playView.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.top.equalTo(20)
             make.right.equalTo(imageView.snp.left).offset(-20)
         }
+        
         stackView.snp.makeConstraints { make in
             make.left.right.equalTo(playView)
             make.top.equalTo(playView.snp.bottom).offset(10)
             make.bottom.equalTo(-20)
             make.height.equalTo(51)
         }
+        
         playBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
+        
         modeBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
+        
         videoBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
+        
         volumeBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
+        
         trashBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
         
+        // ================ 右边区域 ================
         imageView.snp.makeConstraints { make in
             make.right.equalTo(-20)
             make.top.equalTo(20)
             make.width.equalTo(playView)
             make.height.equalTo(playView)
         }
+        
         imgBtn.snp.makeConstraints { make in
             make.left.equalTo(imageView).offset(20)
             make.centerY.equalTo(slider)
             make.width.height.equalTo(51)
         }
+        
         slider.snp.makeConstraints { make in
             make.left.equalTo(imgBtn.snp.right).offset(15)
             make.right.equalTo(valueLabel.snp.left)
             make.top.equalTo(imageView.snp.bottom).offset(20)
         }
+        
         valueLabel.snp.makeConstraints { make in
             make.right.equalTo(imageView)
             make.centerY.equalTo(slider)
@@ -172,21 +195,22 @@ private extension ViewController {
     }
     
     func addSubviewsTarget() {
+        // ================ 左边区域 ================
+        playView.addInteraction(dropInteraction)
         playBtn.addTarget(self, action: #selector(playAction(_:)), for: .touchUpInside)
         modeBtn.addTarget(self, action: #selector(modeAction(_:)), for: .touchUpInside)
         videoBtn.addTarget(self, action: #selector(videoAction(_:)), for: .touchUpInside)
         volumeBtn.addTarget(self, action: #selector(volumeAction(_:)), for: .touchUpInside)
         trashBtn.addTarget(self, action: #selector(deleteAction(_:)), for: .touchUpInside)
+        
+        // ================ 右边区域 ================
         imgBtn.addTarget(self, action: #selector(imageAction(_:)), for: .touchUpInside)
         slider.addTarget(self, action: #selector(sliderDidChanged(_:)), for: .valueChanged)
-        
-        playView.addInteraction(dropInteraction)
     }
 }
 
-// MARK: - Actions
 extension ViewController {
-    /// 播放/暂停
+    // MARK: - 播放/暂停
     @objc func playAction(_ sender: UIButton) {
         guard playView.isEnable else { return }
         sender.isSelected.toggle()
@@ -197,24 +221,18 @@ extension ViewController {
         }
     }
     
-    /// 播放模式
+    // MARK: - 选择播放模式
     @objc func modeAction(_ sender: UIButton) {
-        guard let store = playView.store else { return }
-        guard store.isLottie else {
-            JPProgressHUD.showInfo(withStatus: "暂不支持SVGA")
-            return
-        }
-        
         let alertCtr = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         for loopMode in AnimationPlayView.LoopMode.allCases {
-            let title: String
+            var title: String = playView.loopMode == loopMode ? "✅ " : ""
             switch loopMode {
             case .forward:
-                title = "Forward loop"
+                title += "Forward loop"
             case .reverse:
-                title = "Reverse loop"
+                title += "Reverse loop"
             case .backwards:
-                title = "Backwards loop"
+                title += "Backwards loop"
             }
             alertCtr.addAction(
                 UIAlertAction(title: title, style: .default) { _ in
@@ -232,7 +250,7 @@ extension ViewController {
         present(alertCtr, animated: true)
     }
     
-    /// 制作视频
+    // MARK: - 制作视频
     @objc func videoAction(_ sender: UIButton) {
         guard let store = playView.store else { return }
         guard store.isLottie else {
@@ -253,20 +271,20 @@ extension ViewController {
         }
     }
     
-    /// 声音设置
+    // MARK: - 声音设置
     @objc func volumeAction(_ sender: UIButton) {
         sender.isSelected.toggle()
         playView.isSVGAMute = sender.isSelected
     }
     
-    /// 删除
+    // MARK: - 删除
     @objc func deleteAction(_ sender: UIButton) {
         guard playView.isEnable else { return }
         replaceAnimation(nil)
         AnimationStore.clearCache()
     }
     
-    /// 截取当前帧生成图片
+    // MARK: - 截取当前帧生成图片
     @objc func imageAction(_ sender: UIButton) {
         guard imageView.isEnable else { return }
         JPProgressHUD.show()
@@ -280,7 +298,7 @@ extension ViewController {
         }
     }
     
-    /// 滑动浏览帧
+    // MARK: - 滑动浏览每一帧
     @objc func sliderDidChanged(_ slider: UISlider) {
         imageView.currentFrame = CGFloat(slider.value)
         valueLabel.text = String(format: "%0.lf", slider.value)
@@ -316,7 +334,7 @@ private extension ViewController {
     }
 }
 
-// MARK: - 替换/移除Lottie
+// MARK: - 替换&移除 Lottie/SVGA
 extension ViewController {
     func replaceAnimation(_ store: AnimationStore?) {
         playView.replaceAnimation(store)

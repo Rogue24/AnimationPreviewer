@@ -18,7 +18,7 @@ class AnimationImageView: UIView {
     
     private let placeholderView = UIView()
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
-    private let svgaView = SVGAParsePlayer()
+    private let svgaView = SVGAExPlayer()
     
     var isEnable: Bool {
         store != nil
@@ -36,7 +36,7 @@ class AnimationImageView: UIView {
             if !lottieView.isHidden {
                 return lottieView.currentFrame
             } else if !svgaView.isHidden {
-                return CGFloat(svgaView.currFrame)
+                return CGFloat(svgaView.currentFrame)
             }
             return 0
         }
@@ -90,7 +90,7 @@ extension AnimationImageView {
 
 private extension AnimationImageView {
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
-        svgaView.stop(isClear: true)
+        svgaView.clean()
         svgaView.isHidden = true
         
         lottieView.animation = animation
@@ -118,7 +118,7 @@ private extension AnimationImageView {
         lottieView.animation = nil
         lottieView.isHidden = true
         
-        svgaView.stop(isClear: true)
+        svgaView.clean()
         svgaView.isHidden = true
         
         updateLayout()
@@ -169,7 +169,7 @@ extension AnimationImageView {
             size = animation.bounds.size
     
         case let .svga(entity):
-            guard let drawLayer = svgaView.drawLayer else {
+            guard let drawLayer = svgaView.getDrawLayer() else {
                 completion(.failure(reason: "图片截取失败"))
                 return
             }

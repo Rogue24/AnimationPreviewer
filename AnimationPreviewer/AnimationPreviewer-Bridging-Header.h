@@ -3,5 +3,6 @@
 //
 
 #import <SSZipArchive/SSZipArchive.h>
-#import "SVGA.h"
 #import "SVProgressHUD.h"
+#import "SVGARePlayer.h"
+#import "SVGAParser.h"
