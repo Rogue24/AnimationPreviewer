@@ -99,7 +99,7 @@ typedef NS_ENUM(NSUInteger, SVGARePlayerStoppedScene) {
             endFrame:(NSInteger)endFrame;
 
 - (void)setVideoItem:(nullable SVGAVideoEntity *)videoItem
-          startFrame:(NSInteger)startFrame 
+          startFrame:(NSInteger)startFrame
             endFrame:(NSInteger)endFrame
         currentFrame:(NSInteger)currentFrame;
 
