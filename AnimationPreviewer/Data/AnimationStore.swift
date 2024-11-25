@@ -11,27 +11,38 @@ import SSZipArchive
 enum AnimationType: Int {
     case lottie = 1
     case svga = 2
+    case gif = 3
 }
 
 enum AnimationStore {
     case lottie(animation: LottieAnimation, provider: FilepathImageProvider)
     case svga(entity: SVGAVideoEntity)
+    case gif(images: [UIImage], duration: TimeInterval)
     
     var isLottie: Bool {
         switch self {
         case .lottie:
             return true
-        case .svga:
+        default:
             return false
         }
     }
     
     var isSVGA: Bool {
         switch self {
-        case .lottie:
-            return false
         case .svga:
             return true
+        default:
+            return false
+        }
+    }
+    
+    var isGIF: Bool {
+        switch self {
+        case .gif:
+            return true
+        default:
+            return false
         }
     }
     
@@ -44,6 +55,8 @@ enum AnimationStore {
         case lottieWithoutJsonFile
         /// `lottie`没有图片文件夹
         case lottieWithoutImagesDir
+        /// `GIF`解码失败
+        case decodeGIFFailed
         
         var errorDescription: String? {
             switch self {
@@ -55,6 +68,8 @@ enum AnimationStore {
                 return "lottie文件错误：没有data.json文件"
             case .lottieWithoutImagesDir:
                 return "lottie文件错误：没有images目录"
+            case .decodeGIFFailed:
+                return "GIF解码失败"
             }
         }
     }
@@ -131,10 +146,10 @@ extension AnimationStore {
             let store: AnimationStore
             let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
             if let isDir = resourceValues.isDirectory, isDir {
-                // 还是文件夹，看看是不是lottie（其内部会检查有没有svga文件）
+                // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
                 store = try loadLottieData(fileURL)
             } else {
-                // 不是文件夹，看看是不是svga（不是的话其内部会去看看是不是lottie）
+                // 不是文件夹，看看是不是svga（其内部会先看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie）
                 store = try loadSVGAData(fileURL)
             }
             
@@ -146,22 +161,35 @@ extension AnimationStore {
     }
 }
 
-// MARK: - lottie/SVGA数据加载
+// MARK: - lottie/SVGA/GIF数据加载
 private extension AnimationStore {
+    static func loadGIFData(_ tmpFileURL: URL) throws -> AnimationStore {
+        let tmpData = try Data(contentsOf: tmpFileURL)
+        
+        guard isGIFData(tmpData) else {
+            return try loadSVGAData(tmpFileURL)
+        }
+        
+        guard let gif = decodeGIF(tmpData) else {
+            throw Self.Error.decodeGIFFailed
+        }
+        
+        try cacheFile(tmpFileURL, for: .gif)
+        
+        let store = AnimationStore.gif(images: gif.0, duration: gif.1)
+        cache = store
+        
+        return store
+    }
+    
     static func loadSVGAData(_ tmpFileURL: URL) throws -> AnimationStore {
         let tmpData = try Data(contentsOf: tmpFileURL)
         
-        var entity: SVGAVideoEntity?
-        let lock = DispatchSemaphore(value: 0)
-        SVGAParser().parse(with: tmpData, cacheKey: "") {
-            entity = $0
-            lock.signal()
-        } failureBlock: { _ in
-            lock.signal()
+        if isGIFData(tmpData) {
+            return try loadGIFData(tmpFileURL)
         }
-        lock.wait()
         
-        guard let entity else {
+        guard let entity = parseSVGA(tmpData) else {
             // 不是svga，去看看是不是lottie
             return try loadLottieData(tmpFileURL)
         }
@@ -181,17 +209,23 @@ private extension AnimationStore {
         // 如果就是lottie文件
         var isLottieDir: (hadJsonFile: Bool, hadImagesDir: Bool) = (false, false)
         for fileURL in fileURLs {
+            // 居然有gif文件
+            if fileURL.pathExtension.lowercased() == "gif" {
+                return try loadGIFData(fileURL)
+            }
+            
             // 居然有svga文件
-            if fileURL.pathExtension == "svga" {
+            if fileURL.pathExtension.lowercased() == "svga" {
                 return try loadSVGAData(fileURL)
             }
             
-            if fileURL.lastPathComponent == "data.json" {
+            if fileURL.lastPathComponent.lowercased() == "data.json" {
                 isLottieDir.hadJsonFile = true
-            } else if fileURL.lastPathComponent == "images" {
+            } else if fileURL.lastPathComponent.lowercased() == "images" {
                 isLottieDir.hadImagesDir = true
             }
         }
+        
         if isLottieDir.hadJsonFile, isLottieDir.hadImagesDir {
             let jsonPath = tmpFileURL.appendingPathComponent("data.json").path
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
@@ -284,27 +318,22 @@ private extension AnimationStore {
             cache = .lottie(animation: animation, provider: provider)
             
         case .svga:
-            guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
+            guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)),
+                  let entity = parseSVGA(data)
+            else {
                 clearCacheFile()
                 return
             }
-            
-            var entity: SVGAVideoEntity?
-            let lock = DispatchSemaphore(value: 0)
-            SVGAParser().parse(with: data, cacheKey: "") {
-                entity = $0
-                lock.signal()
-            } failureBlock: { _ in
-                lock.signal()
-            }
-            lock.wait()
-            
-            guard let entity else {
-                clearCacheFile()
-                return
-            }
-            
             cache = .svga(entity: entity)
+            
+        case .gif:
+            guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)),
+                  let gif = decodeGIF(data)
+            else {
+                clearCacheFile()
+                return
+            }
+            cache = .gif(images: gif.0, duration: gif.1)
         }
     }
 }
@@ -327,5 +356,75 @@ private extension AnimationStore {
         } else {
             myQueue.async { handler() }
         }
+    }
+}
+
+// MARK: - SVGA相关
+private extension AnimationStore {
+    static func parseSVGA(_ data: Data) -> SVGAVideoEntity? {
+        var entity: SVGAVideoEntity?
+        let lock = DispatchSemaphore(value: 0)
+        SVGAParser().parse(with: data, cacheKey: "") {
+            entity = $0
+            lock.signal()
+        } failureBlock: { _ in
+            lock.signal()
+        }
+        lock.wait()
+        return entity
+    }
+}
+
+// MARK: - GIF相关
+private extension AnimationStore {
+    static func isGIFData(_ data: Data) -> Bool {
+        let gifIdentifier = Data([0x47, 0x49, 0x46])
+        
+        guard data.count >= gifIdentifier.count else {
+            return false
+        }
+        
+        let prefix = data.prefix(gifIdentifier.count)
+        return prefix.elementsEqual(gifIdentifier)
+    }
+    
+    static func decodeGIF(_ data: Data) -> ([UIImage], TimeInterval)? {
+        guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+            return nil
+        }
+        
+        var images: [UIImage] = []
+        var duration: TimeInterval = 0
+        
+        let count = CGImageSourceGetCount(imageSource)
+        for i in 0 ..< count {
+            guard let cgImg = CGImageSourceCreateImageAtIndex(imageSource, i, nil) else { continue }
+            
+            let img = UIImage(cgImage: cgImg)
+            images.append(img)
+            
+            // CFDictionary的使用：https://www.jianshu.com/p/766acdbbe271
+            guard let proertyDic = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
+                  let gifDicValue = CFDictionaryGetValue(proertyDic, Unmanaged.passRetained(kCGImagePropertyGIFDictionary).autorelease().toOpaque()) else {
+                duration += 0.1
+                continue
+            }
+            
+            let gifDic = Unmanaged<CFDictionary>.fromOpaque(gifDicValue).takeUnretainedValue()
+            
+            guard let delayValue = CFDictionaryGetValue(gifDic, Unmanaged.passRetained(kCGImagePropertyGIFUnclampedDelayTime).autorelease().toOpaque()) else {
+                duration += 0.1
+                continue
+            }
+            
+            var delay = Unmanaged<NSNumber>.fromOpaque(delayValue).takeUnretainedValue().doubleValue
+            if delay <= Double.ulpOfOne, let delayValue2 = CFDictionaryGetValue(gifDic, Unmanaged.passRetained(kCGImagePropertyGIFDelayTime).autorelease().toOpaque()) {
+                delay = Unmanaged<NSNumber>.fromOpaque(delayValue2).takeUnretainedValue().doubleValue
+            }
+            
+            duration += (delay < 0.02 ? 0.1 : delay)
+        }
+        
+        return (images, duration)
     }
 }
