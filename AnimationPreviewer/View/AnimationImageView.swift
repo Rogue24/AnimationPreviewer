@@ -19,6 +19,8 @@ class AnimationImageView: UIView {
     private let placeholderView = UIView()
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
     private let svgaView = SVGAExPlayer()
+    private let gifView = UIImageView()
+    private var gif: (images: [UIImage], currentFrame: Int) = ([], 0)
     
     var isEnable: Bool {
         store != nil
@@ -28,15 +30,25 @@ class AnimationImageView: UIView {
         set {
             if !lottieView.isHidden {
                 lottieView.currentFrame = newValue
-            } else if !svgaView.isHidden {
+            }
+            else if !svgaView.isHidden {
                 svgaView.play(fromFrame: Int(newValue), isAutoPlay: false)
+            }
+            else if !gifView.isHidden {
+                gif.1 = Int(newValue)
+                guard gif.1 < gif.0.count else { return }
+                gifView.image = gif.0[gif.1]
             }
         }
         get {
             if !lottieView.isHidden {
                 return lottieView.currentFrame
-            } else if !svgaView.isHidden {
+            }
+            else if !svgaView.isHidden {
                 return CGFloat(svgaView.currentFrame)
+            }
+            else if !gifView.isHidden {
+                return CGFloat(gif.1)
             }
             return 0
         }
@@ -44,21 +56,19 @@ class AnimationImageView: UIView {
     
     init() {
         super.init(frame: .zero)
-        
-        lottieView.isHidden = true
-        lottieView.contentMode = .scaleAspectFit
-        addSubview(lottieView)
-        lottieView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        svgaView.isHidden = true
-        svgaView.contentMode = .scaleAspectFit
-        addSubview(svgaView)
-        svgaView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
+        setupBase()
+        setupLottieView()
+        setupSvgaView()
+        setupGifView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+private extension AnimationImageView {
+    func setupBase() {
         backgroundColor = .rgb(41, 43, 51, a: 0.35)
         layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
         layer.borderWidth = 4
@@ -66,8 +76,48 @@ class AnimationImageView: UIView {
         layer.masksToBounds = true
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func setupLottieView() {
+        lottieView.isHidden = true
+        lottieView.contentMode = .scaleAspectFit
+        addSubview(lottieView)
+        lottieView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    func setupSvgaView() {
+        svgaView.isHidden = true
+        svgaView.contentMode = .scaleAspectFit
+        addSubview(svgaView)
+        svgaView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    func setupGifView() {
+        gifView.isHidden = true
+        gifView.contentMode = .scaleAspectFit
+        addSubview(gifView)
+        gifView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
+    func hiddenLottieView() {
+        lottieView.stop()
+        lottieView.animation = nil
+        lottieView.isHidden = true
+    }
+    
+    func hiddenSvgaView() {
+        svgaView.clean()
+        svgaView.isHidden = true
+    }
+    
+    func hiddenGifView() {
+        gif = ([], 0)
+        gifView.image = nil
+        gifView.isHidden = true
     }
 }
 
@@ -84,14 +134,16 @@ extension AnimationImageView {
             replaceLottie(animation, provider)
         case let .svga(entity):
             replaceSVGA(entity)
+        case let .gif(images, _):
+            replaceGIF(images)
         }
     }
 }
 
 private extension AnimationImageView {
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
-        svgaView.clean()
-        svgaView.isHidden = true
+        hiddenSvgaView()
+        hiddenGifView()
         
         lottieView.animation = animation
         lottieView.imageProvider = provider
@@ -101,12 +153,22 @@ private extension AnimationImageView {
     }
     
     func replaceSVGA(_ entity: SVGAVideoEntity) {
-        lottieView.stop()
-        lottieView.animation = nil
-        lottieView.isHidden = true
+        hiddenLottieView()
+        hiddenGifView()
         
         svgaView.play(with: entity, fromFrame: 0, isAutoPlay: false)
         svgaView.isHidden = false
+        
+        updateLayout()
+    }
+    
+    func replaceGIF(_ images: [UIImage]) {
+        hiddenLottieView()
+        hiddenSvgaView()
+        
+        gif = (images, 0)
+        gifView.image = images.first
+        gifView.isHidden = false
         
         updateLayout()
     }
@@ -114,19 +176,16 @@ private extension AnimationImageView {
 
 private extension AnimationImageView {
     func removeAnimation() {
-        lottieView.stop()
-        lottieView.animation = nil
-        lottieView.isHidden = true
-        
-        svgaView.clean()
-        svgaView.isHidden = true
-        
+        hiddenLottieView()
+        hiddenSvgaView()
+        hiddenGifView()
         updateLayout()
     }
     
     func updateLayout() {
         lottieView.layoutIfNeeded()
         svgaView.layoutIfNeeded()
+        gifView.layoutIfNeeded()
         
         UIView.transition(with: lottieView,
                           duration: 0.25,
@@ -134,6 +193,11 @@ private extension AnimationImageView {
                           animations: {})
         
         UIView.transition(with: svgaView,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: {})
+        
+        UIView.transition(with: gifView,
                           duration: 0.25,
                           options: .transitionCrossDissolve,
                           animations: {})
@@ -176,21 +240,28 @@ extension AnimationImageView {
             
             layer = drawLayer
             size = entity.videoSize
+            
+        case .gif:
+            guard let image = gifView.image else {
+                completion(.failure(reason: "图片截取失败"))
+                return
+            }
+            
+            completion(.success(image: image))
+            return
         }
         
         var newImage: UIImage?
         Asyncs.async {
-            
-            UIGraphicsBeginImageContextWithOptions(size, false, 0)
-            guard let ctx = UIGraphicsGetCurrentContext() else {
-                UIGraphicsEndImageContext()
-                return
+            let format = UIGraphicsImageRendererFormat()
+            format.opaque = false // false表示透明，这里需要透明背景
+            format.scale = UIScreen.main.scale
+            let renderer = UIGraphicsImageRenderer(size: size, format: format)
+            newImage = renderer.image { ctx in
+                DispatchQueue.main.sync {
+                    layer.render(in: ctx.cgContext)
+                }
             }
-            
-            layer.render(in: ctx)
-            newImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
         } mainTask: {
             if let newImage {
                 completion(.success(image: newImage))
