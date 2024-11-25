@@ -73,12 +73,10 @@ class ViewController: UIViewController {
     // MARK: - 生命周期
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupBgView()
         addSubviews()
         setupSubviewsLayout()
         addSubviewsTarget()
-        
         // 初始化缓存
         AnimationStore.setup() { [weak self] in
             guard let self, let store = AnimationStore.cache else { return }
@@ -223,37 +221,52 @@ extension ViewController {
     
     // MARK: - 选择播放模式
     @objc func modeAction(_ sender: UIButton) {
-        let alertCtr = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        for loopMode in AnimationPlayView.LoopMode.allCases {
-            var title: String = playView.loopMode == loopMode ? "✅ " : ""
-            switch loopMode {
-            case .forward:
-                title += "Forward loop"
-            case .reverse:
-                title += "Reverse loop"
-            case .backwards:
-                title += "Backwards loop"
-            }
-            alertCtr.addAction(
-                UIAlertAction(title: title, style: .default) { _ in
-                    self.playView.loopMode = loopMode
-                    self.playBtn.isSelected = true
-                }
-            )
-        }
-        alertCtr.addAction(UIAlertAction(title: "取消", style: .cancel))
-        
+        let alertCtr = UIViewController()
+        alertCtr.modalPresentationStyle = .popover
+        alertCtr.preferredContentSize = [220, 10 + 44.0 * 3 + 10]
         if let popover = alertCtr.popoverPresentationController {
             popover.sourceView = sender
             popover.permittedArrowDirections = .down
         }
+        
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 0
+        alertCtr.view.addSubview(stackView)
+        stackView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        for (i, loopMode) in AnimationPlayView.LoopMode.allCases.enumerated() {
+            let title = (playView.loopMode == loopMode ? "✅ " : "") + loopMode.title
+            let color = playView.loopMode == loopMode ? UIColor.systemBlue : UIColor.white
+            let btn = UIButton(type: .system)
+            btn.tag = i
+            btn.setTitle(title, for: .normal)
+            btn.setTitleColor(color, for: .normal)
+            btn.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+            btn.addTarget(self, action: #selector(_modeBtnDidClick(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(btn)
+            btn.snp.makeConstraints { make in
+                make.width.equalTo(220)
+                make.height.equalTo(44)
+            }
+        }
+        
         present(alertCtr, animated: true)
+    }
+    
+    @objc func _modeBtnDidClick(_ sender: UIButton) {
+        playView.loopMode = AnimationPlayView.LoopMode.allCases[sender.tag]
+        playBtn.isSelected = true
+        dismiss(animated: true)
     }
     
     // MARK: - 制作视频
     @objc func videoAction(_ sender: UIButton) {
         guard let store = playView.store else { return }
-        guard store.isLottie else {
+        guard !store.isSVGA else {
             JPProgressHUD.showInfo(withStatus: "暂不支持SVGA")
             return
         }
@@ -363,6 +376,10 @@ extension ViewController {
             volumeBtn.isHidden = false
             slider.minimumValue = 0
             slider.maximumValue = Float(entity.frames)
+        case let .gif(images, _):
+            volumeBtn.isHidden = true
+            slider.minimumValue = 0
+            slider.maximumValue = Float(images.count - 1)
         }
     }
 }
