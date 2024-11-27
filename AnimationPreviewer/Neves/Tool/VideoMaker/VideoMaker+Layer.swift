@@ -259,15 +259,23 @@ extension VideoMaker {
             Asyncs.main { completion(.failure(.writerError)) }
             return
         }
-        exportSession.outputFileType = .mp4
-        exportSession.outputURL = URL(fileURLWithPath: cachePath)
         exportSession.shouldOptimizeForNetworkUse = true
         exportSession.videoComposition = videoComposition
         
-        exportSession.exportAsynchronously {
+        let outputURL = URL(fileURLWithPath: cachePath)
+        Task {
+            if #available(macCatalyst 18, *) {
+                try? await exportSession.export(to: outputURL, as: .mp4)
+            } else {
+                exportSession.outputFileType = .mp4
+                exportSession.outputURL = outputURL
+                await exportSession.export()
+            }
+            
             print("videoPath \(videoPath)")
             print("cachePath \(cachePath)")
             File.manager.deleteFile(videoPath)
+            
             switch exportSession.status {
             case .completed:
                 Asyncs.main { completion(.success(cachePath)) }

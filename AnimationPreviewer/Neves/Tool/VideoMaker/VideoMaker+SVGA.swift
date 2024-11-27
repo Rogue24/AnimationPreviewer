@@ -160,7 +160,6 @@ extension VideoMaker {
         }
         
         let fps = entity.fps
-        
         for audioInfo in entity.audios {
             guard let audioPath = audiosData[audioInfo.audioKey] else { continue }
             
@@ -198,18 +197,26 @@ extension VideoMaker {
             completion(nil)
             return
         }
+        exporter.shouldOptimizeForNetworkUse = true
+        exporter.timeRange = CMTimeRange(start: .zero, duration: videoAsset.duration)
+        exporter.audioMix = audioMix
         
         let outputPath = File.tmpFilePath("final_output.mp4")
         File.manager.deleteFile(outputPath)
         
-        exporter.outputURL = URL(fileURLWithPath: outputPath)
-        exporter.outputFileType = .mp4
-        exporter.timeRange = CMTimeRange(start: .zero, duration: videoAsset.duration)
-        exporter.audioMix = audioMix
-        
-        exporter.exportAsynchronously {
+        let outputURL =  URL(fileURLWithPath: outputPath)
+        Task {
+            if #available(macCatalyst 18, *) {
+                try? await exporter.export(to: outputURL, as: .mp4)
+            } else {
+                exporter.outputURL = outputURL
+                exporter.outputFileType = .mp4
+                await exporter.export()
+            }
+            
             audiosData.values.forEach { File.manager.deleteFile($0) }
             File.manager.deleteFile(videoPath)
+            
             switch exporter.status {
             case .completed:
                 completion(outputPath)

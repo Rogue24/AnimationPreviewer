@@ -50,7 +50,6 @@ extension VideoMaker {
         videoWriter.startSession(atSourceTime: .zero)
         
         let fps: Int32 = Int32(images.count) / Int32(duration)
-        
         var frameTime = CMTime.zero
         for (i, image) in images.enumerated() {
             autoreleasepool {
@@ -83,9 +82,11 @@ extension VideoMaker {
                 File.manager.deleteFile(cachePath)
                 File.manager.moveFile(videoPath, toPath: cachePath)
                 Asyncs.main { completion(.success(cachePath)) }
+                
             default:
                 Asyncs.main { completion(.failure(.writerError)) }
             }
+            
             File.manager.deleteFile(videoPath)
         }
     }
