@@ -14,6 +14,17 @@ class AnimationPlayView: UIView {
         case reverse
         case backwards
         
+        var title: String {
+            switch self {
+            case .forward:
+                return "Forward loop"
+            case .reverse:
+                return "Reverse loop"
+            case .backwards:
+                return "Backwards loop"
+            }
+        }
+        
         var lottieLoopMode: LottieLoopMode {
             switch self {
             case .forward, .backwards:
@@ -54,6 +65,8 @@ class AnimationPlayView: UIView {
     private let placeholderView = UIView()
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
     private let svgaView = SVGAExPlayer()
+    private let gifView = UIImageView()
+    private var gif: (images: [UIImage], duration: TimeInterval) = ([], 0)
     
     @UserDefault(.isSVGAMute) private var _isSVGAMute: Bool = false
     var isSVGAMute: Bool {
@@ -115,6 +128,13 @@ class AnimationPlayView: UIView {
             make.edges.equalToSuperview()
         }
         
+        gifView.isHidden = true
+        gifView.contentMode = .scaleAspectFit
+        addSubview(gifView)
+        gifView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         backgroundColor = .rgb(41, 43, 51, a: 0.35)
         layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
         layer.borderWidth = 4
@@ -139,6 +159,7 @@ extension AnimationPlayView: SVGAExPlayerDelegate {
 extension AnimationPlayView {
     func replaceAnimation(_ store: AnimationStore?) {
         self.store = store
+        
         guard let store else {
             removeAnimation()
             return
@@ -149,8 +170,9 @@ extension AnimationPlayView {
             replaceLottie(animation, provider)
         case let .svga(entity):
             replaceSVGA(entity)
+        case let .gif(images, duration):
+            replaceGIF(images, duration)
         }
-        
         play()
     }
 }
@@ -161,6 +183,13 @@ private extension AnimationPlayView {
         
         svgaView.clean()
         svgaView.isHidden = true
+        
+        gif = ([], 0)
+        gifView.stopAnimating()
+        gifView.animationImages = nil
+        gifView.animationDuration = 0
+        gifView.image = nil
+        gifView.isHidden = true
         
         lottieView.animation = animation
         lottieView.imageProvider = provider
@@ -176,8 +205,35 @@ private extension AnimationPlayView {
         lottieView.animation = nil
         lottieView.isHidden = true
         
+        gif = ([], 0)
+        gifView.stopAnimating()
+        gifView.animationImages = nil
+        gifView.animationDuration = 0
+        gifView.image = nil
+        gifView.isHidden = true
+        
         svgaView.play(with: entity, fromFrame: 0, isAutoPlay: false)
         svgaView.isHidden = false
+        
+        updateLayout()
+    }
+    
+    func replaceGIF(_ images: [UIImage], _ duration: TimeInterval) {
+        placeholderView.isHidden = true
+        
+        svgaView.clean()
+        svgaView.isHidden = true
+        
+        lottieView.stop()
+        lottieView.animation = nil
+        lottieView.isHidden = true
+        
+        gif = (images, duration)
+        gifView.stopAnimating()
+        gifView.animationImages = nil
+        gifView.animationDuration = 0
+        gifView.image = nil
+        gifView.isHidden = false
         
         updateLayout()
     }
@@ -192,6 +248,13 @@ private extension AnimationPlayView {
         svgaView.clean()
         svgaView.isHidden = true
         
+        gif = ([], 0)
+        gifView.stopAnimating()
+        gifView.animationImages = nil
+        gifView.animationDuration = 0
+        gifView.image = nil
+        gifView.isHidden = true
+        
         placeholderView.isHidden = false
         
         updateLayout()
@@ -200,6 +263,7 @@ private extension AnimationPlayView {
     func updateLayout() {
         lottieView.layoutIfNeeded()
         svgaView.layoutIfNeeded()
+        gifView.layoutIfNeeded()
         placeholderView.layoutIfNeeded()
         
         UIView.transition(with: lottieView,
@@ -208,6 +272,11 @@ private extension AnimationPlayView {
                           animations: {})
         
         UIView.transition(with: svgaView,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: {})
+        
+        UIView.transition(with: gifView,
                           duration: 0.25,
                           options: .transitionCrossDissolve,
                           animations: {})
@@ -227,7 +296,8 @@ extension AnimationPlayView {
             } else {
                 lottieView.play(fromProgress: 0, toProgress: 1, loopMode: lottieView.loopMode)
             }
-        } else if !svgaView.isHidden {
+        }
+        else if !svgaView.isHidden {
             if loopMode == .forward {
                 svgaView.isReversing = false
             } else if loopMode == .backwards {
@@ -235,25 +305,51 @@ extension AnimationPlayView {
             }
             svgaView.play()
         }
+        else if !gifView.isHidden {
+            switch loopMode {
+            case .forward:
+                gifView.image = gif.0.first
+                gifView.animationImages = gif.0
+                gifView.animationDuration = gif.1
+            case .reverse:
+                gifView.image = gif.0.first
+                gifView.animationImages = gif.0 + gif.0.reversed()
+                gifView.animationDuration = gif.1 * 2
+            case .backwards:
+                gifView.image = gif.0.last
+                gifView.animationImages = gif.0.reversed()
+                gifView.animationDuration = gif.1
+            }
+            gifView.startAnimating()
+        }
     }
     
     func pause() {
         if !lottieView.isHidden {
             lottieView.pause()
-        } else if !svgaView.isHidden {
+        }
+        else if !svgaView.isHidden {
             svgaView.pause()
+        }
+        else if !gifView.isHidden {
+            gifView.stopAnimating()
         }
     }
     
     func stop() {
         if !lottieView.isHidden {
             lottieView.stop()
-        } else if !svgaView.isHidden {
+        }
+        else if !svgaView.isHidden {
             svgaView.stop()
+        }
+        else if !gifView.isHidden {
+            gifView.stopAnimating()
         }
     }
 }
- 
+
+// MARK: - 制作视频
 extension AnimationPlayView {
     func makeVideo(progressHandler: @escaping (_ progress: Float) -> (),
                    completion: @escaping (_ result: MakeVideoResult) -> ()) {
@@ -265,39 +361,83 @@ extension AnimationPlayView {
         switch store {
         case let .lottie(animation, provider):
             if animation.duration < 1 {
-                completion(.failure(reason: "动画时长太短了"))
+                completion(.failure(reason: "动画时长过短，无法生成视频"))
                 return
             }
             
-            Asyncs.async {
-                let picker = LottieImagePicker(animation: animation,
-                                               provider: provider,
-                                               bgColor: UIColor.black,
-                                               animSize: [720, 720],
-                                               renderScale: UIScreen.mainScale)
-                VideoMaker.makeVideo(framerate: 20,
-                                     frameInterval: 20,
-                                     duration: animation.duration,
-                                     size: [720, 720]) { currentFrame, currentTime, _ in
-                    picker.update(currentTime)
-                    return [picker.animLayer]
-                } progress: { currentFrame, totalFrame in
-                    let progress = Float(currentFrame) / Float(totalFrame)
-                    Asyncs.main {
-                        progressHandler(progress)
-                    }
-                } completion: { result in
-                    switch result {
-                    case let .success(path):
-                        completion(.success(videoPath: path))
-                    case let .failure(error):
-                        completion(.failure(reason: error.localizedDescription))
-                    }
+            let picker = LottieImagePicker(animation: animation,
+                                           provider: provider,
+                                           bgColor: UIColor.black,
+                                           animSize: [720, 720],
+                                           renderScale: UIScreen.mainScale)
+            VideoMaker.makeVideo(framerate: 20,
+                                 frameInterval: 20,
+                                 duration: animation.duration,
+                                 size: [720, 720]) { currentFrame, currentTime, _ in
+                picker.update(currentTime)
+                return [picker.animLayer]
+            } progress: { currentFrame, totalFrame in
+                let progress = Float(currentFrame) / Float(totalFrame)
+                Asyncs.main {
+                    progressHandler(progress)
+                }
+            } completion: { result in
+                switch result {
+                case let .success(path):
+                    completion(.success(videoPath: path))
+                case let .failure(error):
+                    completion(.failure(reason: error.localizedDescription))
                 }
             }
             
-        case .svga:
-            completion(.failure(reason: "暂不支持SVGA"))
+        case let .svga(entity):
+            if entity.duration < 1 {
+                completion(.failure(reason: "动画时长过短，无法生成视频"))
+                return
+            }
+            
+            VideoMaker.makeVideo(withSVGAEntity: entity, size: [720, 720]) { result in
+                switch result {
+                case let .success(path):
+                    completion(.success(videoPath: path))
+                case let .failure(error):
+                    completion(.failure(reason: error.localizedDescription))
+                }
+            }
+            
+        case let .gif(images, duration):
+            if duration < 1 {
+                completion(.failure(reason: "动画时长过短，无法生成视频"))
+                return
+            }
+            
+            VideoMaker.makeVideo(withImages: images, duration: duration, size: [720, 720]) { result in
+                switch result {
+                case let .success(path):
+                    completion(.success(videoPath: path))
+                case let .failure(error):
+                    completion(.failure(reason: error.localizedDescription))
+                }
+            }
+            
+//            Asyncs.async {
+//                let frameDuration = duration / Double(images.count)
+//                
+//                let imageInfos: [VideoMaker.ImageInfo] = images.map {
+//                    .init(image: $0, duration: frameDuration)
+//                }
+//                
+//                let videoSize: CGSize = [720, 720]
+//                
+//                VideoMaker.makeVideo(withImageInfos: imageInfos, size: videoSize) { result in
+//                    switch result {
+//                    case let .success(path):
+//                        completion(.success(videoPath: path))
+//                    case let .failure(error):
+//                        completion(.failure(reason: error.localizedDescription))
+//                    }
+//                }
+//            }
         }
     }
 }

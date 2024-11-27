@@ -265,12 +265,6 @@ extension ViewController {
     
     // MARK: - 制作视频
     @objc func videoAction(_ sender: UIButton) {
-        guard let store = playView.store else { return }
-        guard !store.isSVGA else {
-            JPProgressHUD.showInfo(withStatus: "暂不支持SVGA")
-            return
-        }
-        
         JPProgressHUD.show(withStatus: "视频制作中...")
         playView.makeVideo { progress in
             JPProgressHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))

@@ -15,6 +15,8 @@
 		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
 		001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */; };
 		001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
+		0053162D2CF5BCA200EACB72 /* VideoMaker+SVGA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */; };
+		006398EC2CF71536005750C3 /* VideoMaker+GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */; };
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA52A974291009C9FF4 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA42A974291009C9FF4 /* Data+.swift */; };
 		009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA62A984A21009C9FF4 /* AnimationStore.swift */; };
@@ -244,18 +246,18 @@
 		1A95CCB72A0A05D9006E3102 /* Hookable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC712A0A05D8006E3102 /* Hookable.swift */; };
 		1A95CCBC2A0A05D9006E3102 /* Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC772A0A05D8006E3102 /* Function.swift */; };
 		1A95CCBD2A0A05D9006E3102 /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC792A0A05D8006E3102 /* UserDefault.swift */; };
-		1A95CCBE2A0A05D9006E3102 /* VideoMaker.Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC7A2A0A05D8006E3102 /* VideoMaker.Layer.swift */; };
-		1A95CCBF2A0A05D9006E3102 /* VideoMaker.Lottie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC7B2A0A05D8006E3102 /* VideoMaker.Lottie.swift */; };
+		1A95CCBE2A0A05D9006E3102 /* VideoMaker+Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC7A2A0A05D8006E3102 /* VideoMaker+Layer.swift */; };
+		1A95CCBF2A0A05D9006E3102 /* VideoMaker+Lottie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC7B2A0A05D8006E3102 /* VideoMaker+Lottie.swift */; };
 		1A95CCC02A0A05D9006E3102 /* VideoMaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC7C2A0A05D8006E3102 /* VideoMaker.swift */; };
 		1A95CCC62A0A05D9006E3102 /* LottieImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC852A0A05D8006E3102 /* LottieImageStore.swift */; };
 		1A95CCC72A0A05D9006E3102 /* DecodeImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC862A0A05D8006E3102 /* DecodeImageProvider.swift */; };
 		1A95CCC82A0A05D9006E3102 /* LottieImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC872A0A05D8006E3102 /* LottieImagePicker.swift */; };
 		1A95CCC92A0A05D9006E3102 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC882A0A05D8006E3102 /* File.swift */; };
-		1A95CCCC2A0A05D9006E3102 /* VideoMaker.ImageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC8C2A0A05D8006E3102 /* VideoMaker.ImageTest.swift */; };
-		1A95CCCE2A0A05D9006E3102 /* VideoMaker.Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC8E2A0A05D8006E3102 /* VideoMaker.Image.swift */; };
+		1A95CCCC2A0A05D9006E3102 /* VideoMaker+ImageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC8C2A0A05D8006E3102 /* VideoMaker+ImageTest.swift */; };
+		1A95CCCE2A0A05D9006E3102 /* VideoMaker+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC8E2A0A05D8006E3102 /* VideoMaker+Image.swift */; };
 		1A95CCCF2A0A05D9006E3102 /* Done.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC8F2A0A05D8006E3102 /* Done.swift */; };
 		1A95CCD12A0A05D9006E3102 /* Asyncs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC912A0A05D8006E3102 /* Asyncs.swift */; };
-		1A95CCD22A0A05D9006E3102 /* VideoMaker.ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC922A0A05D8006E3102 /* VideoMaker.ImageInfo.swift */; };
+		1A95CCD22A0A05D9006E3102 /* VideoMaker+ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC922A0A05D8006E3102 /* VideoMaker+ImageInfo.swift */; };
 		1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */; };
 		1A95CD852A0AA1A6006E3102 /* AnimationPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */; };
 		1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */; };
@@ -290,6 +292,8 @@
 		001AB9322A9DC2B800C09045 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPProgressHUD.swift; sourceTree = "<group>"; };
 		001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
+		0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+SVGA.swift"; sourceTree = "<group>"; };
+		006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+GIF.swift"; sourceTree = "<group>"; };
 		009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationData.swift; sourceTree = "<group>"; };
 		009F1DA42A974291009C9FF4 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		009F1DA62A984A21009C9FF4 /* AnimationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationStore.swift; sourceTree = "<group>"; };
@@ -543,18 +547,18 @@
 		1A95CC712A0A05D8006E3102 /* Hookable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hookable.swift; sourceTree = "<group>"; };
 		1A95CC772A0A05D8006E3102 /* Function.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Function.swift; sourceTree = "<group>"; };
 		1A95CC792A0A05D8006E3102 /* UserDefault.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefault.swift; sourceTree = "<group>"; };
-		1A95CC7A2A0A05D8006E3102 /* VideoMaker.Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.Layer.swift; sourceTree = "<group>"; };
-		1A95CC7B2A0A05D8006E3102 /* VideoMaker.Lottie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.Lottie.swift; sourceTree = "<group>"; };
+		1A95CC7A2A0A05D8006E3102 /* VideoMaker+Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoMaker+Layer.swift"; sourceTree = "<group>"; };
+		1A95CC7B2A0A05D8006E3102 /* VideoMaker+Lottie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoMaker+Lottie.swift"; sourceTree = "<group>"; };
 		1A95CC7C2A0A05D8006E3102 /* VideoMaker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.swift; sourceTree = "<group>"; };
 		1A95CC852A0A05D8006E3102 /* LottieImageStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LottieImageStore.swift; sourceTree = "<group>"; };
 		1A95CC862A0A05D8006E3102 /* DecodeImageProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DecodeImageProvider.swift; sourceTree = "<group>"; };
 		1A95CC872A0A05D8006E3102 /* LottieImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LottieImagePicker.swift; sourceTree = "<group>"; };
 		1A95CC882A0A05D8006E3102 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		1A95CC8C2A0A05D8006E3102 /* VideoMaker.ImageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.ImageTest.swift; sourceTree = "<group>"; };
-		1A95CC8E2A0A05D8006E3102 /* VideoMaker.Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.Image.swift; sourceTree = "<group>"; };
+		1A95CC8C2A0A05D8006E3102 /* VideoMaker+ImageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoMaker+ImageTest.swift"; sourceTree = "<group>"; };
+		1A95CC8E2A0A05D8006E3102 /* VideoMaker+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoMaker+Image.swift"; sourceTree = "<group>"; };
 		1A95CC8F2A0A05D8006E3102 /* Done.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Done.swift; sourceTree = "<group>"; };
 		1A95CC912A0A05D8006E3102 /* Asyncs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Asyncs.swift; sourceTree = "<group>"; };
-		1A95CC922A0A05D8006E3102 /* VideoMaker.ImageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoMaker.ImageInfo.swift; sourceTree = "<group>"; };
+		1A95CC922A0A05D8006E3102 /* VideoMaker+ImageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VideoMaker+ImageInfo.swift"; sourceTree = "<group>"; };
 		1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenRotator.swift; sourceTree = "<group>"; };
 		1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationPlayView.swift; sourceTree = "<group>"; };
 		1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationImageView.swift; sourceTree = "<group>"; };
@@ -1457,11 +1461,13 @@
 		1A95CD8A2A0AA298006E3102 /* VideoMaker */ = {
 			isa = PBXGroup;
 			children = (
-				1A95CC8E2A0A05D8006E3102 /* VideoMaker.Image.swift */,
-				1A95CC922A0A05D8006E3102 /* VideoMaker.ImageInfo.swift */,
-				1A95CC8C2A0A05D8006E3102 /* VideoMaker.ImageTest.swift */,
-				1A95CC7A2A0A05D8006E3102 /* VideoMaker.Layer.swift */,
-				1A95CC7B2A0A05D8006E3102 /* VideoMaker.Lottie.swift */,
+				1A95CC8E2A0A05D8006E3102 /* VideoMaker+Image.swift */,
+				1A95CC922A0A05D8006E3102 /* VideoMaker+ImageInfo.swift */,
+				1A95CC8C2A0A05D8006E3102 /* VideoMaker+ImageTest.swift */,
+				1A95CC7A2A0A05D8006E3102 /* VideoMaker+Layer.swift */,
+				1A95CC7B2A0A05D8006E3102 /* VideoMaker+Lottie.swift */,
+				0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */,
+				006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */,
 				1A95CC7C2A0A05D8006E3102 /* VideoMaker.swift */,
 			);
 			path = VideoMaker;
@@ -1672,6 +1678,7 @@
 				1A64FB0E2A08F221000F979B /* TextLayer.swift in Sources */,
 				1A95CCA72A0A05D9006E3102 /* UIView+.swift in Sources */,
 				1A880DB32A0B6C7A00BE7F16 /* ViewController+Drop.swift in Sources */,
+				0053162D2CF5BCA200EACB72 /* VideoMaker+SVGA.swift in Sources */,
 				1A64FB3D2A08F221000F979B /* CompoundBezierPath.swift in Sources */,
 				1A64FAFA2A08F221000F979B /* TextLayerModel.swift in Sources */,
 				009F1DCF2A98B174009C9FF4 /* SVGAVectorLayer.m in Sources */,
@@ -1698,7 +1705,7 @@
 				1A64FAD22A08F221000F979B /* RectNode.swift in Sources */,
 				1A95CC422A097E24006E3102 /* Channel.swift in Sources */,
 				1A95CCCF2A0A05D9006E3102 /* Done.swift in Sources */,
-				1A95CCBE2A0A05D9006E3102 /* VideoMaker.Layer.swift in Sources */,
+				1A95CCBE2A0A05D9006E3102 /* VideoMaker+Layer.swift in Sources */,
 				009F1DD82A98B174009C9FF4 /* SVGAVideoEntity.m in Sources */,
 				1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */,
 				1A64FAB62A08F220000F979B /* CompositionLayer.swift in Sources */,
@@ -1716,7 +1723,7 @@
 				1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */,
 				1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */,
 				1A64FAD82A08F221000F979B /* FillNode.swift in Sources */,
-				1A95CCCC2A0A05D9006E3102 /* VideoMaker.ImageTest.swift in Sources */,
+				1A95CCCC2A0A05D9006E3102 /* VideoMaker+ImageTest.swift in Sources */,
 				1A64FABD2A08F220000F979B /* MaskContainerLayer.swift in Sources */,
 				1A64FB282A08F221000F979B /* StrokeAnimation.swift in Sources */,
 				1A64FAAA2A08F220000F979B /* LRUAnimationCache.swift in Sources */,
@@ -1773,7 +1780,7 @@
 				001AB9332A9DC2B800C09045 /* SVRadialGradientLayer.m in Sources */,
 				1A64FB3B2A08F221000F979B /* BezierPath.swift in Sources */,
 				1A64F9512A085DE7000F979B /* AppDelegate.swift in Sources */,
-				1A95CCBF2A0A05D9006E3102 /* VideoMaker.Lottie.swift in Sources */,
+				1A95CCBF2A0A05D9006E3102 /* VideoMaker+Lottie.swift in Sources */,
 				1A64FB0F2A08F221000F979B /* GradientRenderLayer.swift in Sources */,
 				1A64FA9C2A08F220000F979B /* FilepathImageProvider.swift in Sources */,
 				1A64FB1E2A08F221000F979B /* ValueProviderStore.swift in Sources */,
@@ -1792,6 +1799,7 @@
 				1A64FAB22A08F220000F979B /* GradientValueProvider.swift in Sources */,
 				009F1DD52A98B174009C9FF4 /* SVGAPlayer.m in Sources */,
 				1A64FAA82A08F220000F979B /* Keyframe.swift in Sources */,
+				006398EC2CF71536005750C3 /* VideoMaker+GIF.swift in Sources */,
 				1A64FAF32A08F221000F979B /* GradientStroke.swift in Sources */,
 				1A64FB022A08F221000F979B /* Bundle.swift in Sources */,
 				009F1DDC2A98B174009C9FF4 /* SVGAContentLayer.m in Sources */,
@@ -1804,7 +1812,7 @@
 				1A64FAD72A08F221000F979B /* StrokeNode.swift in Sources */,
 				1A64FAAD2A08F220000F979B /* AnimationKeypath.swift in Sources */,
 				1A64FAE92A08F221000F979B /* Fill.swift in Sources */,
-				1A95CCD22A0A05D9006E3102 /* VideoMaker.ImageInfo.swift in Sources */,
+				1A95CCD22A0A05D9006E3102 /* VideoMaker+ImageInfo.swift in Sources */,
 				1A64FB052A08F221000F979B /* TextDocument.swift in Sources */,
 				1A95CCC82A0A05D9006E3102 /* LottieImagePicker.swift in Sources */,
 				1A64FABB2A08F220000F979B /* ImageCompositionLayer.swift in Sources */,
@@ -1854,7 +1862,7 @@
 				1A64FAF02A08F221000F979B /* Merge.swift in Sources */,
 				1A64FAFC2A08F221000F979B /* ShapeLayerModel.swift in Sources */,
 				1A64FAC32A08F220000F979B /* LayerImageProvider.swift in Sources */,
-				1A95CCCE2A0A05D9006E3102 /* VideoMaker.Image.swift in Sources */,
+				1A95CCCE2A0A05D9006E3102 /* VideoMaker+Image.swift in Sources */,
 				1A64FA9E2A08F220000F979B /* BundleImageProvider.swift in Sources */,
 				1A64FB212A08F221000F979B /* KeyframeGroup+exactlyOneKeyframe.swift in Sources */,
 				1A64FA992A08F220000F979B /* AnimationImageProvider.swift in Sources */,

@@ -45,12 +45,29 @@ extension VideoMaker {
             AVVideoWidthKey: size.width,
             AVVideoHeightKey: size.height,
             AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: bitsPerSecond,
-                AVVideoMaxKeyFrameIntervalKey: frameInterval,
+                AVVideoAverageBitRateKey: bitsPerSecond, // 平均比特率
+                AVVideoMaxKeyFrameIntervalKey: frameInterval, // 最大关键帧间隔
                 AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
             ] as [String : Any]
         ]
+        /// `AVVideoMaxKeyFrameIntervalKey`的作用：
+        /// 该参数定义了两帧关键帧之间的最大帧数，即 关键帧间隔（GOP: Group of Pictures）。其值越大：
+        /// 1. 视频压缩率更高：
+        ///   - 关键帧的数据量较大，间隔越长，视频的压缩效率越高，生成的文件体积越小。
+        /// 2. 视频质量可能下降：
+        ///   - 非关键帧依赖前面的关键帧，间隔过大会导致解码过程中的误差积累，影响视频质量。
+        /// 3. 解码性能可能降低：
+        ///   - 解码时若需要查找很久之前的关键帧，性能会有所降低，尤其是在视频快进、回退时。
+        ///
+        /// 常见取值
+        /// 1：每帧都是关键帧（无预测帧），质量最高，但文件体积非常大。
+        /// 10~30：通常适用于实时视频通话或低延迟场景，提供较好的平衡。
+        /// 60 或更大：用于非实时视频，例如电影或录播，最大化压缩率。
         return AVAssetWriterInput(mediaType: .video, outputSettings: settings)
+    }
+    
+    static func createVideoWriterInput(_ size: CGSize) -> AVAssetWriterInput {
+        return createVideoWriterInput(frameInterval: 15, size: size)
     }
     
     static func createPixelBufferWithImage(_ image: UIImage, pixelBufferPool: CVPixelBufferPool? = nil, size: CGSize) -> CVPixelBuffer? {
@@ -179,19 +196,7 @@ extension VideoMaker {
         }
         videoWriter.shouldOptimizeForNetworkUse = false
         
-        let bitsPerSecond = 5000 * 1024
-        let settings: [String: Any] = [
-            AVVideoCodecKey: AVVideoCodecType.h264,
-            AVVideoWidthKey: size.width,
-            AVVideoHeightKey: size.height,
-            AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: bitsPerSecond,
-                AVVideoMaxKeyFrameIntervalKey: frameInterval,
-                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
-            ] as [String : Any]
-        ]
-        
-        let writerInput = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
+        let writerInput = createVideoWriterInput(frameInterval: frameInterval, size: size)
         let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: nil)
         
         guard videoWriter.canAdd(writerInput) else {

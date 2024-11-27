@@ -140,7 +140,7 @@ extension LottieImagePicker {
                 ctx.restoreGState()
                 
                 // 写
-                var isContainsAlpha: Bool = {
+                let isContainsAlpha: Bool = {
                     guard let cgImage = image.cgImage else {
                         return false
                     }

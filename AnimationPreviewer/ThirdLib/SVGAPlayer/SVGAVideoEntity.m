@@ -10,7 +10,6 @@
 #import "SVGAVideoEntity.h"
 #import "SVGABezierPath.h"
 #import "SVGAVideoSpriteEntity.h"
-#import "SVGAAudioEntity.h"
 #import "Svga.pbobjc.h"
 
 #define MP3_MAGIC_NUMBER "ID3"

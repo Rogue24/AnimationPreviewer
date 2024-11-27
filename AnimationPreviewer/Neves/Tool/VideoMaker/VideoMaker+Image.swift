@@ -1,14 +1,16 @@
 //
-//  VideoMaker.Layer.swift
+//  VideoMaker+Image.swift
 //  Neves
 //
-//  Created by aa on 2021/10/19.
+//  Created by aa on 2021/10/22.
 //
 
+import UIKit
 import AVFoundation
 
-protocol VideoAnimationLayer: CALayer {
-    func addAnimate()
+protocol VideoImageStore {
+    func getImage(_ currentFrame: Int) -> UIImage?
+    func getImage(_ currentTime: TimeInterval) -> UIImage?
 }
 
 extension VideoMaker {
@@ -18,8 +20,7 @@ extension VideoMaker {
                           size: CGSize,
                           audioPath: String? = nil,
                           animLayer: VideoAnimationLayer? = nil,
-                          layerProvider: @escaping LayerProvider,
-                          progress: Progress?,
+                          imageStores: [VideoImageStore],
                           completion: @escaping Completion) {
         
         guard !Thread.isMainThread else {
@@ -30,12 +31,12 @@ extension VideoMaker {
                           size: size,
                           audioPath: audioPath,
                           animLayer: animLayer,
-                          layerProvider: layerProvider,
-                          progress: progress,
+                          imageStores: imageStores,
                           completion: completion)
             }
             return
         }
+//        JPrint("makeVideo", Thread.current)
         
         UIGraphicsBeginImageContextWithOptions(size, false, 1)
         defer { UIGraphicsEndImageContext() }
@@ -82,6 +83,7 @@ extension VideoMaker {
             return
         }
         videoWriter.startSession(atSourceTime: .zero)
+        JPrint("startSession", Thread.current) // 卡顿所在
         
         let timescale = CMTimeScale(framerate)
         let fps: CGFloat = 1.0 / CGFloat(frameInterval)
@@ -126,7 +128,7 @@ extension VideoMaker {
             if videoWriter.status != .writing {
                 // 其中一个错误：Code=-11800 "The operation could not be completed"
                 // 这是因为写入了相同的currentFrame造成的
-                JPrint("视频生成失败！", videoWriter.status.rawValue,
+                JPrint("失败？？？", videoWriter.status.rawValue,
                        videoWriter.error ?? "",
                        adaptor.assetWriterInput.isReadyForMoreMediaData)
                 
@@ -135,14 +137,20 @@ extension VideoMaker {
                 return
             }
             
-            var layers: [CALayer?] = []
-            DispatchQueue.main.sync {
-                layers = layerProvider(currentFrame, currentTime, size)
-            }
             autoreleasepool {
-                layers.forEach {
-                    guard let layer = $0 else { return }
-                    layer.render(in: ctx)
+                if let girl = UIImage(contentsOfFile: Bundle.main.path(forResource: "girl", ofType: "jpg")!) {
+                    girl.draw(in: [HalfDiffValue(size.width, girl.size.width), 0, size.height * (girl.size.width / girl.size.height), size.height])
+                }
+                UIImage(named: "album_videobg_jielong")?.draw(in: CGRect(origin: .zero, size: size))
+                
+                for store in imageStores {
+                    guard let image = store.getImage(currentTime) else {
+                        continue
+                    }
+//                    guard let image = store.getImage(currentFrame) else {
+//                        continue
+//                    }
+                    image.draw(in: CGRect(origin: .zero, size: size))
                 }
                 let image = UIGraphicsGetImageFromCurrentImageContext()
                 ctx.clear(CGRect(origin: .zero, size: size))
@@ -163,12 +171,11 @@ extension VideoMaker {
                 }
                 let frameTime = CMTime(value: CMTimeValue(currentFrame), timescale: timescale)
                 adaptor.append(pixelBuffer, withPresentationTime: frameTime)
-                
-                progress?(i, frameCount)
             }
         }
         
         writerInput.markAsFinished()
+        JPrint("markAsFinished", Thread.current)
         
         let endTime = CMTime(value: CMTimeValue(totalFrame), timescale: timescale)
         videoWriter.endSession(atSourceTime: endTime)
@@ -192,8 +199,6 @@ extension VideoMaker {
         guard let audioPath = audioPath else {
             File.manager.moveFile(videoPath, toPath: cachePath)
             Asyncs.main { completion(.success(cachePath)) }
-            print("videoPath \(videoPath)")
-            print("cachePath \(cachePath)")
             return
         }
         
@@ -283,9 +288,6 @@ extension VideoMaker {
             default:
                 Asyncs.main { completion(.failure(.writerError)) }
             }
-            
-            print("videoPath \(videoPath)")
-            print("cachePath \(cachePath)")
         }
     }
 }

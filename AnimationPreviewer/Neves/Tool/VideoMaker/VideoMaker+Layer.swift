@@ -1,22 +1,26 @@
 //
-//  VideoMaker.ImageTest.swift
+//  VideoMaker+Layer.swift
 //  Neves
 //
-//  Created by aa on 2021/10/25.
+//  Created by aa on 2021/10/19.
 //
 
-import AVFoundation
 import UIKit
+import AVFoundation
 
+protocol VideoAnimationLayer: CALayer {
+    func addAnimate()
+}
 
 extension VideoMaker {
-    static func makeVideoTest(framerate: Int,
+    static func makeVideo(framerate: Int,
                           frameInterval: Int,
                           duration: TimeInterval,
                           size: CGSize,
                           audioPath: String? = nil,
                           animLayer: VideoAnimationLayer? = nil,
-                          imageStores: [VideoImageStore],
+                          layerProvider: @escaping LayerProvider,
+                          progress: Progress?,
                           completion: @escaping Completion) {
         
         guard !Thread.isMainThread else {
@@ -27,20 +31,20 @@ extension VideoMaker {
                           size: size,
                           audioPath: audioPath,
                           animLayer: animLayer,
-                          imageStores: imageStores,
+                          layerProvider: layerProvider,
+                          progress: progress,
                           completion: completion)
             }
             return
         }
-//        JPrint("makeVideo", Thread.current)
         
-//        UIGraphicsBeginImageContextWithOptions(size, false, 1)
-//        defer { UIGraphicsEndImageContext() }
-//
-//        guard let ctx = UIGraphicsGetCurrentContext() else {
-//            Asyncs.main { completion(.failure(.writerError)) }
-//            return
-//        }
+        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+        defer { UIGraphicsEndImageContext() }
+        
+        guard let ctx = UIGraphicsGetCurrentContext() else {
+            Asyncs.main { completion(.failure(.writerError)) }
+            return
+        }
         
         let videoName = "\(Int(Date().timeIntervalSince1970)).mp4"
         let videoPath = File.tmpFilePath(videoName)
@@ -79,7 +83,6 @@ extension VideoMaker {
             return
         }
         videoWriter.startSession(atSourceTime: .zero)
-        JPrint("startSession", Thread.current) // 卡顿所在
         
         let timescale = CMTimeScale(framerate)
         let fps: CGFloat = 1.0 / CGFloat(frameInterval)
@@ -90,26 +93,6 @@ extension VideoMaker {
         var lastFrame: Int = -1
         var lastTime: CGFloat = -1
         var lastPixelBuffer: CVPixelBuffer? = nil
-        
-//        var bitmapRawValue = CGBitmapInfo.byteOrder32Little.rawValue
-//        bitmapRawValue |= CGImageAlphaInfo.noneSkipFirst.rawValue
-//        guard let context = CGContext(data: nil,
-//                                      width: Int(size.width),
-//                                      height: Int(size.height),
-//                                      bitsPerComponent: 8,
-//                                      bytesPerRow: 0,
-//                                      space: ColorSpace,
-//                                      bitmapInfo: bitmapRawValue) else { return }
-        
-        var bitmapRawValue = CGBitmapInfo.byteOrder32Little.rawValue
-        bitmapRawValue |= CGImageAlphaInfo.noneSkipFirst.rawValue
-        guard let context = CGContext(data: nil,
-                                      width: Int(size.width),
-                                      height: Int(size.height),
-                                      bitsPerComponent: 8,
-                                      bytesPerRow: 0,
-                                      space: ColorSpace,
-                                      bitmapInfo: bitmapRawValue) else { return }
         
         for i in 0 ... frameCount {
             // framerate和frameInterval不一样的情况，该处理有待考量
@@ -144,7 +127,7 @@ extension VideoMaker {
             if videoWriter.status != .writing {
                 // 其中一个错误：Code=-11800 "The operation could not be completed"
                 // 这是因为写入了相同的currentFrame造成的
-                JPrint("失败？？？", videoWriter.status.rawValue,
+                JPrint("视频生成失败！", videoWriter.status.rawValue,
                        videoWriter.error ?? "",
                        adaptor.assetWriterInput.isReadyForMoreMediaData)
                 
@@ -153,31 +136,22 @@ extension VideoMaker {
                 return
             }
             
-            var kCgImage: CGImage?
-            autoreleasepool {
-                if let girl = UIImage(contentsOfFile: Bundle.main.path(forResource: "girl", ofType: "jpg")!)?.cgImage {
-                    context.draw(girl, in: [HalfDiffValue(size.width, CGFloat(girl.width)), 0, size.height * (CGFloat(girl.width) / CGFloat(girl.height)), size.height])
-                }
-                if let bg = UIImage(named: "album_videobg_jielong")?.cgImage {
-                    context.draw(bg, in: CGRect(origin: .zero, size: size))
-                }
-                for store in imageStores {
-                    if let image = store.getImage(currentTime)?.cgImage {
-                        context.draw(image, in: CGRect(origin: .zero, size: size))
-                    }
-                }
-                if let cgImage = context.makeImage() {
-                    kCgImage = cgImage
-                    JPrint(i, cgImage.width)
-                }
+            var layers: [CALayer?] = []
+            DispatchQueue.main.sync {
+                layers = layerProvider(currentFrame, currentTime, size)
             }
-            context.clear(CGRect(origin: .zero, size: size))
-            
-            var pixelBuffer: CVPixelBuffer?
             autoreleasepool {
-                if let cgImage = kCgImage,
-                   let pb = createPixelBufferWithImage(cgImage,
-//                                                       pixelBufferPool: adaptor.pixelBufferPool,
+                layers.forEach {
+                    guard let layer = $0 else { return }
+                    layer.render(in: ctx)
+                }
+                let image = UIGraphicsGetImageFromCurrentImageContext()
+                ctx.clear(CGRect(origin: .zero, size: size))
+                
+                let pixelBuffer: CVPixelBuffer
+                if let image = image,
+                   let pb = createPixelBufferWithImage(image,
+                                                       pixelBufferPool: adaptor.pixelBufferPool,
                                                        size: size) {
                     lastPixelBuffer = pb
                     pixelBuffer = pb
@@ -188,16 +162,14 @@ extension VideoMaker {
                         return pb
                     }()
                 }
-            }
-
-            if let pixelBuffer = pixelBuffer {
                 let frameTime = CMTime(value: CMTimeValue(currentFrame), timescale: timescale)
                 adaptor.append(pixelBuffer, withPresentationTime: frameTime)
+                
+                progress?(i, frameCount)
             }
         }
         
         writerInput.markAsFinished()
-        JPrint("markAsFinished", Thread.current)
         
         let endTime = CMTime(value: CMTimeValue(totalFrame), timescale: timescale)
         videoWriter.endSession(atSourceTime: endTime)
@@ -219,7 +191,10 @@ extension VideoMaker {
         File.manager.deleteFile(cachePath)
         
         guard let audioPath = audioPath else {
+            print("videoPath \(videoPath)")
+            print("cachePath \(cachePath)")
             File.manager.moveFile(videoPath, toPath: cachePath)
+            File.manager.deleteFile(videoPath)
             Asyncs.main { completion(.success(cachePath)) }
             return
         }
@@ -303,14 +278,16 @@ extension VideoMaker {
         exportSession.videoComposition = videoComposition
         
         exportSession.exportAsynchronously {
+            print("videoPath \(videoPath)")
+            print("cachePath \(cachePath)")
             File.manager.deleteFile(videoPath)
             switch exportSession.status {
             case .completed:
                 Asyncs.main { completion(.success(cachePath)) }
             default:
+                File.manager.deleteFile(cachePath)
                 Asyncs.main { completion(.failure(.writerError)) }
             }
         }
     }
 }
-

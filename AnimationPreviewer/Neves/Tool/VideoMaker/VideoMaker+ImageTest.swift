@@ -1,19 +1,15 @@
 //
-//  VideoMaker.Image.swift
+//  VideoMaker+ImageTest.swift
 //  Neves
 //
-//  Created by aa on 2021/10/22.
+//  Created by aa on 2021/10/25.
 //
 
+import UIKit
 import AVFoundation
 
-protocol VideoImageStore {
-    func getImage(_ currentFrame: Int) -> UIImage?
-    func getImage(_ currentTime: TimeInterval) -> UIImage?
-}
-
 extension VideoMaker {
-    static func makeVideo(framerate: Int,
+    static func makeVideoTest(framerate: Int,
                           frameInterval: Int,
                           duration: TimeInterval,
                           size: CGSize,
@@ -37,13 +33,13 @@ extension VideoMaker {
         }
 //        JPrint("makeVideo", Thread.current)
         
-        UIGraphicsBeginImageContextWithOptions(size, false, 1)
-        defer { UIGraphicsEndImageContext() }
-        
-        guard let ctx = UIGraphicsGetCurrentContext() else {
-            Asyncs.main { completion(.failure(.writerError)) }
-            return
-        }
+//        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+//        defer { UIGraphicsEndImageContext() }
+//
+//        guard let ctx = UIGraphicsGetCurrentContext() else {
+//            Asyncs.main { completion(.failure(.writerError)) }
+//            return
+//        }
         
         let videoName = "\(Int(Date().timeIntervalSince1970)).mp4"
         let videoPath = File.tmpFilePath(videoName)
@@ -94,6 +90,26 @@ extension VideoMaker {
         var lastTime: CGFloat = -1
         var lastPixelBuffer: CVPixelBuffer? = nil
         
+//        var bitmapRawValue = CGBitmapInfo.byteOrder32Little.rawValue
+//        bitmapRawValue |= CGImageAlphaInfo.noneSkipFirst.rawValue
+//        guard let context = CGContext(data: nil,
+//                                      width: Int(size.width),
+//                                      height: Int(size.height),
+//                                      bitsPerComponent: 8,
+//                                      bytesPerRow: 0,
+//                                      space: ColorSpace,
+//                                      bitmapInfo: bitmapRawValue) else { return }
+        
+        var bitmapRawValue = CGBitmapInfo.byteOrder32Little.rawValue
+        bitmapRawValue |= CGImageAlphaInfo.noneSkipFirst.rawValue
+        guard let context = CGContext(data: nil,
+                                      width: Int(size.width),
+                                      height: Int(size.height),
+                                      bitsPerComponent: 8,
+                                      bytesPerRow: 0,
+                                      space: ColorSpace,
+                                      bitmapInfo: bitmapRawValue) else { return }
+        
         for i in 0 ... frameCount {
             // framerate和frameInterval不一样的情况，该处理有待考量
             let currentFrame: Int
@@ -136,28 +152,31 @@ extension VideoMaker {
                 return
             }
             
+            var kCgImage: CGImage?
             autoreleasepool {
-                if let girl = UIImage(contentsOfFile: Bundle.main.path(forResource: "girl", ofType: "jpg")!) {
-                    girl.draw(in: [HalfDiffValue(size.width, girl.size.width), 0, size.height * (girl.size.width / girl.size.height), size.height])
+                if let girl = UIImage(contentsOfFile: Bundle.main.path(forResource: "girl", ofType: "jpg")!)?.cgImage {
+                    context.draw(girl, in: [HalfDiffValue(size.width, CGFloat(girl.width)), 0, size.height * (CGFloat(girl.width) / CGFloat(girl.height)), size.height])
                 }
-                UIImage(named: "album_videobg_jielong")?.draw(in: CGRect(origin: .zero, size: size))
-                
+                if let bg = UIImage(named: "album_videobg_jielong")?.cgImage {
+                    context.draw(bg, in: CGRect(origin: .zero, size: size))
+                }
                 for store in imageStores {
-                    guard let image = store.getImage(currentTime) else {
-                        continue
+                    if let image = store.getImage(currentTime)?.cgImage {
+                        context.draw(image, in: CGRect(origin: .zero, size: size))
                     }
-//                    guard let image = store.getImage(currentFrame) else {
-//                        continue
-//                    }
-                    image.draw(in: CGRect(origin: .zero, size: size))
                 }
-                let image = UIGraphicsGetImageFromCurrentImageContext()
-                ctx.clear(CGRect(origin: .zero, size: size))
-                
-                let pixelBuffer: CVPixelBuffer
-                if let image = image,
-                   let pb = createPixelBufferWithImage(image,
-                                                       pixelBufferPool: adaptor.pixelBufferPool,
+                if let cgImage = context.makeImage() {
+                    kCgImage = cgImage
+                    JPrint(i, cgImage.width)
+                }
+            }
+            context.clear(CGRect(origin: .zero, size: size))
+            
+            var pixelBuffer: CVPixelBuffer?
+            autoreleasepool {
+                if let cgImage = kCgImage,
+                   let pb = createPixelBufferWithImage(cgImage,
+//                                                       pixelBufferPool: adaptor.pixelBufferPool,
                                                        size: size) {
                     lastPixelBuffer = pb
                     pixelBuffer = pb
@@ -168,6 +187,9 @@ extension VideoMaker {
                         return pb
                     }()
                 }
+            }
+
+            if let pixelBuffer = pixelBuffer {
                 let frameTime = CMTime(value: CMTimeValue(currentFrame), timescale: timescale)
                 adaptor.append(pixelBuffer, withPresentationTime: frameTime)
             }
@@ -290,3 +312,4 @@ extension VideoMaker {
         }
     }
 }
+

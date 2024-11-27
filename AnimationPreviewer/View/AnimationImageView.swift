@@ -204,6 +204,7 @@ private extension AnimationImageView {
     }
 }
 
+// MARK: - 截取当前帧为图片
 extension AnimationImageView {
     func getCurrentImage(completion: @escaping (_ result: GetImageResult) -> ()) {
         guard let store else {
