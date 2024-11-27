@@ -70,6 +70,20 @@ extension VideoMaker {
         return createVideoWriterInput(frameInterval: 15, size: size)
     }
     
+    static func createSourcePixelBufferAttributes() -> [String: Any]? {
+        var keyCallBacks = kCFTypeDictionaryKeyCallBacks
+        var valCallBacks = kCFTypeDictionaryValueCallBacks
+        guard let empty = CFDictionaryCreate(kCFAllocatorDefault, nil, nil, 0, &keyCallBacks, &valCallBacks) else {
+            return nil
+        }
+        return [
+            kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_32BGRA,
+            kCVPixelBufferCGImageCompatibilityKey: true,
+            kCVPixelBufferCGBitmapContextCompatibilityKey: true,
+            kCVPixelBufferIOSurfacePropertiesKey: empty
+        ] as [String: Any]
+    }
+    
     static func createPixelBufferWithImage(_ image: UIImage, pixelBufferPool: CVPixelBufferPool? = nil, size: CGSize) -> CVPixelBuffer? {
         guard let cgImage = image.cgImage else {
             return nil

@@ -9,10 +9,14 @@ import UIKit
 import AVFoundation
 
 extension VideoMaker {
-    static func makeVideo(withSVGAEntity entity: SVGAVideoEntity, size: CGSize, completion: @escaping (Result<String, MakeError>) -> ()) {
+    static func makeVideo(withSVGAEntity entity: SVGAVideoEntity,
+                          size: CGSize,
+                          progress: Progress?,
+                          startMergeAudio: (() -> Void)?,
+                          completion: @escaping Completion) {
         if Thread.isMainThread {
             Asyncs.async {
-                makeVideo(withSVGAEntity: entity, size: size, completion: completion)
+                makeVideo(withSVGAEntity: entity, size: size, progress: progress, startMergeAudio: startMergeAudio, completion: completion)
             }
             return
         }
@@ -25,8 +29,10 @@ extension VideoMaker {
             return
         }
         
+        videoWriter.shouldOptimizeForNetworkUse = true
+        
         let writerInput = createVideoWriterInput(size)
-        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: nil)
+        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: createSourcePixelBufferAttributes())
         
         guard videoWriter.canAdd(writerInput) else {
             Asyncs.main { completion(.failure(.writerError)) }
@@ -59,13 +65,15 @@ extension VideoMaker {
         format.opaque = false // false表示透明，这里需要透明背景
         format.scale = UIScreen.main.scale
         
+        let frameCount = Int(entity.frames)
+        
         var frameTime = CMTime.zero
-        for i in 0..<entity.frames {
+        for i in 0 ..< frameCount {
             autoreleasepool {
                 let renderer = UIGraphicsImageRenderer(size: svgaSize, format: format)
                 let image = renderer.image { ctx in
                     DispatchQueue.main.sync {
-                        svgaView.play(fromFrame: Int(i), isAutoPlay: false)
+                        svgaView.play(fromFrame: i, isAutoPlay: false)
                         if let drawLayer = svgaView.getDrawLayer() {
                             drawLayer.render(in: ctx.cgContext)
                         }
@@ -85,6 +93,8 @@ extension VideoMaker {
                     adaptor.append(pixelBuffer, withPresentationTime: frameTime)
                     frameTime = CMTimeAdd(frameTime, CMTimeMake(value: 1, timescale: fps))
                 }
+                
+                progress?(i, frameCount)
             }
         }
         
@@ -105,6 +115,7 @@ extension VideoMaker {
                     return
                 }
                 
+                startMergeAudio?()
                 _mergeAudio(withSVGAEntity: entity, videoPath: videoPath) { outputPath in
                     guard let outputPath else {
                         Asyncs.main { completion(.failure(.writerError)) }

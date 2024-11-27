@@ -57,20 +57,7 @@ extension VideoMaker {
         videoWriter.shouldOptimizeForNetworkUse = true
         
         let writerInput = createVideoWriterInput(frameInterval: frameInterval, size: size)
-        
-        var keyCallBacks = kCFTypeDictionaryKeyCallBacks
-        var valCallBacks = kCFTypeDictionaryValueCallBacks
-        guard let empty = CFDictionaryCreate(kCFAllocatorDefault, nil, nil, 0, &keyCallBacks, &valCallBacks) else {
-            Asyncs.main { completion(.failure(.writerError)) }
-            return
-        }
-        let attributes: [CFString: Any] = [
-            kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_32BGRA,
-            kCVPixelBufferCGImageCompatibilityKey: true,
-            kCVPixelBufferCGBitmapContextCompatibilityKey: true,
-            kCVPixelBufferIOSurfacePropertiesKey: empty
-        ]
-        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: attributes as [String: Any])
+        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: createSourcePixelBufferAttributes())
         
         guard videoWriter.canAdd(writerInput) else {
             Asyncs.main { completion(.failure(.writerError)) }

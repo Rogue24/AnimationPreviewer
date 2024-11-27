@@ -10,10 +10,14 @@ import AVFoundation
 
 extension VideoMaker {
     
-    static func makeVideo(withImages images: [UIImage], duration: TimeInterval, size: CGSize, completion: @escaping (Result<String, MakeError>) -> ()) {
+    static func makeVideo(withImages images: [UIImage],
+                          duration: TimeInterval,
+                          size: CGSize,
+                          progress: Progress?,
+                          completion: @escaping Completion) {
         if Thread.isMainThread {
             Asyncs.async {
-                makeVideo(withImages: images, duration: duration, size: size, completion: completion)
+                makeVideo(withImages: images, duration: duration, size: size, progress: progress, completion: completion)
             }
             return
         }
@@ -26,8 +30,10 @@ extension VideoMaker {
             return
         }
         
+        videoWriter.shouldOptimizeForNetworkUse = true
+        
         let writerInput = createVideoWriterInput(size)
-        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: nil)
+        let adaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: writerInput, sourcePixelBufferAttributes: createSourcePixelBufferAttributes())
         
         guard videoWriter.canAdd(writerInput) else {
             Asyncs.main { completion(.failure(.writerError)) }
@@ -46,7 +52,7 @@ extension VideoMaker {
         let fps: Int32 = Int32(images.count) / Int32(duration)
         
         var frameTime = CMTime.zero
-        for image in images {
+        for (i, image) in images.enumerated() {
             autoreleasepool {
                 if let pixelBuffer = createPixelBufferWithImage(image, size: size) {
                     while !adaptor.assetWriterInput.isReadyForMoreMediaData {
@@ -61,6 +67,8 @@ extension VideoMaker {
                     adaptor.append(pixelBuffer, withPresentationTime: frameTime)
                     frameTime = CMTimeAdd(frameTime, CMTimeMake(value: 1, timescale: fps))
                 }
+                
+                progress?(i, images.count)
             }
         }
         

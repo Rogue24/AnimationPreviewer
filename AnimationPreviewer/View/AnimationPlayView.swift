@@ -62,12 +62,6 @@ class AnimationPlayView: UIView {
         }
     }
     
-    private let placeholderView = UIView()
-    private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
-    private let svgaView = SVGAExPlayer()
-    private let gifView = UIImageView()
-    private var gif: (images: [UIImage], duration: TimeInterval) = ([], 0)
-    
     @UserDefault(.isSVGAMute) private var _isSVGAMute: Bool = false
     var isSVGAMute: Bool {
         get { _isSVGAMute }
@@ -77,9 +71,37 @@ class AnimationPlayView: UIView {
         }
     }
     
+    private let placeholderView = UIView()
+    private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
+    private let svgaView = SVGAExPlayer()
+    private let gifView = UIImageView()
+    private var gif: (images: [UIImage], duration: TimeInterval) = ([], 0)
+    
     init() {
         super.init(frame: .zero)
-        
+        setupBase()
+        setupPlaceholderView()
+        setupLottieView()
+        setupSvgaView()
+        setupGifView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+private extension AnimationPlayView {
+    func setupBase() {
+        backgroundColor = .rgb(41, 43, 51, a: 0.35)
+        layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
+        layer.borderWidth = 4
+        layer.cornerRadius = 16
+        layer.masksToBounds = true
+    }
+    
+    func setupPlaceholderView() {
         let config = UIImage.SymbolConfiguration(
             pointSize: 82, weight: .medium, scale: .default)
         let dragIcon = UIImageView(image: UIImage(systemName: "arrow.turn.right.down", withConfiguration: config))
@@ -87,7 +109,9 @@ class AnimationPlayView: UIView {
         dragIcon.tintColor = UIColor(white: 1, alpha: 0.8)
         
         let label = UILabel()
+        label.numberOfLines = 0
         label.font = .systemFont(ofSize: 18, weight: .medium)
+        label.textAlignment = .center
         label.textColor = UIColor(white: 1, alpha: 0.8)
         label.text = "把「Lottie/SVGA的文件」丢到这里来吧"
         
@@ -97,20 +121,22 @@ class AnimationPlayView: UIView {
         addSubview(placeholderView)
         
         dragIcon.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
+            make.top.centerX.equalToSuperview()
             make.width.height.equalTo(110)
         }
         
         label.snp.makeConstraints { make in
             make.top.equalTo(dragIcon.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview()
+            make.leading.trailing.bottom.equalToSuperview()
         }
         
         placeholderView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
         }
-        
+    }
+    
+    func setupLottieView() {
         lottieView.isHidden = true
         lottieView.contentMode = .scaleAspectFit
         lottieView.loopMode = loopMode.lottieLoopMode
@@ -118,7 +144,9 @@ class AnimationPlayView: UIView {
         lottieView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
+    }
+    
+    func setupSvgaView() {
         svgaView.isHidden = true
         svgaView.contentMode = .scaleAspectFit
         svgaView.isMute = isSVGAMute
@@ -127,23 +155,35 @@ class AnimationPlayView: UIView {
         svgaView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
+    }
+    
+    func setupGifView() {
         gifView.isHidden = true
         gifView.contentMode = .scaleAspectFit
         addSubview(gifView)
         gifView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        backgroundColor = .rgb(41, 43, 51, a: 0.35)
-        layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
-        layer.borderWidth = 4
-        layer.cornerRadius = 16
-        layer.masksToBounds = true
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func hiddenLottieView() {
+        lottieView.stop()
+        lottieView.animation = nil
+        lottieView.isHidden = true
+    }
+    
+    func hiddenSvgaView() {
+        svgaView.clean()
+        svgaView.isHidden = true
+    }
+    
+    func hiddenGifView() {
+        gif = ([], 0)
+        gifView.stopAnimating()
+        gifView.animationImages = nil
+        gifView.animationDuration = 0
+        gifView.image = nil
+        gifView.isHidden = true
     }
 }
 
@@ -173,6 +213,7 @@ extension AnimationPlayView {
         case let .gif(images, duration):
             replaceGIF(images, duration)
         }
+        
         play()
     }
 }
@@ -180,16 +221,8 @@ extension AnimationPlayView {
 private extension AnimationPlayView {
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
         placeholderView.isHidden = true
-        
-        svgaView.clean()
-        svgaView.isHidden = true
-        
-        gif = ([], 0)
-        gifView.stopAnimating()
-        gifView.animationImages = nil
-        gifView.animationDuration = 0
-        gifView.image = nil
-        gifView.isHidden = true
+        hiddenSvgaView()
+        hiddenGifView()
         
         lottieView.animation = animation
         lottieView.imageProvider = provider
@@ -200,17 +233,8 @@ private extension AnimationPlayView {
     
     func replaceSVGA(_ entity: SVGAVideoEntity) {
         placeholderView.isHidden = true
-        
-        lottieView.stop()
-        lottieView.animation = nil
-        lottieView.isHidden = true
-        
-        gif = ([], 0)
-        gifView.stopAnimating()
-        gifView.animationImages = nil
-        gifView.animationDuration = 0
-        gifView.image = nil
-        gifView.isHidden = true
+        hiddenLottieView()
+        hiddenGifView()
         
         svgaView.play(with: entity, fromFrame: 0, isAutoPlay: false)
         svgaView.isHidden = false
@@ -220,13 +244,8 @@ private extension AnimationPlayView {
     
     func replaceGIF(_ images: [UIImage], _ duration: TimeInterval) {
         placeholderView.isHidden = true
-        
-        svgaView.clean()
-        svgaView.isHidden = true
-        
-        lottieView.stop()
-        lottieView.animation = nil
-        lottieView.isHidden = true
+        hiddenLottieView()
+        hiddenSvgaView()
         
         gif = (images, duration)
         gifView.stopAnimating()
@@ -241,30 +260,23 @@ private extension AnimationPlayView {
 
 private extension AnimationPlayView {
     func removeAnimation() {
-        lottieView.stop()
-        lottieView.animation = nil
-        lottieView.isHidden = true
-        
-        svgaView.clean()
-        svgaView.isHidden = true
-        
-        gif = ([], 0)
-        gifView.stopAnimating()
-        gifView.animationImages = nil
-        gifView.animationDuration = 0
-        gifView.image = nil
-        gifView.isHidden = true
-        
         placeholderView.isHidden = false
-        
+        hiddenLottieView()
+        hiddenSvgaView()
+        hiddenGifView()
         updateLayout()
     }
     
     func updateLayout() {
+        placeholderView.layoutIfNeeded()
         lottieView.layoutIfNeeded()
         svgaView.layoutIfNeeded()
         gifView.layoutIfNeeded()
-        placeholderView.layoutIfNeeded()
+        
+        UIView.transition(with: placeholderView,
+                          duration: 0.25,
+                          options: .transitionCrossDissolve,
+                          animations: {})
         
         UIView.transition(with: lottieView,
                           duration: 0.25,
@@ -277,11 +289,6 @@ private extension AnimationPlayView {
                           animations: {})
         
         UIView.transition(with: gifView,
-                          duration: 0.25,
-                          options: .transitionCrossDissolve,
-                          animations: {})
-        
-        UIView.transition(with: placeholderView,
                           duration: 0.25,
                           options: .transitionCrossDissolve,
                           animations: {})
@@ -311,15 +318,18 @@ extension AnimationPlayView {
                 gifView.image = gif.0.first
                 gifView.animationImages = gif.0
                 gifView.animationDuration = gif.1
+                
             case .reverse:
                 gifView.image = gif.0.first
                 gifView.animationImages = gif.0 + gif.0.reversed()
                 gifView.animationDuration = gif.1 * 2
+                
             case .backwards:
                 gifView.image = gif.0.last
                 gifView.animationImages = gif.0.reversed()
                 gifView.animationDuration = gif.1
             }
+            
             gifView.startAnimating()
         }
     }
@@ -352,6 +362,7 @@ extension AnimationPlayView {
 // MARK: - 制作视频
 extension AnimationPlayView {
     func makeVideo(progressHandler: @escaping (_ progress: Float) -> (),
+                   otherHandler: @escaping (_ text: String) -> (),
                    completion: @escaping (_ result: MakeVideoResult) -> ()) {
         guard let store else {
             completion(.failure(reason: "没有对象"))
@@ -378,9 +389,7 @@ extension AnimationPlayView {
                 return [picker.animLayer]
             } progress: { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
-                Asyncs.main {
-                    progressHandler(progress)
-                }
+                Asyncs.main { progressHandler(progress) }
             } completion: { result in
                 switch result {
                 case let .success(path):
@@ -396,7 +405,12 @@ extension AnimationPlayView {
                 return
             }
             
-            VideoMaker.makeVideo(withSVGAEntity: entity, size: [720, 720]) { result in
+            VideoMaker.makeVideo(withSVGAEntity: entity, size: [720, 720]) { currentFrame, totalFrame in
+                let progress = Float(currentFrame) / Float(totalFrame)
+                Asyncs.main { progressHandler(progress) }
+            } startMergeAudio: {
+                Asyncs.main { otherHandler("合成动画音频中...") }
+            } completion: { result in
                 switch result {
                 case let .success(path):
                     completion(.success(videoPath: path))
@@ -411,7 +425,10 @@ extension AnimationPlayView {
                 return
             }
             
-            VideoMaker.makeVideo(withImages: images, duration: duration, size: [720, 720]) { result in
+            VideoMaker.makeVideo(withImages: images, duration: duration, size: [720, 720]) { currentFrame, totalFrame in
+                let progress = Float(currentFrame) / Float(totalFrame)
+                Asyncs.main { progressHandler(progress) }
+            } completion: { result in
                 switch result {
                 case let .success(path):
                     completion(.success(videoPath: path))

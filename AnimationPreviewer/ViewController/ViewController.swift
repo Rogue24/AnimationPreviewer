@@ -268,6 +268,8 @@ extension ViewController {
         JPProgressHUD.show(withStatus: "视频制作中...")
         playView.makeVideo { progress in
             JPProgressHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))
+        } otherHandler: { text in
+            JPProgressHUD.show(withStatus: text)
         } completion: { result in
             switch result {
             case let .success(videoPath):
@@ -317,7 +319,7 @@ private extension ViewController {
     static func saveVideo(_ videoPath: String) {
         MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
             if isSuccess {
-                JPProgressHUD.dismiss()
+                JPProgressHUD.showSuccess(withStatus: "视频制作成功")
             } else {
                 JPProgressHUD.showError(withStatus: "视频保存失败")
             }
