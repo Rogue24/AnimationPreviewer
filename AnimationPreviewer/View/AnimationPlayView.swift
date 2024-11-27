@@ -113,7 +113,7 @@ private extension AnimationPlayView {
         label.font = .systemFont(ofSize: 18, weight: .medium)
         label.textAlignment = .center
         label.textColor = UIColor(white: 1, alpha: 0.8)
-        label.text = "把「Lottie/SVGA的文件」丢到这里来吧"
+        label.text = "把「Lottie / SVGA / GIF」丢到这里来吧"
         
         placeholderView.clipsToBounds = false
         placeholderView.addSubview(dragIcon)
