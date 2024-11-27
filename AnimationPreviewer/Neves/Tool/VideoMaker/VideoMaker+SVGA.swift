@@ -106,7 +106,7 @@ extension VideoMaker {
         videoWriter.finishWriting {
             switch videoWriter.status {
             case .completed:
-                guard entity.audios.count > 0 else {
+                guard entity.isHasAudio else {
                     let cachePath = File.cacheFilePath(videoName)
                     File.manager.deleteFile(cachePath)
                     File.manager.moveFile(videoPath, toPath: cachePath)
@@ -158,6 +158,9 @@ extension VideoMaker {
             try? data.write(to: URL(fileURLWithPath: audioPath))
             audiosData[name] = audioPath
         }
+        
+        let fps = entity.fps
+        
         for audioInfo in entity.audios {
             guard let audioPath = audiosData[audioInfo.audioKey] else { continue }
             
@@ -166,9 +169,9 @@ extension VideoMaker {
             
             let audioCompositionTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
             
-            let start = CMTimeMake(value: Int64(audioInfo.startTime), timescale: entity.fps)
-            let duration = CMTimeMake(value: Int64(audioInfo.endFrame - audioInfo.startFrame), timescale: entity.fps)
-            let atTime = CMTimeMake(value: Int64(audioInfo.startFrame), timescale: entity.fps)
+            let start = CMTimeMake(value: Int64(audioInfo.startTime), timescale: fps)
+            let duration = CMTimeMake(value: Int64(audioInfo.endFrame - audioInfo.startFrame), timescale: fps)
+            let atTime = CMTimeMake(value: Int64(audioInfo.startFrame), timescale: fps)
             try? audioCompositionTrack?.insertTimeRange(CMTimeRange(start: start, duration: duration), of: audioTrack, at: atTime)
         }
         

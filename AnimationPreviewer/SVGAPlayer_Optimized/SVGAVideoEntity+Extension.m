@@ -40,4 +40,8 @@
     return SVGAVideoEntityError_None;
 }
 
+- (BOOL)isHasAudio {
+    return self.audiosData.count > 0 && self.audios.count > 0;
+}
+
 @end
