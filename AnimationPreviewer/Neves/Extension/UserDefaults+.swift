@@ -12,5 +12,6 @@ extension UserDefaults {
     enum Key: String, CaseIterable {
         case animationType
         case isSVGAMute
+        case bgImageType
     }
 }

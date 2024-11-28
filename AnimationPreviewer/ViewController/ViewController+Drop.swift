@@ -31,17 +31,8 @@ extension ViewController: UIDropInteractionDelegate {
     // 加载数据
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
         session.loadObjects(ofClass: AnimationData.self) { [weak self] items in
-            guard let self = self, let animData = items.first as? AnimationData else {
-                return
-            }
-            
-            JPProgressHUD.show(withStatus: "Loding...")
-            AnimationStore.loadData(animData.rawData) { [weak self] store in
-                JPProgressHUD.dismiss()
-                self?.replaceAnimation(store)
-            } failure: { error in
-                JPProgressHUD.showError(withStatus: error.localizedDescription)
-            }
+            guard let self = self, let animData = items.first as? AnimationData else { return }
+            self.replaceAnimation(with: animData.rawData)
         }
     }
     

@@ -17,6 +17,7 @@
 		001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
 		0053162D2CF5BCA200EACB72 /* VideoMaker+SVGA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */; };
 		006398EC2CF71536005750C3 /* VideoMaker+GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */; };
+		007F1CE42CF8E05600FC65A5 /* BgImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007F1CE32CF8E05600FC65A5 /* BgImageType.swift */; };
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA52A974291009C9FF4 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA42A974291009C9FF4 /* Data+.swift */; };
 		009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA62A984A21009C9FF4 /* AnimationStore.swift */; };
@@ -261,7 +262,7 @@
 		1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */; };
 		1A95CD852A0AA1A6006E3102 /* AnimationPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */; };
 		1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */; };
-		1A95CD952A0B6134006E3102 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A95CD942A0B6134006E3102 /* background.jpg */; };
+		1A95CD952A0B6134006E3102 /* background1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A95CD942A0B6134006E3102 /* background1.jpg */; };
 		1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ADCAD7C2A9FA8B800D939FC /* background2.jpg */; };
 		A7F300AD6649580DA732C31C /* Pods_AnimationPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D7A399D7C16BC354CD1DBF /* Pods_AnimationPreviewer.framework */; };
 /* End PBXBuildFile section */
@@ -294,6 +295,7 @@
 		001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
 		0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+SVGA.swift"; sourceTree = "<group>"; };
 		006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+GIF.swift"; sourceTree = "<group>"; };
+		007F1CE32CF8E05600FC65A5 /* BgImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BgImageType.swift; sourceTree = "<group>"; };
 		009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationData.swift; sourceTree = "<group>"; };
 		009F1DA42A974291009C9FF4 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		009F1DA62A984A21009C9FF4 /* AnimationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationStore.swift; sourceTree = "<group>"; };
@@ -562,7 +564,7 @@
 		1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenRotator.swift; sourceTree = "<group>"; };
 		1A95CD842A0AA1A6006E3102 /* AnimationPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationPlayView.swift; sourceTree = "<group>"; };
 		1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationImageView.swift; sourceTree = "<group>"; };
-		1A95CD942A0B6134006E3102 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
+		1A95CD942A0B6134006E3102 /* background1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background1.jpg; sourceTree = "<group>"; };
 		1ADCAD7C2A9FA8B800D939FC /* background2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background2.jpg; sourceTree = "<group>"; };
 		4D515DBDAA677B02FBB660A4 /* Pods-LottiePreviewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.debug.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.debug.xcconfig"; sourceTree = "<group>"; };
 		E5D7A399D7C16BC354CD1DBF /* Pods_AnimationPreviewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AnimationPreviewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -617,6 +619,7 @@
 		009F1C692A94ABC1009C9FF4 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				007F1CE32CF8E05600FC65A5 /* BgImageType.swift */,
 				009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */,
 				009F1DA62A984A21009C9FF4 /* AnimationStore.swift */,
 			);
@@ -1477,7 +1480,7 @@
 			isa = PBXGroup;
 			children = (
 				1A64F9642A085F9E000F979B /* AnimationPreviewer.entitlements */,
-				1A95CD942A0B6134006E3102 /* background.jpg */,
+				1A95CD942A0B6134006E3102 /* background1.jpg */,
 				1ADCAD7C2A9FA8B800D939FC /* background2.jpg */,
 				1A64F9592A085DE9000F979B /* Assets.xcassets */,
 				1A64F95E2A085DE9000F979B /* Info.plist */,
@@ -1582,7 +1585,7 @@
 			files = (
 				001AB9352A9DC2B800C09045 /* SVProgressHUD.bundle in Resources */,
 				1A64F95D2A085DE9000F979B /* LaunchScreen.storyboard in Resources */,
-				1A95CD952A0B6134006E3102 /* background.jpg in Resources */,
+				1A95CD952A0B6134006E3102 /* background1.jpg in Resources */,
 				1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */,
 				1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */,
 				1A64F9582A085DE7000F979B /* Main.storyboard in Resources */,
@@ -1892,6 +1895,7 @@
 				1A64FAAF2A08F220000F979B /* ColorValueProvider.swift in Sources */,
 				1A64FB1A2A08F221000F979B /* CALayer+setupLayerHierarchy.swift in Sources */,
 				009F1DD22A98B174009C9FF4 /* SVGABitmapLayer.m in Sources */,
+				007F1CE42CF8E05600FC65A5 /* BgImageType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2073,6 +2077,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AnimationPreviewer/AnimationPreviewer-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2114,6 +2119,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "AnimationPreviewer/AnimationPreviewer-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

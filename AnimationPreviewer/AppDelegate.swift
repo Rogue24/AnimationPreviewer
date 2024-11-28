@@ -9,7 +9,7 @@ import UIKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     @objc var window: UIWindow? {
         set {}
         get {
@@ -22,12 +22,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return window
         }
     }
+    
+    private var mainVC: ViewController? {
+        window?.rootViewController as? ViewController
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
         JPProgressHUD.setMaxSupportedWindowLevel(.alert)
         JPProgressHUD.setMinimumDismissTimeInterval(1.3)
-        
         return true
     }
 
@@ -47,3 +49,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 }
 
+private extension AppDelegate {
+    @objc func openLottieFile() {
+        MacChannel.shared().pickLottie { [weak self] data in
+            guard let data, let mainVC = self?.mainVC else { return }
+            mainVC.replaceAnimation(with: data)
+        }
+    }
+    
+    @objc func openSVGAFile() {
+        MacChannel.shared().pickSVGA { [weak self] data in
+            guard let data, let mainVC = self?.mainVC else { return }
+            mainVC.replaceAnimation(with: data)
+        }
+    }
+    
+    @objc func openGIFFile() {
+        MacChannel.shared().pickGIF { [weak self] data in
+            guard let data, let mainVC = self?.mainVC else { return }
+            mainVC.replaceAnimation(with: data)
+        }
+    }
+    
+    @objc func openImageFile() {
+        MacChannel.shared().pickImage { [weak self] data in
+            guard let data, let mainVC = self?.mainVC else { return }
+            mainVC.setupCustomBgImage(data)
+        }
+    }
+    
+    @objc func useBuiltIn1Background() {
+        guard let mainVC else { return }
+        mainVC.setupBuiltIn1BgImage()
+    }
+    
+    @objc func useBuiltIn2Background() {
+        guard let mainVC else { return }
+        mainVC.setupBuiltIn2BgImage()
+    }
+    
+    @objc func clearBackground() {
+        guard let mainVC else { return }
+        mainVC.removeBgImage()
+    }
+}

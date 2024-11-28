@@ -15,6 +15,11 @@ class ViewController: UIViewController {
     
     private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
     
+    @UserDefault(.bgImageType) private var bgImageType: BgImageType.RawValue = 1
+    
+    // ================ 背景 ================
+    private let bgImgView = UIImageView()
+    
     // ================ 左边区域 ================
     private let playView = AnimationPlayView()
     
@@ -106,11 +111,27 @@ private extension ViewController {
             make.edges.equalToSuperview()
         }
         
-        let bgImgView = UIImageView(image: UIImage(contentsOfFile: Bundle.jp.resourcePath(withName: "background2", type: "jpg")))
         bgImgView.contentMode = .scaleAspectFill
         view.insertSubview(bgImgView, at: 0)
         bgImgView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+        }
+        
+        var type = BgImageType(rawValue: bgImageType) ?? .builtIn1
+        guard type == .custom else {
+            BgImageType.removeCustomBgImageData()
+            bgImgView.image = type.bgImage
+            return
+        }
+        
+        if let image = type.bgImage {
+            bgImgView.image = image
+        } else {
+            // 如果没有缓存的自定义背景图，则使用内置背景图1
+            type = BgImageType.builtIn1
+            BgImageType.removeCustomBgImageData()
+            bgImgView.image = type.bgImage
+            bgImageType = type.rawValue
         }
     }
     
@@ -343,9 +364,19 @@ private extension ViewController {
     }
 }
 
-// MARK: - 替换&移除 Lottie/SVGA
+// MARK: - 替换&移除·动画（Lottie/SVGA/GIF）
 extension ViewController {
-    func replaceAnimation(_ store: AnimationStore?) {
+    func replaceAnimation(with data: Data) {
+        JPProgressHUD.show(withStatus: "Loding...")
+        AnimationStore.loadData(data) { [weak self] store in
+            JPProgressHUD.dismiss()
+            self?.replaceAnimation(store)
+        } failure: { error in
+            JPProgressHUD.showError(withStatus: error.localizedDescription)
+        }
+    }
+    
+    private func replaceAnimation(_ store: AnimationStore?) {
         playView.replaceAnimation(store)
         imageView.replaceAnimation(store)
         
@@ -376,6 +407,52 @@ extension ViewController {
             volumeBtn.isHidden = true
             slider.minimumValue = 0
             slider.maximumValue = Float(images.count - 1)
+        }
+    }
+}
+
+// MARK: - 替换&移除·背景图片
+extension ViewController {
+    func removeBgImage() {
+        replaceBgImage(for: .null)
+    }
+    
+    func setupBuiltIn1BgImage() {
+        replaceBgImage(for: .builtIn1)
+    }
+    
+    func setupBuiltIn2BgImage() {
+        replaceBgImage(for: .builtIn2)
+    }
+    
+    func setupCustomBgImage(_ imageData: Data) {
+        replaceBgImage(with: imageData, for: .custom)
+    }
+    
+    private func replaceBgImage(with data: Data? = nil, for type: BgImageType) {
+        guard type == .custom else {
+            UIView.transition(with: bgImgView, duration: 0.5, options: .transitionCrossDissolve) {
+                self.bgImgView.image = type.bgImage
+            }
+            Asyncs.async {
+                BgImageType.removeCustomBgImageData()
+                self.bgImageType = type.rawValue
+            }
+            return
+        }
+        
+        let image = data.map { UIImage(data: $0) } ?? nil
+        UIView.transition(with: bgImgView, duration: 0.5, options: .transitionCrossDissolve) {
+            self.bgImgView.image = image
+        }
+        
+        Asyncs.async {
+            BgImageType.removeCustomBgImageData()
+            if image != nil, let data, BgImageType.cacheCustomBgImageData(data) {
+                self.bgImageType = BgImageType.custom.rawValue
+            } else {
+                self.bgImageType = BgImageType.null.rawValue
+            }
         }
     }
 }

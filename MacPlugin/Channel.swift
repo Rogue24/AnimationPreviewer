@@ -19,4 +19,12 @@ protocol Channel: NSObjectProtocol {
     
     /// 保存视频到下载文件夹
     func saveVideo(_ videoPath: NSString, completion: @escaping (_ isSuccess: Bool) -> ())
+    
+    func pickLottie(completion: @escaping (_ data: Data?) -> ())
+    
+    func pickSVGA(completion: @escaping (_ data: Data?) -> ())
+    
+    func pickGIF(completion: @escaping (_ data: Data?) -> ())
+    
+    func pickImage(completion: @escaping (_ data: Data?) -> ())
 }
