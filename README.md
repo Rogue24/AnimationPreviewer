@@ -36,10 +36,10 @@ lottie_dir:
           ...
 ```
 
-3. 除了拖拽，还能通过菜单栏打开动画文件
+3. 除了拖拽，还能通过菜单栏打开动画文件：
 
 ![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example3.jpeg)
 
-4. 可以自定义App背景图片
+4. 可以自定义App背景图片：
 
 ![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example4.jpeg)
