@@ -5,7 +5,10 @@
     Feature：
         ✅ 可立即预览 Lottie & SVGA & GIF 的动画效果；
         ✅ 可截取动画任意一帧生成图片；
-        ✅ 可将动画制作成视频并导出。
+        ✅ 可将动画制作成视频并导出；
+        ✅ 支持拖拽动画文件到App；
+        ✅ 支持通过菜单栏打开动画文件；
+        ✅ 支持自定义App背景。
 
 ## 使用效果
 
@@ -21,7 +24,15 @@
 
 1. 拖拽预览支持`Lottie文件`、`SVGA文件`、`GIF文件`及其对应的`zip包`
 
-2. 其中`Lottie文件`内容需要跟以下规格保持一致：
+2. 除了拖拽，还能通过菜单栏打开动画文件
+
+![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example3.jpeg)
+
+3. 可以自定义App背景图片
+
+![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example4.jpeg)
+
+4. 📢 注意`Lottie文件`的内容需要跟以下规格保持一致：
 
 ```swift
 lottie_dir:
