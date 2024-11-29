@@ -12,6 +12,7 @@ class MacPlugin: NSObject, Channel {
     var statusItem: NSStatusItem?
     
 // MARK: - <Channel>
+    
     required override init() {}
     
     func setup() {
@@ -73,20 +74,26 @@ class MacPlugin: NSObject, Channel {
     
     func pickLottie(completion: @escaping (_ data: Data?) -> ()) {
         let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = true
-        openPanel.allowsMultipleSelection = false
+        openPanel.showsHiddenFiles = true // 显示隐藏文件
+        openPanel.canChooseFiles = true // 可以选择文件
+        openPanel.canChooseDirectories = true // 可以选择文件夹
+        openPanel.allowsMultipleSelection = false // 单选
         openPanel.allowedContentTypes = [.zip, .directory]
         
-        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        guard openPanel.runModal() == .OK else { return }
         
-        if isDirectory(at: url), let zipData = zipFolderWithSpecificContents(folderURL: url) {
-            print("成功获取 ZIP 文件的 Data, 大小: \(zipData.count) 字节")
+        guard let url = openPanel.url else {
+            print("没有找到符合要求的文件或文件夹")
+            completion(nil)
+            return
+        }
+        
+        if isDirectory(at: url), let zipData = zipFolderWithLottieContents(folderURL: url) {
+            print("成功获取zip文件的Data, 大小: \(zipData.count)字节")
             completion(zipData)
         }
         else if let data = try? Data(contentsOf: url) {
-            print("成功获取 Data, 大小: \(data.count) 字节")
+            print("成功获取Data, 大小: \(data.count)字节")
             completion(data)
         }
         else {
@@ -97,16 +104,16 @@ class MacPlugin: NSObject, Channel {
     
     func pickSVGA(completion: @escaping (_ data: Data?) -> ()) {
         let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = false
-        openPanel.allowsMultipleSelection = false
+        openPanel.showsHiddenFiles = true // 显示隐藏文件
+        openPanel.canChooseFiles = true // 可以选择文件
+        openPanel.canChooseDirectories = false // 不能选择文件夹
+        openPanel.allowsMultipleSelection = false // 单选
         openPanel.allowedContentTypes = [UTType(exportedAs: "svga", conformingTo: .data)]
         
-        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        guard openPanel.runModal() == .OK else { return }
         
-        if let data = try? Data(contentsOf: url) {
-            print("成功获取 Data, 大小: \(data.count) 字节")
+        if let url = openPanel.url, let data = try? Data(contentsOf: url) {
+            print("成功获取Data, 大小: \(data.count)字节")
             completion(data)
         }
         else {
@@ -117,16 +124,16 @@ class MacPlugin: NSObject, Channel {
     
     func pickGIF(completion: @escaping (_ data: Data?) -> ()) {
         let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = false
-        openPanel.allowsMultipleSelection = false
+        openPanel.showsHiddenFiles = true // 显示隐藏文件
+        openPanel.canChooseFiles = true // 可以选择文件
+        openPanel.canChooseDirectories = false // 不能选择文件夹
+        openPanel.allowsMultipleSelection = false // 单选
         openPanel.allowedContentTypes = [.gif]
         
-        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        guard openPanel.runModal() == .OK else { return }
         
-        if let data = try? Data(contentsOf: url) {
-            print("成功获取 Data, 大小: \(data.count) 字节")
+        if let url = openPanel.url, let data = try? Data(contentsOf: url) {
+            print("成功获取Data, 大小: \(data.count)字节")
             completion(data)
         }
         else {
@@ -137,16 +144,16 @@ class MacPlugin: NSObject, Channel {
     
     func pickImage(completion: @escaping (_ data: Data?) -> ()) {
         let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true
-        openPanel.canChooseFiles = true
-        openPanel.canChooseDirectories = false
-        openPanel.allowsMultipleSelection = false
+        openPanel.showsHiddenFiles = true // 显示隐藏文件
+        openPanel.canChooseFiles = true // 可以选择文件
+        openPanel.canChooseDirectories = false // 不能选择文件夹
+        openPanel.allowsMultipleSelection = false // 单选
         openPanel.allowedContentTypes = [.jpeg, .png]
         
-        guard openPanel.runModal() == .OK, let url = openPanel.url else { return }
+        guard openPanel.runModal() == .OK else { return }
         
-        if let data = try? Data(contentsOf: url) {
-            print("成功获取 Data, 大小: \(data.count) 字节")
+        if let url = openPanel.url, let data = try? Data(contentsOf: url) {
+            print("成功获取Data, 大小: \(data.count)字节")
             completion(data)
         }
         else {
@@ -156,7 +163,9 @@ class MacPlugin: NSObject, Channel {
     }
 }
 
+// MARK: - 文件操作
 private extension MacPlugin {
+    /// 该路径是否文件夹
     func isDirectory(at url: URL) -> Bool {
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
@@ -167,14 +176,15 @@ private extension MacPlugin {
         return exists && isDirectory.boolValue
     }
     
-    func zipFolderWithSpecificContents(folderURL: URL) -> Data? {
+    /// 将 Lottie 所需文件放入到一个临时文件夹中再进行压缩
+    func zipFolderWithLottieContents(folderURL: URL) -> Data? {
         let fileManager = FileManager.default
         
         do {
             // 获取文件夹中的所有内容
             let folderContents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: [])
             
-            // 检查文件夹中是否包含 "data.json" 和 "images" 文件夹
+            // 检查文件夹中是否包含"data.json"和"images"文件夹
             let dataFile = folderContents.first { $0.lastPathComponent == "data.json" }
             guard let dataFileURL = dataFile else {
                 print("文件夹内容不符合要求，缺少 data.json")
@@ -194,7 +204,7 @@ private extension MacPlugin {
             // 创建临时文件夹
             try fileManager.createDirectory(at: tempFolderURL, withIntermediateDirectories: true, attributes: nil)
             
-            // 将 "data.json" 文件和 "images" 文件夹复制到临时文件夹中
+            // 将"data.json"文件和"images"文件夹复制到临时文件夹中
             let destinationDataFileURL = tempFolderURL.appendingPathComponent("data.json")
             let destinationImagesFolderURL = tempFolderURL.appendingPathComponent("images")
             
@@ -209,18 +219,19 @@ private extension MacPlugin {
             return nil
         }
     }
-
+    
+    /// 压缩文件夹
     func zipFolderToData(folderURL: URL) -> Data? {
         let fileManager = FileManager.default
         let archiveURL = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("zip")
         
-        // 创建 ZIP 压缩任务
+        // 创建zip压缩任务
         let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/usr/bin/zip") // macOS 自带 zip 命令
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/zip") // macOS自带zip命令
         task.arguments = ["-r", archiveURL.path, folderURL.lastPathComponent]
         task.currentDirectoryURL = folderURL.deletingLastPathComponent()
         
-        // 设置管道来捕获 zip 命令的输出
+        // 设置管道来捕获zip命令的输出
         let pipe = Pipe()
         task.standardOutput = pipe
         task.standardError = pipe
@@ -232,9 +243,9 @@ private extension MacPlugin {
             
             // 检查文件是否成功创建
             if task.terminationStatus == 0, fileManager.fileExists(atPath: archiveURL.path) {
-                // 读取生成的 zip 文件数据
+                // 读取生成的zip文件数据
                 let zipData = try Data(contentsOf: archiveURL)
-                // 删除临时 ZIP 文件
+                // 删除临时zip文件
                 try fileManager.removeItem(at: archiveURL)
                 return zipData
             } else {
@@ -248,6 +259,7 @@ private extension MacPlugin {
     }
 }
 
+// MARK: - 打开主窗口
 private extension MacPlugin {
     @objc func openMainWindow() {
         NSApplication.shared.mainWindow?.windowController?.showWindow(NSApplication.shared.mainWindow)
