@@ -24,15 +24,7 @@
 
 1. 拖拽预览支持`Lottie文件`、`SVGA文件`、`GIF文件`及其对应的`zip包`
 
-2. 除了拖拽，还能通过菜单栏打开动画文件
-
-![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example3.jpeg)
-
-3. 可以自定义App背景图片
-
-![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example4.jpeg)
-
-4. 📢 注意`Lottie文件`的内容需要跟以下规格保持一致：
+2. 📢 注意`Lottie文件`的内容需要跟以下规格保持一致：
 
 ```swift
 lottie_dir:
@@ -43,3 +35,11 @@ lottie_dir:
           img_2.png
           ...
 ```
+
+3. 除了拖拽，还能通过菜单栏打开动画文件
+
+![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example3.jpeg)
+
+4. 可以自定义App背景图片
+
+![example2](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/example4.jpeg)
