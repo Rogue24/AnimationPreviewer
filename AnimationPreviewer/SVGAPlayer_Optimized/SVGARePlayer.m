@@ -420,10 +420,10 @@ static inline void _jp_dispatch_sync_on_main_queue(void (^block)(void)) {
     }
     
     if (frame < _videoItem.minFrame) {
-        _JPLog(@"[SVGARePlayer_%p] 给的frame超出了总frames的范围！这里给你修正！", self);
+//        _JPLog(@"[SVGARePlayer_%p] 给的frame超出了总frames的范围！这里给你修正！", self);
         frame = _videoItem.minFrame;
     } else if (frame > _videoItem.maxFrame) {
-        _JPLog(@"[SVGARePlayer_%p] 给的frame超出了总frames的范围！这里给你修正！", self);
+//        _JPLog(@"[SVGARePlayer_%p] 给的frame超出了总frames的范围！这里给你修正！", self);
         frame = _videoItem.maxFrame;
     }
     
