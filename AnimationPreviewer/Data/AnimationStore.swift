@@ -131,7 +131,8 @@ extension AnimationStore {
             
             // 检查是不是文件夹
             guard isDirectory.boolValue else {
-                // 不是，去看看是不是svga（不是的话其内部会去看看是不是lottie）
+                // 不是，去看看是不是svga
+                // 内部会先看看是不是lottie_json，再看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie_dir
                 let store = try loadSVGAData(unzipDirURL)
                 Asyncs.main { success(store) }
                 return
@@ -149,7 +150,8 @@ extension AnimationStore {
                 // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
                 store = try loadLottieData(fileURL)
             } else {
-                // 不是文件夹，看看是不是svga（其内部会先看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie）
+                // 不是文件夹，看看是不是svga
+                // 内部会先看看是不是lottie_json，再看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie_dir
                 store = try loadSVGAData(fileURL)
             }
             
@@ -166,7 +168,7 @@ private extension AnimationStore {
     static func loadGIFData(_ tmpFileURL: URL) throws -> AnimationStore {
         let tmpData = try Data(contentsOf: tmpFileURL)
         
-        guard isGIFData(tmpData) else {
+        guard tmpData.jp.isGIF else {
             return try loadSVGAData(tmpFileURL)
         }
         
@@ -185,7 +187,11 @@ private extension AnimationStore {
     static func loadSVGAData(_ tmpFileURL: URL) throws -> AnimationStore {
         let tmpData = try Data(contentsOf: tmpFileURL)
         
-        if isGIFData(tmpData) {
+        if tmpData.jp.isJSON {
+            return try loadLottieData(tmpFileURL, isDir: false)
+        }
+        
+        if tmpData.jp.isGIF {
             return try loadGIFData(tmpFileURL)
         }
         
@@ -202,7 +208,21 @@ private extension AnimationStore {
         return store
     }
     
-    static func loadLottieData(_ tmpFileURL: URL) throws -> AnimationStore {
+    static func loadLottieData(_ tmpFileURL: URL, isDir: Bool = true) throws -> AnimationStore {
+        // 非文件夹就是lottie_json（纯矢量动画）
+        if !isDir {
+            let tmpData = try Data(contentsOf: tmpFileURL)
+            let animation = try LottieAnimation.from(data: tmpData)
+            
+            try cacheFile(tmpFileURL, for: .lottie)
+            
+            let provider = FilepathImageProvider(filepath: cacheFilePath)
+            let store = AnimationStore.lottie(animation: animation, provider: provider)
+            cache = store
+            
+            return store
+        }
+        
         let fileURLs = try FileManager.default.contentsOfDirectory(at: tmpFileURL,
                                                                    includingPropertiesForKeys: nil,
                                                                    options: .skipsHiddenFiles)
@@ -307,7 +327,14 @@ private extension AnimationStore {
         
         switch cacheType {
         case .lottie:
-            let jsonPath = "\(filePath)/data.json"
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: filePath, isDirectory: &isDirectory) else {
+                clearCacheFile()
+                return
+            }
+            
+            // 文件夹是lottie_dir（自带图片的动画），非文件夹则是lottie_json（纯矢量动画）
+            let jsonPath = isDirectory.boolValue ? "\(filePath)/data.json" : filePath
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
                 clearCacheFile()
                 return
@@ -377,17 +404,6 @@ private extension AnimationStore {
 
 // MARK: - GIF相关
 private extension AnimationStore {
-    static func isGIFData(_ data: Data) -> Bool {
-        let gifIdentifier = Data([0x47, 0x49, 0x46])
-        
-        guard data.count >= gifIdentifier.count else {
-            return false
-        }
-        
-        let prefix = data.prefix(gifIdentifier.count)
-        return prefix.elementsEqual(gifIdentifier)
-    }
-    
     static func decodeGIF(_ data: Data) -> ([UIImage], TimeInterval)? {
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
             return nil

@@ -15,6 +15,7 @@
 		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
 		001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */; };
 		001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
+		0045DC032DA626CD00346866 /* URL+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0045DC022DA626CD00346866 /* URL+.swift */; };
 		0053162D2CF5BCA200EACB72 /* VideoMaker+SVGA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */; };
 		006398EC2CF71536005750C3 /* VideoMaker+GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */; };
 		007F1CE42CF8E05600FC65A5 /* BgImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007F1CE32CF8E05600FC65A5 /* BgImageType.swift */; };
@@ -293,6 +294,7 @@
 		001AB9322A9DC2B800C09045 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPProgressHUD.swift; sourceTree = "<group>"; };
 		001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
+		0045DC022DA626CD00346866 /* URL+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+.swift"; sourceTree = "<group>"; };
 		0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+SVGA.swift"; sourceTree = "<group>"; };
 		006398EB2CF71536005750C3 /* VideoMaker+GIF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+GIF.swift"; sourceTree = "<group>"; };
 		007F1CE32CF8E05600FC65A5 /* BgImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BgImageType.swift; sourceTree = "<group>"; };
@@ -1403,6 +1405,7 @@
 				1A95CC672A0A05D8006E3102 /* UIColor+.swift */,
 				1A95CC6B2A0A05D8006E3102 /* UIScreen+.swift */,
 				1A95CC602A0A05D8006E3102 /* UIView+.swift */,
+				0045DC022DA626CD00346866 /* URL+.swift */,
 				009F1DA42A974291009C9FF4 /* Data+.swift */,
 				001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */,
 			);
@@ -1716,6 +1719,7 @@
 				001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */,
 				1A64FB0B2A08F221000F979B /* PrecompAsset.swift in Sources */,
 				1A64FB182A08F221000F979B /* ShapeLayer.swift in Sources */,
+				0045DC032DA626CD00346866 /* URL+.swift in Sources */,
 				1A64FADF2A08F221000F979B /* AnyValueContainer.swift in Sources */,
 				1A64FACD2A08F221000F979B /* GroupOutputNode.swift in Sources */,
 				1A64FB312A08F221000F979B /* LayerDebugging.swift in Sources */,
