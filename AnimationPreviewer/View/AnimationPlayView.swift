@@ -11,17 +11,23 @@ import SnapKit
 class AnimationPlayView: UIView {
     enum LoopMode: CaseIterable {
         case forward
-        case reverse
         case backwards
+        case reverse
+        case forwardOnce
+        case backwardsOnce
         
         var title: String {
             switch self {
             case .forward:
                 return "Forward loop"
-            case .reverse:
-                return "Reverse loop"
             case .backwards:
                 return "Backwards loop"
+            case .reverse:
+                return "Reverse loop"
+            case .forwardOnce:
+                return "Forward once"
+            case .backwardsOnce:
+                return "Backwards once"
             }
         }
         
@@ -31,6 +37,35 @@ class AnimationPlayView: UIView {
                 return .loop
             case .reverse:
                 return .autoReverse
+            case .forwardOnce, .backwardsOnce:
+                return .playOnce
+            }
+        }
+        
+        var isOnce: Bool {
+            switch self {
+            case .forwardOnce, .backwardsOnce:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        var isForwar: Bool {
+            switch self {
+            case .forward, .forwardOnce:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        var isBackwards: Bool {
+            switch self {
+            case .backwards, .backwardsOnce:
+                return true
+            default:
+                return false
             }
         }
     }
@@ -51,13 +86,30 @@ class AnimationPlayView: UIView {
             return lottieView.isAnimationPlaying
         } else if !svgaView.isHidden {
             return svgaView.isPlaying
+        } else if !gifView.isHidden {
+            return gifView.isAnimating
         }
         return false
     }
     
     var loopMode: LoopMode = .forward {
         didSet {
-            lottieView.loopMode = loopMode.lottieLoopMode
+            cancelDelayDone()
+            
+            // 换成单次播放则重新设置进度
+            if loopMode.isOnce {
+                // 这里不能暂停，需要【停止】之后再设置进度
+                if !lottieView.isHidden {
+                    lottieView.stop()
+                }
+                else if !svgaView.isHidden {
+                    svgaView.stop(then: .clearLayers)
+                }
+                else if !gifView.isHidden {
+                    gifView.stopAnimating()
+                }
+            }
+            
             play()
         }
     }
@@ -70,6 +122,9 @@ class AnimationPlayView: UIView {
             svgaView.isMute = newValue
         }
     }
+    
+    var playOnceDoneHandler: (() -> Void)?
+    private var delayDoneWorkItem: DispatchWorkItem? = nil
     
     private let placeholderView = UIView()
     private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
@@ -150,6 +205,7 @@ private extension AnimationPlayView {
         svgaView.isHidden = true
         svgaView.contentMode = .scaleAspectFit
         svgaView.isMute = isSVGAMute
+        svgaView.isHideWhenStopped = false
         svgaView.exDelegate = self
         addSubview(svgaView)
         svgaView.snp.makeConstraints { make in
@@ -198,8 +254,9 @@ extension AnimationPlayView: SVGAExPlayerDelegate {
 
 extension AnimationPlayView {
     func replaceAnimation(_ store: AnimationStore?) {
-        self.store = store
+        cancelDelayDone()
         
+        self.store = store
         guard let store else {
             removeAnimation()
             return
@@ -236,7 +293,8 @@ private extension AnimationPlayView {
         hiddenLottieView()
         hiddenGifView()
         
-        svgaView.play(with: entity, fromFrame: 0, isAutoPlay: false)
+        let fromFrame = svgaView.isReversing ? entity.maxFrame : entity.minFrame
+        svgaView.play(with: entity, fromFrame: fromFrame, isAutoPlay: false)
         svgaView.isHidden = false
         
         updateLayout()
@@ -259,6 +317,11 @@ private extension AnimationPlayView {
 }
 
 private extension AnimationPlayView {
+    func cancelDelayDone() {
+        delayDoneWorkItem?.cancel()
+        delayDoneWorkItem = nil
+    }
+    
     func removeAnimation() {
         placeholderView.isHidden = false
         hiddenLottieView()
@@ -297,19 +360,69 @@ private extension AnimationPlayView {
 
 extension AnimationPlayView {
     func play() {
+        cancelDelayDone()
+        
+        var delay: TimeInterval = 0
+        
         if !lottieView.isHidden {
-            if loopMode == .backwards {
-                lottieView.play(fromProgress: 1, toProgress: 0, loopMode: lottieView.loopMode)
+            if loopMode.isOnce {
+                delay = lottieView.animation?.duration ?? 0
+                let progress = lottieView.currentProgress
+                if progress > 0, progress < 1 {
+                    if loopMode.isBackwards {
+                        delay *= progress
+                    } else {
+                        delay *= (1 - progress)
+                    }
+                }
+            }
+            
+            // 如果是暂停中调用以下方法不会重新播放，会继续播放
+            if loopMode.isBackwards {
+                lottieView.play(fromProgress: 1, toProgress: 0, loopMode: loopMode.lottieLoopMode)
             } else {
-                lottieView.play(fromProgress: 0, toProgress: 1, loopMode: lottieView.loopMode)
+                lottieView.play(fromProgress: 0, toProgress: 1, loopMode: loopMode.lottieLoopMode)
             }
         }
         else if !svgaView.isHidden {
-            if loopMode == .forward {
+            switch loopMode {
+            case .forward:
+                svgaView.loops = 0
                 svgaView.isReversing = false
-            } else if loopMode == .backwards {
+                
+            case .backwards:
+                svgaView.loops = 0
                 svgaView.isReversing = true
+                
+            case .reverse:
+                svgaView.loops = 0
+                
+            case .forwardOnce:
+                svgaView.loops = 1
+                svgaView.isReversing = false
+                svgaView.finishedAllScene = .stepToTrailing
+                
+            case .backwardsOnce:
+                svgaView.loops = 1
+                svgaView.isReversing = true
+                svgaView.finishedAllScene = .stepToTrailing
             }
+            
+            if loopMode.isOnce {
+                delay = svgaView.videoItem?.duration ?? 0
+                let progress = Double(svgaView.progress)
+                if progress > 0, progress < 1 {
+                    if svgaView.isReversing {
+                        delay *= progress
+                    } else {
+                        delay *= (1 - progress)
+                    }
+                } else {
+                    // 不是播放中则重新播放
+                    svgaView.step(toFrame: svgaView.leadingFrame)
+                }
+            }
+            
             svgaView.play()
         }
         else if !gifView.isHidden {
@@ -318,23 +431,48 @@ extension AnimationPlayView {
                 gifView.image = gif.0.first
                 gifView.animationImages = gif.0
                 gifView.animationDuration = gif.1
-                
-            case .reverse:
-                gifView.image = gif.0.first
-                gifView.animationImages = gif.0 + gif.0.reversed()
-                gifView.animationDuration = gif.1 * 2
+                gifView.animationRepeatCount = 0
                 
             case .backwards:
                 gifView.image = gif.0.last
                 gifView.animationImages = gif.0.reversed()
                 gifView.animationDuration = gif.1
+                gifView.animationRepeatCount = 0
+                
+            case .reverse:
+                gifView.image = gif.0.first
+                gifView.animationImages = gif.0 + gif.0.reversed()
+                gifView.animationDuration = gif.1 * 2
+                gifView.animationRepeatCount = 0
+                
+            case .forwardOnce:
+                gifView.image = gif.0.first
+                gifView.animationImages = gif.0
+                gifView.animationDuration = gif.1
+                gifView.animationRepeatCount = 1
+                delay = gif.1
+                
+            case .backwardsOnce:
+                gifView.image = gif.0.last
+                gifView.animationImages = gif.0.reversed()
+                gifView.animationDuration = gif.1
+                gifView.animationRepeatCount = 1
+                delay = gif.1
             }
             
+            // gif没有暂停，所以不用看进度
             gifView.startAnimating()
+        }
+        
+        guard delay > 0 else { return }
+        delayDoneWorkItem = Asyncs.mainDelay(delay) { [weak self] in
+            self?.playOnceDoneHandler?()
         }
     }
     
     func pause() {
+        cancelDelayDone()
+        
         if !lottieView.isHidden {
             lottieView.pause()
         }
@@ -347,6 +485,8 @@ extension AnimationPlayView {
     }
     
     func stop() {
+        cancelDelayDone()
+        
         if !lottieView.isHidden {
             lottieView.stop()
         }

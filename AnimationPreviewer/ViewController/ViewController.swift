@@ -216,6 +216,10 @@ private extension ViewController {
     func addSubviewsTarget() {
         // ================ 左边区域 ================
         playView.addInteraction(dropInteraction)
+        playView.playOnceDoneHandler = { [weak self] in
+            guard let self else { return }
+            self.playBtn.isSelected = false // 恢复▶️
+        }
         playBtn.addTarget(self, action: #selector(playAction(_:)), for: .touchUpInside)
         modeBtn.addTarget(self, action: #selector(modeAction(_:)), for: .touchUpInside)
         videoBtn.addTarget(self, action: #selector(videoAction(_:)), for: .touchUpInside)
@@ -242,9 +246,11 @@ extension ViewController {
     
     // MARK: - 选择播放模式
     @objc func modeAction(_ sender: UIButton) {
+        let allModes = AnimationPlayView.LoopMode.allCases
+        
         let alertCtr = UIViewController()
         alertCtr.modalPresentationStyle = .popover
-        alertCtr.preferredContentSize = [220, 10 + 44.0 * 3 + 10]
+        alertCtr.preferredContentSize = [220, 10 + 44.0 * CGFloat(allModes.count) + 10]
         if let popover = alertCtr.popoverPresentationController {
             popover.sourceView = sender
             popover.permittedArrowDirections = .down
@@ -259,7 +265,7 @@ extension ViewController {
             make.center.equalToSuperview()
         }
         
-        for (i, loopMode) in AnimationPlayView.LoopMode.allCases.enumerated() {
+        for (i, loopMode) in allModes.enumerated() {
             let title = (playView.loopMode == loopMode ? "✅ " : "") + loopMode.title
             let color = playView.loopMode == loopMode ? UIColor.systemBlue : UIColor.white
             let btn = UIButton(type: .system)
