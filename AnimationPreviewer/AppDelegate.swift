@@ -28,8 +28,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // 使用深色模式
+        if #available(macCatalyst 13.0, *) {
+            window?.overrideUserInterfaceStyle = .dark
+        }
+        
         JPProgressHUD.setMaxSupportedWindowLevel(.alert)
         JPProgressHUD.setMinimumDismissTimeInterval(1.3)
+        
         return true
     }
 

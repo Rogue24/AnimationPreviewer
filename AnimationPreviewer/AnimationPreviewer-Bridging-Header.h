@@ -6,3 +6,4 @@
 #import "SVProgressHUD.h"
 #import "SVGARePlayer.h"
 #import "SVGAParser.h"
+#import "DSDetailColorBoard.h"

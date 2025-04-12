@@ -17,6 +17,16 @@ class ViewController: UIViewController {
     
     @UserDefault(.bgImageType) private var bgImageType: BgImageType.RawValue = 1
     
+    private var originColor: UIColor = .defaultBgColor
+    private var isTransparentGridBgColor: Bool = false
+    
+    private var bgColor: UIColor = .defaultBgColor {
+        didSet {
+            playView.backgroundColor = bgColor
+            imageView.backgroundColor = bgColor
+        }
+    }
+    
     // ================ 背景 ================
     private let bgImgView = UIImageView()
     
@@ -50,6 +60,12 @@ class ViewController: UIViewController {
         b.tintColor = UIColor(white: 1, alpha: 0.8)
         b.isSelected = playView.isSVGAMute
         b.isHidden = true
+        return b
+    }()
+    
+    private lazy var bgColorBtn: NoHighlightButton = {
+        let b = NoHighlightButton(type: .custom)
+        b.backgroundColor = .randomColor
         return b
     }()
     
@@ -136,6 +152,7 @@ private extension ViewController {
     }
     
     func addSubviews() {
+        playView.backgroundColor = bgColor
         contentView.addSubview(playView)
         contentView.addSubview(stackView)
         
@@ -143,8 +160,10 @@ private extension ViewController {
         stackView.addArrangedSubview(modeBtn)
         stackView.addArrangedSubview(videoBtn)
         stackView.addArrangedSubview(volumeBtn)
+        stackView.addArrangedSubview(bgColorBtn)
         stackView.addArrangedSubview(trashBtn)
         
+        imageView.backgroundColor = bgColor
         contentView.addSubview(imageView)
         contentView.addSubview(imgBtn)
         contentView.addSubview(slider)
@@ -179,6 +198,10 @@ private extension ViewController {
         }
         
         volumeBtn.snp.makeConstraints { make in
+            make.width.height.equalTo(51)
+        }
+        
+        bgColorBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
         
@@ -224,6 +247,7 @@ private extension ViewController {
         modeBtn.addTarget(self, action: #selector(modeAction(_:)), for: .touchUpInside)
         videoBtn.addTarget(self, action: #selector(videoAction(_:)), for: .touchUpInside)
         volumeBtn.addTarget(self, action: #selector(volumeAction(_:)), for: .touchUpInside)
+        bgColorBtn.addTarget(self, action: #selector(bgColorAction(_:)), for: .touchUpInside)
         trashBtn.addTarget(self, action: #selector(deleteAction(_:)), for: .touchUpInside)
         
         // ================ 右边区域 ================
@@ -232,7 +256,7 @@ private extension ViewController {
     }
 }
 
-extension ViewController {
+private extension ViewController {
     // MARK: - 播放/暂停
     @objc func playAction(_ sender: UIButton) {
         guard playView.isEnable else { return }
@@ -311,6 +335,29 @@ extension ViewController {
     @objc func volumeAction(_ sender: UIButton) {
         sender.isSelected.toggle()
         playView.isSVGAMute = sender.isSelected
+    }
+    
+    // MARK: - 背景色设置
+    @objc func bgColorAction(_ sender: UIButton) {
+        if !isTransparentGridBgColor {
+            originColor = bgColor
+        }
+        
+        let colorBoard = DSDetailColorBoard()
+        
+        let alertCtr = UIViewController()
+        alertCtr.modalPresentationStyle = .popover
+        alertCtr.preferredContentSize = colorBoard.frame.size
+        if let popover = alertCtr.popoverPresentationController {
+            popover.sourceView = sender
+            popover.permittedArrowDirections = .down
+        }
+        
+        alertCtr.view.addSubview(colorBoard)
+        
+        present(alertCtr, animated: true) {
+            colorBoard.delegate = self
+        }
     }
     
     // MARK: - 删除
@@ -460,5 +507,31 @@ extension ViewController {
                 self.bgImageType = BgImageType.null.rawValue
             }
         }
+    }
+}
+
+// MARK: - <DSDetailColorBoardDelegate>
+extension ViewController: DSDetailColorBoardDelegate {
+    func detailColorBoardDidChooseOriginColor() {
+        if isTransparentGridBgColor {
+            bgColor = .transparentGrid
+        } else {
+            bgColor = originColor
+        }
+    }
+    
+    func detailColorBoardDidChooseDefaultColor() {
+        isTransparentGridBgColor = false
+        bgColor = .defaultBgColor
+    }
+    
+    func detailColorBoardDidChooseTransparentGridColor() {
+        isTransparentGridBgColor = true
+        bgColor = .transparentGrid
+    }
+    
+    func detailColorBoardDidChooseCustomColor(_ color: UIColor) {
+        isTransparentGridBgColor = false
+        bgColor = color
     }
 }

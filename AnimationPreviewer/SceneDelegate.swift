@@ -17,6 +17,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         
+        // 使用深色模式
+        if #available(macCatalyst 13.0, *) {
+            window?.overrideUserInterfaceStyle = .dark
+        }
+        
         MacChannel.shared().setup()
     }
 

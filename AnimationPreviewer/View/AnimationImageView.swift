@@ -69,7 +69,6 @@ class AnimationImageView: UIView {
 
 private extension AnimationImageView {
     func setupBase() {
-        backgroundColor = .rgb(41, 43, 51, a: 0.35)
         layer.borderColor = UIColor(white: 1, alpha: 0.25).cgColor
         layer.borderWidth = 4
         layer.cornerRadius = 16

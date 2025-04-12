@@ -81,6 +81,7 @@ extension UIColor {
     class var randomColor: UIColor { UIColor.rgba(RGBA.randomRGBA()) }
     class func randomColor(_ a: CGFloat = 1.0) -> UIColor { UIColor.rgba(RGBA.randomRGBA(a)) }
     
+    // MARK: - 颜色转图片
     func toImage(size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         guard let ctx = UIGraphicsGetCurrentContext() else {
@@ -95,5 +96,15 @@ extension UIColor {
         UIGraphicsEndImageContext()
         
         return newImage ?? UIImage()
+    }
+    
+    /// 透明格子颜色
+    @objc static var transparentGrid: UIColor {
+        UIColor(patternImage: .transparentGrid)
+    }
+    
+    /// 默认背景色
+    static var defaultBgColor: UIColor {
+        .rgb(41, 43, 51, a: 0.35)
     }
 }
