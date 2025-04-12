@@ -51,6 +51,13 @@ class ViewController: UIViewController {
     
     private lazy var modeBtn = createBtn("repeat.circle")
     
+    private lazy var paletteBtn: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(named: "color_palette_icon")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        btn.alpha = 0.8
+        return btn
+    }()
+    
     private lazy var videoBtn = createBtn("arrow.down.left.video")
     
     private lazy var volumeBtn: NoHighlightButton = {
@@ -63,18 +70,24 @@ class ViewController: UIViewController {
         return b
     }()
     
-    private lazy var bgColorBtn: NoHighlightButton = {
-        let b = NoHighlightButton(type: .custom)
-        b.backgroundColor = .randomColor
-        return b
+    private lazy var trashBtn: UIButton = {
+        let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .medium, scale: .default)
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "trash", withConfiguration: config), for: .normal)
+        btn.tintColor = UIColor(white: 1, alpha: 0.8)
+        return btn
     }()
-    
-    private lazy var trashBtn = createBtn("trash")
     
     // ================ 右边区域 ================
     private let imageView = AnimationImageView()
     
-    private lazy var imgBtn = createBtn("square.and.arrow.down.on.square")
+    private lazy var imgBtn: UIButton = {
+        let config = UIImage.SymbolConfiguration(pointSize: 28, weight: .medium, scale: .default)
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "square.and.arrow.down.on.square", withConfiguration: config), for: .normal)
+        btn.tintColor = UIColor(white: 1, alpha: 0.8)
+        return btn
+    }()
     
     private let slider: UISlider = {
         let slider = UISlider()
@@ -158,9 +171,9 @@ private extension ViewController {
         
         stackView.addArrangedSubview(playBtn)
         stackView.addArrangedSubview(modeBtn)
+        stackView.addArrangedSubview(paletteBtn)
         stackView.addArrangedSubview(videoBtn)
         stackView.addArrangedSubview(volumeBtn)
-        stackView.addArrangedSubview(bgColorBtn)
         stackView.addArrangedSubview(trashBtn)
         
         imageView.backgroundColor = bgColor
@@ -193,15 +206,15 @@ private extension ViewController {
             make.width.height.equalTo(51)
         }
         
+        paletteBtn.snp.makeConstraints { make in
+            make.width.height.equalTo(51)
+        }
+        
         videoBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
         
         volumeBtn.snp.makeConstraints { make in
-            make.width.height.equalTo(51)
-        }
-        
-        bgColorBtn.snp.makeConstraints { make in
             make.width.height.equalTo(51)
         }
         
@@ -245,9 +258,9 @@ private extension ViewController {
         }
         playBtn.addTarget(self, action: #selector(playAction(_:)), for: .touchUpInside)
         modeBtn.addTarget(self, action: #selector(modeAction(_:)), for: .touchUpInside)
+        paletteBtn.addTarget(self, action: #selector(paletteAction(_:)), for: .touchUpInside)
         videoBtn.addTarget(self, action: #selector(videoAction(_:)), for: .touchUpInside)
         volumeBtn.addTarget(self, action: #selector(volumeAction(_:)), for: .touchUpInside)
-        bgColorBtn.addTarget(self, action: #selector(bgColorAction(_:)), for: .touchUpInside)
         trashBtn.addTarget(self, action: #selector(deleteAction(_:)), for: .touchUpInside)
         
         // ================ 右边区域 ================
@@ -314,6 +327,29 @@ private extension ViewController {
         dismiss(animated: true)
     }
     
+    // MARK: - 选择背景色
+    @objc func paletteAction(_ sender: UIButton) {
+        if !isTransparentGridBgColor {
+            originColor = bgColor
+        }
+        
+        let colorBoard = DSDetailColorBoard()
+        
+        let alertCtr = UIViewController()
+        alertCtr.modalPresentationStyle = .popover
+        alertCtr.preferredContentSize = colorBoard.frame.size
+        if let popover = alertCtr.popoverPresentationController {
+            popover.sourceView = sender
+            popover.permittedArrowDirections = .down
+        }
+        
+        alertCtr.view.addSubview(colorBoard)
+        
+        present(alertCtr, animated: true) {
+            colorBoard.delegate = self
+        }
+    }
+    
     // MARK: - 制作视频
     @objc func videoAction(_ sender: UIButton) {
         JPProgressHUD.show(withStatus: "视频制作中...")
@@ -335,29 +371,6 @@ private extension ViewController {
     @objc func volumeAction(_ sender: UIButton) {
         sender.isSelected.toggle()
         playView.isSVGAMute = sender.isSelected
-    }
-    
-    // MARK: - 背景色设置
-    @objc func bgColorAction(_ sender: UIButton) {
-        if !isTransparentGridBgColor {
-            originColor = bgColor
-        }
-        
-        let colorBoard = DSDetailColorBoard()
-        
-        let alertCtr = UIViewController()
-        alertCtr.modalPresentationStyle = .popover
-        alertCtr.preferredContentSize = colorBoard.frame.size
-        if let popover = alertCtr.popoverPresentationController {
-            popover.sourceView = sender
-            popover.permittedArrowDirections = .down
-        }
-        
-        alertCtr.view.addSubview(colorBoard)
-        
-        present(alertCtr, animated: true) {
-            colorBoard.delegate = self
-        }
     }
     
     // MARK: - 删除
