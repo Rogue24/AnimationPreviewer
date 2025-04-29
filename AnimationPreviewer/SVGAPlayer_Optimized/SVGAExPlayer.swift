@@ -255,6 +255,8 @@ class SVGAExPlayer: SVGARePlayer {
     /// 隐藏回调标识（异步）
     private var _hideTag: UUID?
     
+    /// 用于记录异步回调时的停止情景（用于如果在SVGA资源加载过程中停止了动画，加载完成时还原停止的场景）
+    private var _willStopScene: SVGARePlayerStoppedScene? = nil
     /// 用于记录异步回调时的启动帧数
     private var _willFromFrame = 0
     /// 用于记录异步回调时是否自动播放
@@ -585,7 +587,12 @@ private extension SVGAExPlayer {
         self.entity = entity
         videoItem = entity
         exDelegate?.svgaExPlayer?(self, svga: svgaSource, parseDone: entity)
-        _playSVGA(fromFrame: _willFromFrame, isAutoPlay: _isWillAutoPlay, isNew: true)
+        // 如果SVGA资源加载过程中停止了动画，则还原停止的场景
+        if let scene = _willStopScene {
+            _stopSVGA(scene)
+        } else {
+            _playSVGA(fromFrame: _willFromFrame, isAutoPlay: _isWillAutoPlay, isNew: true)
+        }
     }
 }
 
@@ -617,7 +624,8 @@ private extension SVGAExPlayer {
     }
     
     func _stopSVGA(_ scene: SVGARePlayerStoppedScene) {
-        _loadTag = nil
+        // 只是停止动画，不会中断SVGA资源的加载，记录加载完成后的停止场景
+        _willStopScene = _loadTag == nil ? nil : scene
         stopAnimation(scene)
         _afterStopSVGA()
     }
@@ -642,6 +650,8 @@ private extension SVGAExPlayer {
         
         _loadTag = nil
         _hideTag = nil
+        
+        _willStopScene = nil
         
         stopAnimation(.clearLayers)
         clearDynamicObjects()
@@ -769,6 +779,7 @@ public extension SVGAExPlayer {
     ///   - fromFrame: 从第几帧开始
     ///   - isAutoPlay: 是否自动开始播放
     func play(_ svgaSource: String, fromFrame: Int, isAutoPlay: Bool) {
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         guard self.svgaSource != svgaSource else {
             _loadSVGA(svgaSource, fromFrame: fromFrame, isAutoPlay: isAutoPlay)
             return
@@ -799,7 +810,8 @@ public extension SVGAExPlayer {
     ///   - fromFrame: 从第几帧开始
     ///   - isAutoPlay: 是否自动开始播放
     func play(with entity: SVGAVideoEntity, fromFrame: Int, isAutoPlay: Bool) {
-        _loadTag = nil
+        _loadTag = nil // 取消当前加载
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         
         let memoryAddress = unsafeBitCast(entity, to: Int.self)
         let svgaSource = String(format: "%p", memoryAddress)
@@ -838,6 +850,7 @@ public extension SVGAExPlayer {
     
     /// 播放当前SVGA（从当前所在帧开始）
     func play() {
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         switch status {
         case .playing: return
         case .paused:
@@ -856,6 +869,7 @@ public extension SVGAExPlayer {
     ///  - isAutoPlay: 是否自动开始播放
     func play(fromFrame: Int, isAutoPlay: Bool) {
         guard svgaSource.count > 0 else { return }
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         
         if entity == nil {
             _debugLog("播放 - 需要加载")
@@ -871,6 +885,7 @@ public extension SVGAExPlayer {
     /// 暂停
     func pause() {
         guard svgaSource.count > 0 else { return }
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         guard isPlaying else {
             _isWillAutoPlay = false
             return
@@ -887,7 +902,8 @@ public extension SVGAExPlayer {
     ///   - isAutoPlay: 是否自动开始播放
     func reset(isAutoPlay: Bool = true) {
         guard svgaSource.count > 0 else { return }
-        resetLoopCount()
+        _willStopScene = nil // 取消原本加载完成后的停止操作
+        resetLoopCount() // 重置完成次数
         
         if entity == nil {
             _debugLog("重播 - 需要加载")
@@ -908,7 +924,7 @@ public extension SVGAExPlayer {
     ///     - stepToLeading: 回到头帧
     func stop(then scene: SVGARePlayerStoppedScene, completion: UserStopCompletion? = nil) {
         guard svgaSource.count > 0 else { return }
-        _loadTag = nil
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         _hideForEndAnimationIfNeeded { [weak self] in
             guard let self else { return }
             let svgaSource = self.svgaSource
@@ -927,7 +943,8 @@ public extension SVGAExPlayer {
     /// 清空
     func clean(completion: UserStopCompletion? = nil) {
         guard svgaSource.count > 0 else { return }
-        _loadTag = nil
+        _loadTag = nil // 取消当前加载
+        _willStopScene = nil // 取消原本加载完成后的停止操作
         _hideForEndAnimationIfNeeded { [weak self] in
             guard let self else { return }
             let svgaSource = self.svgaSource

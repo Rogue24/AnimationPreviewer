@@ -211,6 +211,10 @@ static inline void _jp_dispatch_sync_on_main_queue(void (^block)(void)) {
     _isReversing = isReversing;
     
     _jp_dispatch_sync_on_main_queue(^{
+        // 反转时停止音频
+        if (self->_isReversing) {
+            [self __stopAudios];
+        }
         if (self.isAnimating || self.drawLayer == nil) return;
         if (self->_isReversing && self->_currentFrame == self->_startFrame) {
             self->_currentFrame = self->_endFrame;
