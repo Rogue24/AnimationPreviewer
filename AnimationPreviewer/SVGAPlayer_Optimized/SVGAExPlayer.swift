@@ -924,12 +924,16 @@ public extension SVGAExPlayer {
     ///     - stepToLeading: 回到头帧
     func stop(then scene: SVGARePlayerStoppedScene, completion: UserStopCompletion? = nil) {
         guard svgaSource.count > 0 else { return }
-        _willStopScene = nil // 取消原本加载完成后的停止操作
+        _willStopScene = scene // 记录加载完成后的停止场景，不中断SVGA资源的加载
         _hideForEndAnimationIfNeeded { [weak self] in
             guard let self else { return }
             let svgaSource = self.svgaSource
             let loopCount = self.loopCount
-            self._stopSVGA(scene)
+            // 如果已经记录了加载完成后的停止操作，并且在隐藏的过程中SVGA资源就加载成功，
+            // 也就是说有可能在此之前就执行了停止操作，所以在这里判断一下防止重复操作。
+            if self.status != .stopped {
+                self._stopSVGA(scene)
+            }
             completion?(svgaSource, loopCount)
         }
     }
