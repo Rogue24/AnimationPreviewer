@@ -47,21 +47,6 @@
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA52A974291009C9FF4 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA42A974291009C9FF4 /* Data+.swift */; };
 		009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA62A984A21009C9FF4 /* AnimationStore.swift */; };
-		009F1DCE2A98B174009C9FF4 /* SVGAExporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB02A98B173009C9FF4 /* SVGAExporter.m */; };
-		009F1DCF2A98B174009C9FF4 /* SVGAVectorLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */; };
-		009F1DD02A98B174009C9FF4 /* SVGAAudioLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */; };
-		009F1DD12A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */; };
-		009F1DD22A98B174009C9FF4 /* SVGABitmapLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */; };
-		009F1DD32A98B174009C9FF4 /* SVGAParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBC2A98B173009C9FF4 /* SVGAParser.m */; };
-		009F1DD42A98B174009C9FF4 /* SVGABezierPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */; };
-		009F1DD52A98B174009C9FF4 /* SVGAPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */; };
-		009F1DD62A98B174009C9FF4 /* SVGAVideoSpriteEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */; };
-		009F1DD72A98B174009C9FF4 /* SVGA.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC02A98B174009C9FF4 /* SVGA.m */; };
-		009F1DD82A98B174009C9FF4 /* SVGAVideoEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */; };
-		009F1DD92A98B174009C9FF4 /* Svga.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		009F1DDA2A98B174009C9FF4 /* SVGAAudioEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */; };
-		009F1DDB2A98B174009C9FF4 /* SVGAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */; };
-		009F1DDC2A98B174009C9FF4 /* SVGAContentLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */; };
 		1A378AEB2B0E7E8D00D196F7 /* SVGAExPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE62B0E7E8C00D196F7 /* SVGAExPlayer.swift */; };
 		1A378AEC2B0E7E8D00D196F7 /* SVGARePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE72B0E7E8C00D196F7 /* SVGARePlayer.m */; };
 		1A378AED2B0E7E8D00D196F7 /* SVGAVideoEntity+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE82B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.m */; };
@@ -375,36 +360,6 @@
 		009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationData.swift; sourceTree = "<group>"; };
 		009F1DA42A974291009C9FF4 /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		009F1DA62A984A21009C9FF4 /* AnimationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationStore.swift; sourceTree = "<group>"; };
-		009F1DAF2A98B173009C9FF4 /* SVGAAudioEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAAudioEntity.h; sourceTree = "<group>"; };
-		009F1DB02A98B173009C9FF4 /* SVGAExporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAExporter.m; sourceTree = "<group>"; };
-		009F1DB12A98B173009C9FF4 /* SVGAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAImageView.h; sourceTree = "<group>"; };
-		009F1DB22A98B173009C9FF4 /* SVGABezierPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGABezierPath.h; sourceTree = "<group>"; };
-		009F1DB32A98B173009C9FF4 /* SVGAVideoSpriteEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoSpriteEntity.h; sourceTree = "<group>"; };
-		009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVectorLayer.m; sourceTree = "<group>"; };
-		009F1DB52A98B173009C9FF4 /* SVGAVectorLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVectorLayer.h; sourceTree = "<group>"; };
-		009F1DB62A98B173009C9FF4 /* SVGAVideoEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoEntity.h; sourceTree = "<group>"; };
-		009F1DB72A98B173009C9FF4 /* SVGAExporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAExporter.h; sourceTree = "<group>"; };
-		009F1DB82A98B173009C9FF4 /* SVGA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGA.h; sourceTree = "<group>"; };
-		009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAAudioLayer.m; sourceTree = "<group>"; };
-		009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoSpriteFrameEntity.m; sourceTree = "<group>"; };
-		009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGABitmapLayer.m; sourceTree = "<group>"; };
-		009F1DBC2A98B173009C9FF4 /* SVGAParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAParser.m; sourceTree = "<group>"; };
-		009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGABezierPath.m; sourceTree = "<group>"; };
-		009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAPlayer.m; sourceTree = "<group>"; };
-		009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoSpriteEntity.m; sourceTree = "<group>"; };
-		009F1DC02A98B174009C9FF4 /* SVGA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGA.m; sourceTree = "<group>"; };
-		009F1DC12A98B174009C9FF4 /* SVGAParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAParser.h; sourceTree = "<group>"; };
-		009F1DC22A98B174009C9FF4 /* SVGABitmapLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGABitmapLayer.h; sourceTree = "<group>"; };
-		009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAVideoEntity.m; sourceTree = "<group>"; };
-		009F1DC42A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAVideoSpriteFrameEntity.h; sourceTree = "<group>"; };
-		009F1DC52A98B174009C9FF4 /* SVGAPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAPlayer.h; sourceTree = "<group>"; };
-		009F1DC62A98B174009C9FF4 /* SVGAAudioLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAAudioLayer.h; sourceTree = "<group>"; };
-		009F1DC82A98B174009C9FF4 /* Svga.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Svga.pbobjc.h; sourceTree = "<group>"; };
-		009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Svga.pbobjc.m; sourceTree = "<group>"; };
-		009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAAudioEntity.m; sourceTree = "<group>"; };
-		009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAImageView.m; sourceTree = "<group>"; };
-		009F1DCC2A98B174009C9FF4 /* SVGAContentLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAContentLayer.h; sourceTree = "<group>"; };
-		009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGAContentLayer.m; sourceTree = "<group>"; };
 		04E73BDADB9CB52DDAB46D60 /* Pods-AnimationPreviewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimationPreviewer.debug.xcconfig"; path = "Target Support Files/Pods-AnimationPreviewer/Pods-AnimationPreviewer.debug.xcconfig"; sourceTree = "<group>"; };
 		1574B047E304CC5B0B582CD3 /* Pods-LottiePreviewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.release.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.release.xcconfig"; sourceTree = "<group>"; };
 		1A378AE62B0E7E8C00D196F7 /* SVGAExPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGAExPlayer.swift; sourceTree = "<group>"; };
@@ -782,7 +737,6 @@
 			children = (
 				0003D81E2DAA6B7100ACF034 /* 自定义取色板 */,
 				1A64F9AC2A08F21E000F979B /* lottie */,
-				009F1DAE2A98ACCE009C9FF4 /* SVGAPlayer */,
 				001AB91B2A9DC28100C09045 /* SVProgressHUD */,
 			);
 			path = ThirdLib;
@@ -796,51 +750,6 @@
 				009F1DA62A984A21009C9FF4 /* AnimationStore.swift */,
 			);
 			path = Data;
-			sourceTree = "<group>";
-		};
-		009F1DAE2A98ACCE009C9FF4 /* SVGAPlayer */ = {
-			isa = PBXGroup;
-			children = (
-				009F1DC72A98B174009C9FF4 /* pbobjc */,
-				009F1DB82A98B173009C9FF4 /* SVGA.h */,
-				009F1DC02A98B174009C9FF4 /* SVGA.m */,
-				009F1DAF2A98B173009C9FF4 /* SVGAAudioEntity.h */,
-				009F1DCA2A98B174009C9FF4 /* SVGAAudioEntity.m */,
-				009F1DC62A98B174009C9FF4 /* SVGAAudioLayer.h */,
-				009F1DB92A98B173009C9FF4 /* SVGAAudioLayer.m */,
-				009F1DB22A98B173009C9FF4 /* SVGABezierPath.h */,
-				009F1DBD2A98B174009C9FF4 /* SVGABezierPath.m */,
-				009F1DC22A98B174009C9FF4 /* SVGABitmapLayer.h */,
-				009F1DBB2A98B173009C9FF4 /* SVGABitmapLayer.m */,
-				009F1DCC2A98B174009C9FF4 /* SVGAContentLayer.h */,
-				009F1DCD2A98B174009C9FF4 /* SVGAContentLayer.m */,
-				009F1DB72A98B173009C9FF4 /* SVGAExporter.h */,
-				009F1DB02A98B173009C9FF4 /* SVGAExporter.m */,
-				009F1DB12A98B173009C9FF4 /* SVGAImageView.h */,
-				009F1DCB2A98B174009C9FF4 /* SVGAImageView.m */,
-				009F1DC12A98B174009C9FF4 /* SVGAParser.h */,
-				009F1DBC2A98B173009C9FF4 /* SVGAParser.m */,
-				009F1DC52A98B174009C9FF4 /* SVGAPlayer.h */,
-				009F1DBE2A98B174009C9FF4 /* SVGAPlayer.m */,
-				009F1DB52A98B173009C9FF4 /* SVGAVectorLayer.h */,
-				009F1DB42A98B173009C9FF4 /* SVGAVectorLayer.m */,
-				009F1DB62A98B173009C9FF4 /* SVGAVideoEntity.h */,
-				009F1DC32A98B174009C9FF4 /* SVGAVideoEntity.m */,
-				009F1DB32A98B173009C9FF4 /* SVGAVideoSpriteEntity.h */,
-				009F1DBF2A98B174009C9FF4 /* SVGAVideoSpriteEntity.m */,
-				009F1DC42A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.h */,
-				009F1DBA2A98B173009C9FF4 /* SVGAVideoSpriteFrameEntity.m */,
-			);
-			path = SVGAPlayer;
-			sourceTree = "<group>";
-		};
-		009F1DC72A98B174009C9FF4 /* pbobjc */ = {
-			isa = PBXGroup;
-			children = (
-				009F1DC82A98B174009C9FF4 /* Svga.pbobjc.h */,
-				009F1DC92A98B174009C9FF4 /* Svga.pbobjc.m */,
-			);
-			path = pbobjc;
 			sourceTree = "<group>";
 		};
 		08CCA5ECE0B15A647A716A41 /* Pods */ = {
@@ -1825,7 +1734,6 @@
 			files = (
 				1A64FB342A08F221000F979B /* CGFloatExtensions.swift in Sources */,
 				1A64FAC12A08F220000F979B /* CachedImageProvider.swift in Sources */,
-				009F1DDB2A98B174009C9FF4 /* SVGAImageView.m in Sources */,
 				1A64FAE62A08F221000F979B /* RenderNode.swift in Sources */,
 				1A64FB2C2A08F221000F979B /* CALayer+addAnimation.swift in Sources */,
 				1A64FB252A08F221000F979B /* CombinedShapeAnimation.swift in Sources */,
@@ -1858,7 +1766,6 @@
 				0053162D2CF5BCA200EACB72 /* VideoMaker+SVGA.swift in Sources */,
 				1A64FB3D2A08F221000F979B /* CompoundBezierPath.swift in Sources */,
 				1A64FAFA2A08F221000F979B /* TextLayerModel.swift in Sources */,
-				009F1DCF2A98B174009C9FF4 /* SVGAVectorLayer.m in Sources */,
 				1A64FAE12A08F221000F979B /* GroupInterpolator.swift in Sources */,
 				1A64FB112A08F221000F979B /* MaskCompositionLayer.swift in Sources */,
 				1A64FAC82A08F221000F979B /* GradientFillRenderer.swift in Sources */,
@@ -1876,9 +1783,7 @@
 				1A64FB332A08F221000F979B /* AnimatorNodeDebugging.swift in Sources */,
 				001AB9362A9DC2B800C09045 /* SVIndefiniteAnimatedView.m in Sources */,
 				1A95CCAE2A0A05D9006E3102 /* UIColor+.swift in Sources */,
-				009F1DD72A98B174009C9FF4 /* SVGA.m in Sources */,
 				1A64FAF92A08F221000F979B /* ImageLayerModel.swift in Sources */,
-				009F1DD32A98B174009C9FF4 /* SVGAParser.m in Sources */,
 				0003D81F2DAA6B7100ACF034 /* DSDetailColorBoard.m in Sources */,
 				0003D8202DAA6B7100ACF034 /* BitmapCropManipulator.m in Sources */,
 				0003D8212DAA6B7100ACF034 /* BitmapDrawManipulator.m in Sources */,
@@ -1906,7 +1811,6 @@
 				1A95CC422A097E24006E3102 /* Channel.swift in Sources */,
 				1A95CCCF2A0A05D9006E3102 /* Done.swift in Sources */,
 				1A95CCBE2A0A05D9006E3102 /* VideoMaker+Layer.swift in Sources */,
-				009F1DD82A98B174009C9FF4 /* SVGAVideoEntity.m in Sources */,
 				1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */,
 				1A64FAB62A08F220000F979B /* CompositionLayer.swift in Sources */,
 				1A64FAB42A08F220000F979B /* AnimationFontProvider.swift in Sources */,
@@ -1919,7 +1823,6 @@
 				1A64FB312A08F221000F979B /* LayerDebugging.swift in Sources */,
 				1A64FAB72A08F220000F979B /* NullCompositionLayer.swift in Sources */,
 				1A64FB322A08F221000F979B /* TestHelpers.swift in Sources */,
-				009F1DD42A98B174009C9FF4 /* SVGABezierPath.m in Sources */,
 				1A64FADA2A08F221000F979B /* ValueContainer.swift in Sources */,
 				1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */,
 				1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */,
@@ -1938,7 +1841,6 @@
 				1A95CC9A2A0A05D9006E3102 /* ImagePicker.API.swift in Sources */,
 				1A64FAA12A08F220000F979B /* AnimatedButton.swift in Sources */,
 				1A64FAF62A08F221000F979B /* Star.swift in Sources */,
-				009F1DD02A98B174009C9FF4 /* SVGAAudioLayer.m in Sources */,
 				1A64FAFF2A08F221000F979B /* Mask.swift in Sources */,
 				1A64FB372A08F221000F979B /* AnimationKeypathExtension.swift in Sources */,
 				1A95CCC92A0A05D9006E3102 /* File.swift in Sources */,
@@ -1954,8 +1856,6 @@
 				1A64FB2E2A08F221000F979B /* VisibilityAnimation.swift in Sources */,
 				1A64FAD42A08F221000F979B /* StarNode.swift in Sources */,
 				1A64FB002A08F221000F979B /* Marker.swift in Sources */,
-				009F1DCE2A98B174009C9FF4 /* SVGAExporter.m in Sources */,
-				009F1DD62A98B174009C9FF4 /* SVGAVideoSpriteEntity.m in Sources */,
 				1A95CD852A0AA1A6006E3102 /* AnimationPlayView.swift in Sources */,
 				1A64FB352A08F221000F979B /* CGColor+RGB.swift in Sources */,
 				1A64FAC42A08F221000F979B /* LayerTextProvider.swift in Sources */,
@@ -1995,16 +1895,12 @@
 				1A64FB3C2A08F221000F979B /* CGPointExtension.swift in Sources */,
 				001AB9372A9DC2B800C09045 /* SVProgressHUD.m in Sources */,
 				1A64FAE22A08F221000F979B /* ItemsExtension.swift in Sources */,
-				009F1DDA2A98B174009C9FF4 /* SVGAAudioEntity.m in Sources */,
 				1A64FAA02A08F220000F979B /* LottieAnimationViewBase.swift in Sources */,
-				009F1DD92A98B174009C9FF4 /* Svga.pbobjc.m in Sources */,
 				1A64FAB22A08F220000F979B /* GradientValueProvider.swift in Sources */,
-				009F1DD52A98B174009C9FF4 /* SVGAPlayer.m in Sources */,
 				1A64FAA82A08F220000F979B /* Keyframe.swift in Sources */,
 				006398EC2CF71536005750C3 /* VideoMaker+GIF.swift in Sources */,
 				1A64FAF32A08F221000F979B /* GradientStroke.swift in Sources */,
 				1A64FB022A08F221000F979B /* Bundle.swift in Sources */,
-				009F1DDC2A98B174009C9FF4 /* SVGAContentLayer.m in Sources */,
 				1A95CCB42A0A05D9006E3102 /* JP.swift in Sources */,
 				1A64FAEE2A08F221000F979B /* Group.swift in Sources */,
 				1A95CCB72A0A05D9006E3102 /* Hookable.swift in Sources */,
@@ -2020,7 +1916,6 @@
 				1A64FABB2A08F220000F979B /* ImageCompositionLayer.swift in Sources */,
 				1A64FB232A08F221000F979B /* CAAnimation+TimingConfiguration.swift in Sources */,
 				1A64FAED2A08F221000F979B /* Shape.swift in Sources */,
-				009F1DD12A98B174009C9FF4 /* SVGAVideoSpriteFrameEntity.m in Sources */,
 				1A64FAAB2A08F220000F979B /* AnimationTextProvider.swift in Sources */,
 				1A64FAEA2A08F221000F979B /* Ellipse.swift in Sources */,
 				1A95CCC02A0A05D9006E3102 /* VideoMaker.swift in Sources */,
@@ -2094,7 +1989,6 @@
 				1A64FAD02A08F221000F979B /* EllipseNode.swift in Sources */,
 				1A64FAAF2A08F220000F979B /* ColorValueProvider.swift in Sources */,
 				1A64FB1A2A08F221000F979B /* CALayer+setupLayerHierarchy.swift in Sources */,
-				009F1DD22A98B174009C9FF4 /* SVGABitmapLayer.m in Sources */,
 				007F1CE42CF8E05600FC65A5 /* BgImageType.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

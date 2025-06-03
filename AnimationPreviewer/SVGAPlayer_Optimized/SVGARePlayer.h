@@ -1,6 +1,6 @@
 //
 //  SVGARePlayer.h
-//  SVGAPlayer_OptimizedDemo
+//  SVGAPlayer_Optimized
 //
 //  Created by aa on 2023/11/6.
 //

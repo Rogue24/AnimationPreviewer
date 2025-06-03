@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import SVGAPlayer
 
 extension VideoMaker {
     static func makeVideo(withSVGAEntity entity: SVGAVideoEntity,

@@ -5,9 +5,8 @@ target 'AnimationPreviewer' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   
-  pod 'SSZipArchive'
+  pod 'SVGAPlayer', :git => 'https://github.com/Rogue24/SVGAPlayer-iOS.git', :tag => '2.5.8'
   pod 'SnapKit'
-  pod 'Protobuf', '= 3.22.1'
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|

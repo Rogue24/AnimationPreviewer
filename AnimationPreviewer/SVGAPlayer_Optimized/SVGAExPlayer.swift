@@ -1,6 +1,6 @@
 //
 //  SVGAExPlayer.swift
-//  SVGAPlayer_OptimizedDemo
+//  SVGAPlayer_Optimized
 //
 //  Created by aa on 2023/8/23.
 //
@@ -124,7 +124,7 @@ enum SVGAExPlayerError: Swift.Error, LocalizedError {
     case playFailed(_ svgaSource: String, _ error: SVGARePlayerPlayError)
 }
 
-@objcMembers public
+@objcMembers open
 class SVGAExPlayer: SVGARePlayer {
     // MARK: - 自定义加载器/下载器/缓存键生成器
     public typealias LoadSuccess = (_ data: Data) -> Void
@@ -217,7 +217,7 @@ class SVGAExPlayer: SVGARePlayer {
     /// 调试信息（仅限`DEBUG`环境）
     public var debugInfo: String {
 #if DEBUG
-        "[SVGAExPlayer_\(String(format: "%p", self))] svgaSource: \(svgaSource), status: \(status), startFrame: \(startFrame), endFrame: \(endFrame), currentFrame: \(currentFrame), loops: \(loops), loopCount:\(loopCount)"
+        "\(myProfile) svgaSource: \(svgaSource), status: \(status), startFrame: \(startFrame), endFrame: \(endFrame), currentFrame: \(currentFrame), loops: \(loops), loopCount:\(loopCount)"
 #else
         ""
 #endif
@@ -249,6 +249,13 @@ class SVGAExPlayer: SVGARePlayer {
     
     
     // MARK: - 私有属性
+    
+#if DEBUG
+    /// 标识（用于日志打印）
+    private var myProfile: String {
+        "[" + String(describing: Self.self) + "_" + String(format: "%p", self) + "]"
+    }
+#endif
     
     /// 加载回调标识（异步）
     private var _loadTag: UUID?
@@ -330,7 +337,7 @@ class SVGAExPlayer: SVGARePlayer {
     private func _debugLog(_ str: String) {
 #if DEBUG
         guard isDebugLog else { return }
-        print("[SVGAExPlayer_\(String(format: "%p", self))] \(str)")
+        print("\(myProfile) \(str)")
 #endif
     }
 }
@@ -589,6 +596,9 @@ private extension SVGAExPlayer {
         exDelegate?.svgaExPlayer?(self, svga: svgaSource, parseDone: entity)
         // 如果SVGA资源加载过程中停止了动画，则还原停止的场景
         if let scene = _willStopScene {
+            // _willStopScene是在_hideForEndAnimationIfNeeded的回调中存储的，说明此时alpha已经确定好了，
+            // 能来到这里说明还是在相同环境下（因为任何举动都会清空_willStopScene），
+            // 所以无需执行stop(then: scene)丢进_hideForEndAnimationIfNeeded中进行alpha过渡再回调闭包的操作，直接停止。
             _stopSVGA(scene)
         } else {
             _playSVGA(fromFrame: _willFromFrame, isAutoPlay: _isWillAutoPlay, isNew: true)
