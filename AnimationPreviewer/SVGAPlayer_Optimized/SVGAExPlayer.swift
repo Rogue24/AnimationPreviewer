@@ -131,24 +131,33 @@ class SVGAExPlayer: SVGARePlayer {
     public typealias LoadFailure = (_ error: Error) -> Void
     public typealias ForwardLoad = (_ svgaSource: String) -> Void
     
-    /// 自定义加载器
-    public static var loader: Loader? = nil
     public typealias Loader = (_ svgaSource: String,
                                _ success: @escaping LoadSuccess,
                                _ failure: @escaping LoadFailure,
                                _ forwardDownload: @escaping ForwardLoad,
                                _ forwardLoadAsset: @escaping ForwardLoad) -> Void
     
-    /// 自定义下载器
-    public static var downloader: Downloader? = nil
     public typealias Downloader = (_ svgaSource: String,
                                    _ success: @escaping LoadSuccess,
                                    _ failure: @escaping LoadFailure) -> Void
     
-    /// 自定义缓存键生成器
-    public static var cacheKeyGenerator: CacheKeyGenerator? = nil
     public typealias CacheKeyGenerator = (_ svgaSource: String) -> String
     
+    // MARK: 全局通用
+    /// 自定义加载器（通用）
+    public static var loader: Loader? = nil
+    /// 自定义下载器（通用）
+    public static var downloader: Downloader? = nil
+    /// 自定义缓存键生成器（通用）
+    public static var cacheKeyGenerator: CacheKeyGenerator? = nil
+    
+    // MARK: 自身使用
+    /// 自定义加载器（自用）
+    public var loader: Loader? = nil
+    /// 自定义下载器（自用）
+    public var downloader: Downloader? = nil
+    /// 自定义缓存键生成器（自用）
+    public var cacheKeyGenerator: CacheKeyGenerator? = nil
     
     // MARK: - 用户【手动调用】停止/清空的回调
     /// 执行`stop(...)`or`clean(...)` 完成后的闭包
@@ -434,9 +443,9 @@ private extension SVGAExPlayer {
         clearDynamicObjects()
         videoItem = nil
         
-        guard let loader = Self.loader else {
+        guard let loader = self.loader ?? Self.loader else {
             if svgaSource.hasPrefix("http://") || svgaSource.hasPrefix("https://") {
-                _downLoadData(svgaSource, newTag, isAutoPlay)
+                _downloadData(svgaSource, newTag, isAutoPlay)
             } else {
                 _parseFromAsset(svgaSource, newTag, isAutoPlay)
             }
@@ -445,7 +454,7 @@ private extension SVGAExPlayer {
         
         let success = _getLoadSuccess(svgaSource, newTag, isAutoPlay)
         let failure = _getLoadFailure(svgaSource, newTag, isAutoPlay)
-        let forwardDownload: ForwardLoad = { [weak self] in self?._downLoadData($0, newTag, isAutoPlay) }
+        let forwardDownload: ForwardLoad = { [weak self] in self?._downloadData($0, newTag, isAutoPlay) }
         let forwardLoadAsset: ForwardLoad = { [weak self] in self?._parseFromAsset($0, newTag, isAutoPlay) }
         loader(svgaSource, success, failure, forwardDownload, forwardLoadAsset)
     }
@@ -476,10 +485,10 @@ private extension SVGAExPlayer {
 
 // MARK: - 下载/解析 ~> Data/Asset
 private extension SVGAExPlayer {
-    func _downLoadData(_ svgaSource: String,
+    func _downloadData(_ svgaSource: String,
                        _ loadTag: UUID,
                        _ isAutoPlay: Bool) {
-        guard let downloader = Self.downloader else {
+        guard let downloader = self.downloader ?? Self.downloader else {
             _parseFromUrl(svgaSource, loadTag, isAutoPlay)
             return
         }
@@ -530,7 +539,7 @@ private extension SVGAExPlayer {
                         _ svgaSource: String,
                         _ loadTag: UUID,
                         _ isAutoPlay: Bool) {
-        let cacheKey = Self.cacheKeyGenerator?(svgaSource) ?? svgaSource
+        let cacheKey = cacheKeyGenerator?(svgaSource) ?? (Self.cacheKeyGenerator?(svgaSource) ?? svgaSource)
         let parser = SVGAParser()
         parser.enabledMemoryCache = isEnabledMemoryCache
         parser.parse(with: data, cacheKey: cacheKey) { [weak self] entity in
@@ -596,9 +605,6 @@ private extension SVGAExPlayer {
         exDelegate?.svgaExPlayer?(self, svga: svgaSource, parseDone: entity)
         // 如果SVGA资源加载过程中停止了动画，则还原停止的场景
         if let scene = _willStopScene {
-            // _willStopScene是在_hideForEndAnimationIfNeeded的回调中存储的，说明此时alpha已经确定好了，
-            // 能来到这里说明还是在相同环境下（因为任何举动都会清空_willStopScene），
-            // 所以无需执行stop(then: scene)丢进_hideForEndAnimationIfNeeded中进行alpha过渡再回调闭包的操作，直接停止。
             _stopSVGA(scene)
         } else {
             _playSVGA(fromFrame: _willFromFrame, isAutoPlay: _isWillAutoPlay, isNew: true)
@@ -939,11 +945,7 @@ public extension SVGAExPlayer {
             guard let self else { return }
             let svgaSource = self.svgaSource
             let loopCount = self.loopCount
-            // 如果已经记录了加载完成后的停止操作，并且在隐藏的过程中SVGA资源就加载成功，
-            // 也就是说有可能在此之前就执行了停止操作，所以在这里判断一下防止重复操作。
-            if self.status != .stopped {
-                self._stopSVGA(scene)
-            }
+            self._stopSVGA(scene)
             completion?(svgaSource, loopCount)
         }
     }
