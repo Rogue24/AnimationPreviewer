@@ -138,9 +138,18 @@ extension AnimationStore {
                 return
             }
             
-            // 取出文件夹里面的第一个文件
+            // 是文件夹
             let fileURLs = try FileManager.default.contentsOfDirectory(at: unzipDirURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            guard let fileURL = fileURLs.first else {
+            // 取出文件夹里面的第一个文件
+            guard let fileURL = fileURLs.first(where: {
+                // 没有后缀，有可能是文件夹
+                if $0.pathExtension.isEmpty {
+                    return true
+                }
+                // 有后缀，只取规定格式的文件
+                let pathExtension = $0.pathExtension.lowercased()
+                return pathExtension == "json" || pathExtension == "svga" || pathExtension == "gif"
+            }) else {
                 throw Self.Error.unrecognizedFile
             }
             
