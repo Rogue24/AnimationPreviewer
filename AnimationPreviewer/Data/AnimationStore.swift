@@ -246,8 +246,25 @@ private extension AnimationStore {
             }
         }
         
-        if isLottieDir.hadJsonFile, isLottieDir.hadImagesDir {
-            let jsonPath = tmpFileURL.appendingPathComponent("data.json").path
+        if isLottieDir.hadJsonFile {
+            let jsonURL = tmpFileURL.appendingPathComponent("data.json")
+            
+            guard isLottieDir.hadImagesDir else {
+                // 只有json文件（纯矢量动画）
+                let tmpData = try Data(contentsOf: jsonURL)
+                let animation = try LottieAnimation.from(data: tmpData)
+                
+                try cacheFile(jsonURL, for: .lottie)
+                
+                let provider = FilepathImageProvider(filepath: cacheFilePath)
+                let store = AnimationStore.lottie(animation: animation, provider: provider)
+                cache = store
+                
+                return store
+            }
+            
+            // 还有images目录（自带图片的动画）
+            let jsonPath = jsonURL.path
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
                 throw Self.Error.lottieWithoutJsonFile
             }
@@ -267,17 +284,29 @@ private extension AnimationStore {
             guard let isDirectory = resourceValues.isDirectory, isDirectory else {
                 continue
             }
-
-            let jsonPath = fileURL.appendingPathComponent("data.json").path
+            
+            let jsonURL = fileURL.appendingPathComponent("data.json")
+            let jsonPath = jsonURL.path
             guard File.manager.fileExists(jsonPath) else {
                 throw Self.Error.lottieWithoutJsonFile
             }
 
             let imageDirPath = fileURL.appendingPathComponent("images").path
             guard File.manager.fileExists(imageDirPath) else {
-                throw Self.Error.lottieWithoutImagesDir
+                // 只有json文件（纯矢量动画）
+                let tmpData = try Data(contentsOf: jsonURL)
+                let animation = try LottieAnimation.from(data: tmpData)
+                
+                try cacheFile(jsonURL, for: .lottie)
+                
+                let provider = FilepathImageProvider(filepath: cacheFilePath)
+                let store = AnimationStore.lottie(animation: animation, provider: provider)
+                cache = store
+                
+                return store
             }
             
+            // 还有images目录（自带图片的动画）
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
                 throw Self.Error.unzipFailed
             }
