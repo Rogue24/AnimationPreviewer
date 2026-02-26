@@ -7,7 +7,7 @@
 
 import UIKit
 import AVFoundation
-import SVGAPlayer
+import SVGAPlayer_Optimized
 
 extension VideoMaker {
     static func makeVideo(withSVGAEntity entity: SVGAVideoEntity,
@@ -75,9 +75,7 @@ extension VideoMaker {
                 let image = renderer.image { ctx in
                     DispatchQueue.main.sync {
                         svgaView.play(fromFrame: i, isAutoPlay: false)
-                        if let drawLayer = svgaView.getDrawLayer() {
-                            drawLayer.render(in: ctx.cgContext)
-                        }
+                        svgaView.renderCurrentFrame(in: ctx)
                     }
                 }
                 

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SVGAPlayer_Optimized
 
 class AnimationPlayView: UIView {
     enum LoopMode: CaseIterable {

@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import SSZipArchive
+import SVGAPlayer_Optimized
+import ZipArchive
 
 enum AnimationType: Int {
     case lottie = 1

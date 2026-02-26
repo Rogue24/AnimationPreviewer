@@ -47,9 +47,7 @@
 		009F1C6D2A94B1B0009C9FF4 /* AnimationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1C6C2A94B1B0009C9FF4 /* AnimationData.swift */; };
 		009F1DA52A974291009C9FF4 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA42A974291009C9FF4 /* Data+.swift */; };
 		009F1DA72A984A21009C9FF4 /* AnimationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009F1DA62A984A21009C9FF4 /* AnimationStore.swift */; };
-		1A378AEB2B0E7E8D00D196F7 /* SVGAExPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE62B0E7E8C00D196F7 /* SVGAExPlayer.swift */; };
-		1A378AEC2B0E7E8D00D196F7 /* SVGARePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE72B0E7E8C00D196F7 /* SVGARePlayer.m */; };
-		1A378AED2B0E7E8D00D196F7 /* SVGAVideoEntity+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A378AE82B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.m */; };
+		00F96EAE2F504CCE00E6B0F8 /* SVGAPlayer_Optimized in Frameworks */ = {isa = PBXBuildFile; productRef = 00F96EAD2F504CCE00E6B0F8 /* SVGAPlayer_Optimized */; };
 		1A64F9512A085DE7000F979B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9502A085DE7000F979B /* AppDelegate.swift */; };
 		1A64F9532A085DE7000F979B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9522A085DE7000F979B /* SceneDelegate.swift */; };
 		1A64F9552A085DE7000F979B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9542A085DE7000F979B /* ViewController.swift */; };
@@ -362,11 +360,6 @@
 		009F1DA62A984A21009C9FF4 /* AnimationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationStore.swift; sourceTree = "<group>"; };
 		04E73BDADB9CB52DDAB46D60 /* Pods-AnimationPreviewer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnimationPreviewer.debug.xcconfig"; path = "Target Support Files/Pods-AnimationPreviewer/Pods-AnimationPreviewer.debug.xcconfig"; sourceTree = "<group>"; };
 		1574B047E304CC5B0B582CD3 /* Pods-LottiePreviewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottiePreviewer.release.xcconfig"; path = "Target Support Files/Pods-LottiePreviewer/Pods-LottiePreviewer.release.xcconfig"; sourceTree = "<group>"; };
-		1A378AE62B0E7E8C00D196F7 /* SVGAExPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SVGAExPlayer.swift; sourceTree = "<group>"; };
-		1A378AE72B0E7E8C00D196F7 /* SVGARePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVGARePlayer.m; sourceTree = "<group>"; };
-		1A378AE82B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SVGAVideoEntity+Extension.m"; sourceTree = "<group>"; };
-		1A378AE92B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SVGAVideoEntity+Extension.h"; sourceTree = "<group>"; };
-		1A378AEA2B0E7E8C00D196F7 /* SVGARePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGARePlayer.h; sourceTree = "<group>"; };
 		1A64F94D2A085DE7000F979B /* Animation Previewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Animation Previewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A64F9502A085DE7000F979B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A64F9522A085DE7000F979B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -607,6 +600,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00F96EAE2F504CCE00E6B0F8 /* SVGAPlayer_Optimized in Frameworks */,
 				A7F300AD6649580DA732C31C /* Pods_AnimationPreviewer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -763,18 +757,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		1A378AE52B0E7E8C00D196F7 /* SVGAPlayer_Optimized */ = {
-			isa = PBXGroup;
-			children = (
-				1A378AE62B0E7E8C00D196F7 /* SVGAExPlayer.swift */,
-				1A378AEA2B0E7E8C00D196F7 /* SVGARePlayer.h */,
-				1A378AE72B0E7E8C00D196F7 /* SVGARePlayer.m */,
-				1A378AE92B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.h */,
-				1A378AE82B0E7E8C00D196F7 /* SVGAVideoEntity+Extension.m */,
-			);
-			path = SVGAPlayer_Optimized;
-			sourceTree = "<group>";
-		};
 		1A64F9442A085DE7000F979B = {
 			isa = PBXGroup;
 			children = (
@@ -806,7 +788,6 @@
 				1A880DB12A0B6C6300BE7F16 /* ViewController */,
 				1A95CCD82A0A52DF006E3102 /* View */,
 				1A95CC452A0A05D8006E3102 /* Neves */,
-				1A378AE52B0E7E8C00D196F7 /* SVGAPlayer_Optimized */,
 				001AB93A2A9E0C5D00C09045 /* ThirdLib */,
 				1A95CD8B2A0AA346006E3102 /* Supporting Files */,
 			);
@@ -1651,6 +1632,9 @@
 				Base,
 			);
 			mainGroup = 1A64F9442A085DE7000F979B;
+			packageReferences = (
+				00F96EB52F506D7700E6B0F8 /* XCRemoteSwiftPackageReference "SVGAPlayer_Optimized" */,
+			);
 			productRefGroup = 1A64F94E2A085DE7000F979B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1694,9 +1678,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AnimationPreviewer/Pods-AnimationPreviewer-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AnimationPreviewer/Pods-AnimationPreviewer-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1749,13 +1737,11 @@
 				1A64FB102A08F221000F979B /* LayerModel+makeAnimationLayer.swift in Sources */,
 				1A64FAF12A08F221000F979B /* Repeater.swift in Sources */,
 				1A64FB142A08F221000F979B /* ShapeItemLayer.swift in Sources */,
-				1A378AEC2B0E7E8D00D196F7 /* SVGARePlayer.m in Sources */,
 				1A64FAE32A08F221000F979B /* ShapeRenderLayer.swift in Sources */,
 				1A64FABE2A08F220000F979B /* LayerFontProvider.swift in Sources */,
 				1A64FA9F2A08F220000F979B /* UIColorExtension.swift in Sources */,
 				1A64FB0C2A08F221000F979B /* AssetLibrary.swift in Sources */,
 				1A95CCBC2A0A05D9006E3102 /* Function.swift in Sources */,
-				1A378AEB2B0E7E8D00D196F7 /* SVGAExPlayer.swift in Sources */,
 				1A64FACC2A08F221000F979B /* LegacyGradientFillRenderer.swift in Sources */,
 				1A64FAC22A08F220000F979B /* InvertedMatteLayer.swift in Sources */,
 				1A64FB072A08F221000F979B /* TextAnimator.swift in Sources */,
@@ -1971,7 +1957,6 @@
 				1A64FAE52A08F221000F979B /* PathNode.swift in Sources */,
 				1A64FB242A08F221000F979B /* ShapeAnimation.swift in Sources */,
 				1A64F9532A085DE7000F979B /* SceneDelegate.swift in Sources */,
-				1A378AED2B0E7E8D00D196F7 /* SVGAVideoEntity+Extension.m in Sources */,
 				1A64FA982A08F220000F979B /* LottieAnimationHelpers.swift in Sources */,
 				1A64FB2D2A08F221000F979B /* GradientAnimations.swift in Sources */,
 				1A64FAE02A08F221000F979B /* SingleValueProvider.swift in Sources */,
@@ -2159,7 +2144,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2201,7 +2186,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2309,6 +2294,33 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		00F96EAC2F504CCE00E6B0F8 /* XCRemoteSwiftPackageReference "SVGAPlayer_Optimized" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Rogue24/SVGAPlayer_Optimized.git";
+			requirement = {
+				branch = SPM;
+				kind = branch;
+			};
+		};
+		00F96EB52F506D7700E6B0F8 /* XCRemoteSwiftPackageReference "SVGAPlayer_Optimized" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Rogue24/SVGAPlayer_Optimized.git";
+			requirement = {
+				branch = SPM;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		00F96EAD2F504CCE00E6B0F8 /* SVGAPlayer_Optimized */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 00F96EAC2F504CCE00E6B0F8 /* XCRemoteSwiftPackageReference "SVGAPlayer_Optimized" */;
+			productName = SVGAPlayer_Optimized;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A64F9452A085DE7000F979B /* Project object */;
 }

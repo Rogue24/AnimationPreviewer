@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import SVGAPlayer_Optimized
 
 class AnimationImageView: UIView {
     enum GetImageResult {
@@ -211,9 +212,6 @@ extension AnimationImageView {
             return
         }
         
-        let layer: CALayer
-        let size: CGSize
-        
         switch store {
         case let .lottie(animation, provider):
             let animationLayer = MainThreadAnimationLayer(animation: animation,
@@ -221,52 +219,64 @@ extension AnimationImageView {
                                                           textProvider: DefaultTextProvider(),
                                                           fontProvider: DefaultFontProvider(),
                                                           logger: LottieLogger.shared)
-    
+            
             animationLayer.frame = animation.bounds
             animationLayer.renderScale = UIScreen.mainScale
             animationLayer.setNeedsDisplay()
-    
+            
             animationLayer.currentFrame = lottieView.currentFrame
             animationLayer.display()
             
-            layer = animationLayer
-            size = animation.bounds.size
-    
-        case let .svga(entity):
-            guard let drawLayer = svgaView.getDrawLayer() else {
-                completion(.failure(reason: "图片截取失败"))
-                return
-            }
+            let layer = animationLayer
+            let size = animation.bounds.size
+            let scale = UIScreen.main.scale
             
-            layer = drawLayer
-            size = entity.videoSize
-            
-        case .gif:
-            guard let image = gifView.image else {
-                completion(.failure(reason: "图片截取失败"))
-                return
-            }
-            
-            completion(.success(image: image))
-            return
-        }
-        
-        var newImage: UIImage?
-        Asyncs.async {
-            let format = UIGraphicsImageRendererFormat()
-            format.opaque = false // false表示透明，这里需要透明背景
-            format.scale = UIScreen.main.scale
-            let renderer = UIGraphicsImageRenderer(size: size, format: format)
-            newImage = renderer.image { ctx in
-                DispatchQueue.main.sync {
-                    layer.render(in: ctx.cgContext)
+            var newImage: UIImage?
+            Asyncs.async {
+                let format = UIGraphicsImageRendererFormat()
+                format.opaque = false // false表示透明，这里需要透明背景
+                format.scale = scale
+                let renderer = UIGraphicsImageRenderer(size: size, format: format)
+                let pngData = renderer.pngData { ctx in
+                    DispatchQueue.main.sync {
+                        layer.render(in: ctx.cgContext)
+                    }
+                }
+                newImage = UIImage(data: pngData)
+            } mainTask: {
+                if let newImage {
+                    completion(.success(image: newImage))
+                } else {
+                    completion(.failure(reason: "图片截取失败"))
                 }
             }
-        } mainTask: {
-            if let newImage {
-                completion(.success(image: newImage))
-            } else {
+    
+        case .svga:
+            let svgaView = self.svgaView
+            
+            var newImage: UIImage?
+            Asyncs.async {
+                newImage = svgaView.snapshotCurrentFrameWith(asPNG: true)
+            } mainTask: {
+                if let newImage {
+                    completion(.success(image: newImage))
+                } else {
+                    completion(.failure(reason: "图片截取失败"))
+                }
+            }
+            
+        case .gif:
+            guard var newImage = gifView.image else {
                 completion(.failure(reason: "图片截取失败"))
+                return
+            }
+            
+            Asyncs.async {
+                if let pngData = newImage.pngData(), let pngImg = UIImage(data: pngData) {
+                    newImage = pngImg
+                }
+            } mainTask: {
+                completion(.success(image: newImage))
             }
         }
     }
