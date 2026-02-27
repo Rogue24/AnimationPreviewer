@@ -37,10 +37,11 @@ struct Asyncs {
     
     /// 异步延时执行
     @discardableResult
-    public static func asyncDelay(_ seconds: Double, _ task: @escaping BaseTask) -> DispatchWorkItem { _asyncDelay(seconds, task)
+    public static func asyncDelay(_ seconds: Double, _ task: @escaping BaseTask) -> DispatchWorkItem {
+        _asyncDelay(seconds, task)
     }
     
-    /// 异步延时执行+主队列回调（不管任务是否中途被取消，都会【主队列回调】）
+    /// 异步延时执行+主队列回调（不管任务是否中途被取消都会【主队列回调】）
     @discardableResult
     public static func asyncDelay(_ seconds: Double, _ task: @escaping BaseTask, mainTask: @escaping BaseTask) -> DispatchWorkItem {
         _asyncDelay(seconds, task, mainTask)
