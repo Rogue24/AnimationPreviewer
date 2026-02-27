@@ -212,6 +212,9 @@ extension AnimationImageView {
             return
         }
         
+        var newImage: UIImage? = nil
+        let task: Asyncs.BaseTask
+        
         switch store {
         case let .lottie(animation, provider):
             let animationLayer = MainThreadAnimationLayer(animation: animation,
@@ -231,8 +234,7 @@ extension AnimationImageView {
             let size = animation.bounds.size
             let scale = UIScreen.main.scale
             
-            var newImage: UIImage?
-            Asyncs.async {
+            task = {
                 let format = UIGraphicsImageRendererFormat()
                 format.opaque = false // false表示透明，这里需要透明背景
                 format.scale = scale
@@ -243,40 +245,30 @@ extension AnimationImageView {
                     }
                 }
                 newImage = UIImage(data: pngData)
-            } mainTask: {
-                if let newImage {
-                    completion(.success(image: newImage))
-                } else {
-                    completion(.failure(reason: "图片截取失败"))
-                }
             }
-    
+            
         case .svga:
             let svgaView = self.svgaView
-            
-            var newImage: UIImage?
-            Asyncs.async {
+            task = {
                 newImage = svgaView.snapshotCurrentFrameWith(asPNG: true)
-            } mainTask: {
-                if let newImage {
-                    completion(.success(image: newImage))
-                } else {
-                    completion(.failure(reason: "图片截取失败"))
-                }
             }
             
         case .gif:
-            guard var newImage = gifView.image else {
-                completion(.failure(reason: "图片截取失败"))
-                return
+            let gifView = self.gifView
+            task = {
+                guard let image = gifView.image,
+                      let pngData = image.pngData(),
+                      let pngImg = UIImage(data: pngData)
+                else { return }
+                newImage = pngImg
             }
-            
-            Asyncs.async {
-                if let pngData = newImage.pngData(), let pngImg = UIImage(data: pngData) {
-                    newImage = pngImg
-                }
-            } mainTask: {
+        }
+        
+        Asyncs.async(task) {
+            if let newImage {
                 completion(.success(image: newImage))
+            } else {
+                completion(.failure(reason: "图片截取失败"))
             }
         }
     }
