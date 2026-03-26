@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Lottie
 
 class LottieImagePicker {
     
@@ -46,6 +47,7 @@ class LottieImagePicker {
                                                  imageProvider: provider,
                                                  textProvider: DefaultTextProvider(),
                                                  fontProvider: DefaultFontProvider(),
+                                                 maskAnimationToBounds: true,
                                                  logger: LottieLogger.shared)
         animLayer.backgroundColor = bgColor.map { $0.cgColor } ?? UIColor.clear.cgColor
         animLayer.frame = .init(origin: .zero, size: animSize ?? animation.bounds.size)
@@ -201,7 +203,7 @@ extension LottieImagePicker {
             return nil
         }
         
-        guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+        guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
             JPrint("animation错误！")
             return nil
         }

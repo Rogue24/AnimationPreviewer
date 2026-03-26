@@ -5,6 +5,8 @@
 //  Created by aa on 2021/10/22.
 //
 
+import Lottie
+
 class DecodeImageProvider: AnimationImageProvider {
     let images: [String: CGImage]
     let replacement: [String: CGImage]?

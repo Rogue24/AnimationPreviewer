@@ -8,6 +8,7 @@
 import Foundation
 import SVGAPlayer_Optimized
 import ZipArchive
+import Lottie
 
 enum AnimationType: Int {
     case lottie = 1
@@ -155,8 +156,7 @@ extension AnimationStore {
             }
             
             let store: AnimationStore
-            let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
-            if let isDir = resourceValues.isDirectory, isDir {
+            if fileURL.hasDirectoryPath {
                 // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
                 store = try loadLottieData(fileURL, isDir: true)
             } else {
@@ -223,8 +223,7 @@ private extension AnimationStore {
         if let isDir {
             kIsDir = isDir
         } else {
-            let resourceValues = try tmpFileURL.resourceValues(forKeys: [.isDirectoryKey])
-            kIsDir = resourceValues.isDirectory ?? false
+            kIsDir = tmpFileURL.hasDirectoryPath
         }
         guard let store = try _loadLottieData(tmpFileURL, isDir: kIsDir, isNested: false) else {
             throw Self.Error.unrecognizedFile
@@ -294,7 +293,7 @@ private extension AnimationStore {
             
             // 还有images目录（自带图片的动画）
             let jsonPath = jsonURL.path
-            guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+            guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
                 throw Self.Error.lottieWithoutJsonFile
             }
             
@@ -309,11 +308,8 @@ private extension AnimationStore {
         
         if !isNested {
             // 或者是套了一层
-            for fileURL in fileURLs {
-                let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
-                guard let isDirectory = resourceValues.isDirectory, isDirectory,
-                      let store = try _loadLottieData(fileURL, isDir: true, isNested: true)
-                else { continue }
+            for fileURL in fileURLs where fileURL.hasDirectoryPath {
+                guard let store = try _loadLottieData(fileURL, isDir: true, isNested: true) else { continue }
                 return store
             }
         }
@@ -363,7 +359,7 @@ private extension AnimationStore {
             
             // 文件夹是lottie_dir（自带图片的动画），非文件夹则是lottie_json（纯矢量动画）
             let jsonPath = isDirectory.boolValue ? "\(filePath)/data.json" : filePath
-            guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+            guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
                 clearCacheFile()
                 return
             }

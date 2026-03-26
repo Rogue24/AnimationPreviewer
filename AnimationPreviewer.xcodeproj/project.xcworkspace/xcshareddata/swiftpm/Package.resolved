@@ -1,6 +1,15 @@
 {
-  "originHash" : "ffd0bb1ce691484524e44e1bec22be8066d24795c7441a4ab4b0d13ee23024cf",
+  "originHash" : "ec55f0fc60bff4e0aa6dac3bf13810eb298b86d9f168a7aa6600408b8cc457d4",
   "pins" : [
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Rogue24/lottie-ios.git",
+      "state" : {
+        "branch" : "JP_4.6.1",
+        "revision" : "06b46283c4de661c84bdba325d2be7b39bff7447"
+      }
+    },
     {
       "identity" : "snapkit",
       "kind" : "remoteSourceControl",

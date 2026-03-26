@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Lottie
 
 class LottieImageStore {
     
@@ -88,7 +89,7 @@ private extension LottieImageStore {
             JPrint("不存在JSON文件！")
             return nil
         }
-        guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
+        guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
             JPrint("animation错误！")
             return nil
         }
@@ -110,6 +111,7 @@ private extension LottieImageStore {
                                                  imageProvider: imageProvider,
                                                  textProvider: DefaultTextProvider(),
                                                  fontProvider: DefaultFontProvider(),
+                                                 maskAnimationToBounds: true,
                                                  logger: LottieLogger.shared)
         animLayer.renderScale = 1
         animLayer.frame = CGRect(origin: .zero, size: size ?? animation.bounds.size)

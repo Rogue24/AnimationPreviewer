@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import SVGAPlayer_Optimized
+import Lottie
 
 class AnimationPlayView: UIView {
     enum LoopMode: CaseIterable {

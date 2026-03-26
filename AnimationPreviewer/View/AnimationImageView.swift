@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import SVGAPlayer_Optimized
+import Lottie
 
 class AnimationImageView: UIView {
     enum GetImageResult {
@@ -221,6 +222,7 @@ extension AnimationImageView {
                                                           imageProvider: provider,
                                                           textProvider: DefaultTextProvider(),
                                                           fontProvider: DefaultFontProvider(),
+                                                          maskAnimationToBounds: true,
                                                           logger: LottieLogger.shared)
             
             animationLayer.frame = animation.bounds
