@@ -66,7 +66,7 @@ enum AnimationStore {
             case .unrecognizedFile:
                 return "无法识别的文件"
             case .lottieWithoutJsonFile:
-                return "lottie文件错误：没有data.json文件"
+                return "lottie文件错误：没有动画json文件"
             case .lottieWithoutImagesDir:
                 return "lottie文件错误：没有images目录"
             case .decodeGIFFailed:
@@ -158,7 +158,7 @@ extension AnimationStore {
             let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
             if let isDir = resourceValues.isDirectory, isDir {
                 // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
-                store = try loadLottieData(fileURL)
+                store = try loadLottieData(fileURL, isDir: true)
             } else {
                 // 不是文件夹，看看是不是svga
                 // 内部会先看看是不是lottie_json，再看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie_dir
@@ -218,9 +218,23 @@ private extension AnimationStore {
         return store
     }
     
-    static func loadLottieData(_ tmpFileURL: URL, isDir: Bool = true) throws -> AnimationStore {
-        // 非文件夹就是lottie_json（纯矢量动画）
-        if !isDir {
+    static func loadLottieData(_ tmpFileURL: URL, isDir: Bool? = nil) throws -> AnimationStore {
+        let kIsDir: Bool
+        if let isDir {
+            kIsDir = isDir
+        } else {
+            let resourceValues = try tmpFileURL.resourceValues(forKeys: [.isDirectoryKey])
+            kIsDir = resourceValues.isDirectory ?? false
+        }
+        guard let store = try _loadLottieData(tmpFileURL, isDir: kIsDir, isNested: false) else {
+            throw Self.Error.unrecognizedFile
+        }
+        return store
+    }
+    
+    static func _loadLottieData(_ tmpFileURL: URL, isDir: Bool, isNested: Bool) throws -> AnimationStore? {
+        guard isDir else {
+            // 非文件夹就是lottie_json（纯矢量动画）
             let tmpData = try Data(contentsOf: tmpFileURL)
             let animation = try LottieAnimation.from(data: tmpData)
             
@@ -233,31 +247,36 @@ private extension AnimationStore {
             return store
         }
         
+        // 是文件夹，遍历找出lottie文件
         let fileURLs = try FileManager.default.contentsOfDirectory(at: tmpFileURL,
                                                                    includingPropertiesForKeys: nil,
                                                                    options: .skipsHiddenFiles)
-        // 如果就是lottie文件
-        var isLottieDir: (hadJsonFile: Bool, hadImagesDir: Bool) = (false, false)
+        
+        var isLottieDir: (jsonFileName: String?, hadImagesDir: Bool) = (nil, false)
         for fileURL in fileURLs {
-            // 居然有gif文件
-            if fileURL.pathExtension.lowercased() == "gif" {
-                return try loadGIFData(fileURL)
+            let pathExtension = fileURL.pathExtension.lowercased()
+            
+            if !isNested {
+                // 居然有gif文件
+                if pathExtension == "gif" {
+                    return try loadGIFData(fileURL)
+                }
+                
+                // 居然有svga文件
+                if pathExtension == "svga" {
+                    return try loadSVGAData(fileURL)
+                }
             }
             
-            // 居然有svga文件
-            if fileURL.pathExtension.lowercased() == "svga" {
-                return try loadSVGAData(fileURL)
-            }
-            
-            if fileURL.lastPathComponent.lowercased() == "data.json" {
-                isLottieDir.hadJsonFile = true
+            if pathExtension == "json" {
+                isLottieDir.jsonFileName = fileURL.lastPathComponent
             } else if fileURL.lastPathComponent.lowercased() == "images" {
                 isLottieDir.hadImagesDir = true
             }
         }
         
-        if isLottieDir.hadJsonFile {
-            let jsonURL = tmpFileURL.appendingPathComponent("data.json")
+        if let jsonFileName = isLottieDir.jsonFileName {
+            let jsonURL = tmpFileURL.appendingPathComponent(jsonFileName)
             
             guard isLottieDir.hadImagesDir else {
                 // 只有json文件（纯矢量动画）
@@ -288,49 +307,19 @@ private extension AnimationStore {
             return store
         }
         
-        // 或者是套了一层
-        for fileURL in fileURLs {
-            let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
-            guard let isDirectory = resourceValues.isDirectory, isDirectory else {
-                continue
-            }
-            
-            let jsonURL = fileURL.appendingPathComponent("data.json")
-            let jsonPath = jsonURL.path
-            guard File.manager.fileExists(jsonPath) else {
-                throw Self.Error.lottieWithoutJsonFile
-            }
-
-            let imageDirPath = fileURL.appendingPathComponent("images").path
-            guard File.manager.fileExists(imageDirPath) else {
-                // 只有json文件（纯矢量动画）
-                let tmpData = try Data(contentsOf: jsonURL)
-                let animation = try LottieAnimation.from(data: tmpData)
-                
-                try cacheFile(jsonURL, for: .lottie)
-                
-                let provider = FilepathImageProvider(filepath: cacheFilePath)
-                let store = AnimationStore.lottie(animation: animation, provider: provider)
-                cache = store
-                
+        if !isNested {
+            // 或者是套了一层
+            for fileURL in fileURLs {
+                let resourceValues = try fileURL.resourceValues(forKeys: [.isDirectoryKey])
+                guard let isDirectory = resourceValues.isDirectory, isDirectory,
+                      let store = try _loadLottieData(fileURL, isDir: true, isNested: true)
+                else { continue }
                 return store
             }
-            
-            // 还有images目录（自带图片的动画）
-            guard let animation = LottieAnimation.filepath(jsonPath, animationCache: LRUAnimationCache.sharedCache) else {
-                throw Self.Error.unzipFailed
-            }
-            
-            try cacheFile(fileURL, for: .lottie)
-            
-            let provider = FilepathImageProvider(filepath: cacheFilePath)
-            let store = AnimationStore.lottie(animation: animation, provider: provider)
-            cache = store
-            
-            return store
         }
-
-        throw Self.Error.unrecognizedFile
+        
+        // 已经嵌入一层去找了，还是找不着，没招了
+        return nil
     }
 }
 
