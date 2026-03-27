@@ -1,0 +1,14 @@
+{
+    "version": "1",
+    "author" : "zhoujianping",
+    "generator": "build_dotlottie",
+    "animations": [
+        {
+            "id": "animation",
+            "direction": 1,
+            "speed": 1,
+            "mode": "normal",
+            "loop": true
+        }
+    ]
+}
