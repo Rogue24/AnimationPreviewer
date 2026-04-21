@@ -105,6 +105,7 @@ extension UIColor {
     func toImage(size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
         let rendererFormat = UIGraphicsImageRendererFormat()
         rendererFormat.scale = UIScreen.main.scale
+        rendererFormat.opaque = false // 是否“完全不透明” --- false：可能有透明
         
         // 使用 renderer 生成图像
         let renderer = UIGraphicsImageRenderer(size: size, format: rendererFormat)
