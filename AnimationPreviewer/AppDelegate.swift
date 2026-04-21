@@ -34,8 +34,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = .dark
         }
         
-        JPProgressHUD.setMaxSupportedWindowLevel(.alert)
-        JPProgressHUD.setMinimumDismissTimeInterval(1.3)
+        JPHUD.setMaxSupportedWindowLevel(.alert)
+        JPHUD.setMinimumDismissTimeInterval(1.3)
         
         return true
     }

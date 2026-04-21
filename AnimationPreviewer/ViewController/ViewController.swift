@@ -119,7 +119,7 @@ class ViewController: UIViewController {
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        JPProgressHUD.positionHUD()
+        JPHUD.positionHUD()
     }
 }
 
@@ -352,17 +352,17 @@ private extension ViewController {
     
     // MARK: - 制作视频
     @objc func videoAction(_ sender: UIButton) {
-        JPProgressHUD.show(withStatus: "视频制作中...")
+        JPHUD.show(withStatus: "视频制作中...")
         playView.makeVideo { progress in
-            JPProgressHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))
+            JPHUD.showProgress(progress, status: String(format: "视频制作中...%.0lf%%", progress * 100))
         } otherHandler: { text in
-            JPProgressHUD.show(withStatus: text)
+            JPHUD.show(withStatus: text)
         } completion: { result in
             switch result {
             case let .success(videoPath):
                 Self.saveVideo(videoPath)
             case let .failure(reason):
-                JPProgressHUD.showError(withStatus: reason)
+                JPHUD.showError(withStatus: reason)
             }
         }
     }
@@ -383,13 +383,13 @@ private extension ViewController {
     // MARK: - 截取当前帧生成图片
     @objc func imageAction(_ sender: UIButton) {
         guard imageView.isEnable else { return }
-        JPProgressHUD.show()
+        JPHUD.show()
         imageView.getCurrentImage() { result in
             switch result {
             case let .success(image):
                 Self.saveImage(image)
             case let .failure(reason):
-                JPProgressHUD.showError(withStatus: reason)
+                JPHUD.showError(withStatus: reason)
             }
         }
     }
@@ -406,9 +406,9 @@ private extension ViewController {
     static func saveVideo(_ videoPath: String) {
         MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
             if isSuccess {
-                JPProgressHUD.showSuccess(withStatus: "视频制作成功")
+                JPHUD.showSuccess(withStatus: "视频制作成功")
             } else {
-                JPProgressHUD.showError(withStatus: "视频保存失败")
+                JPHUD.showError(withStatus: "视频保存失败")
             }
             File.manager.deleteFile(videoPath)
         }
@@ -416,15 +416,15 @@ private extension ViewController {
     
     static func saveImage(_ image: UIImage) {
         guard let data = image.pngData() else {
-            JPProgressHUD.showError(withStatus: "图片生成失败")
+            JPHUD.showError(withStatus: "图片生成失败")
             return
         }
         
         MacChannel.shared().saveImage(data) { isSuccess in
             if isSuccess {
-                JPProgressHUD.dismiss()
+                JPHUD.dismiss()
             } else {
-                JPProgressHUD.showError(withStatus: "图片保存失败")
+                JPHUD.showError(withStatus: "图片保存失败")
             }
         }
     }
@@ -433,12 +433,12 @@ private extension ViewController {
 // MARK: - 替换&移除·动画（Lottie/SVGA/GIF）
 extension ViewController {
     func replaceAnimation(with data: Data) {
-        JPProgressHUD.show(withStatus: "Loding...")
+        JPHUD.show(withStatus: "Loding...")
         AnimationStore.loadData(data) { [weak self] store in
-            JPProgressHUD.dismiss()
+            JPHUD.dismiss()
             self?.replaceAnimation(store)
         } failure: { error in
-            JPProgressHUD.showError(withStatus: error.localizedDescription)
+            JPHUD.showError(withStatus: error.localizedDescription)
         }
     }
     

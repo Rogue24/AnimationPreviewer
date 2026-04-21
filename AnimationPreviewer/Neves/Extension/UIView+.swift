@@ -9,7 +9,6 @@
 import UIKit
 
 extension UIView {
-    
     var x: CGFloat {
         set { frame.origin.x = newValue }
         get { frame.origin.x }
@@ -118,4 +117,12 @@ extension UIView: JPCompatible {}
 extension JP where Base: UIView {
     var topVC: UIViewController? { base.window?.jp.topVC }
     var topNavCtr: UINavigationController? { topVC?.navigationController }
+    
+    func addFade(duration: TimeInterval = 0.12) {
+        guard duration > 0 else { return }
+        let transition = CATransition()
+        transition.type = .fade
+        transition.duration = duration
+        base.layer.add(transition, forKey: "jp_fade")
+    }
 }

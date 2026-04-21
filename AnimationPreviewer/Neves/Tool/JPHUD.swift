@@ -1,18 +1,18 @@
 //
-//  JPProgressHUD.swift
-//  AnimationPreviewer
+//  JPHUD.swift
+//  Neves
 //
 //  Created by aa on 2023/8/29.
 //
 
 import UIKit
 
-enum JPProgressHUD {
+enum JPHUD {
     static var maskType: SVProgressHUDMaskType = .clear
 }
 
 // MARK: - 初始化配置
-extension JPProgressHUD {
+extension JPHUD {
     static func setLightStyle() {
         SVProgressHUD.setDefaultStyle(.light)
     }
@@ -55,7 +55,7 @@ extension JPProgressHUD {
 }
 
 // MARK: - 使用方法
-extension JPProgressHUD {
+extension JPHUD {
     static var isVisible: Bool {
         SVProgressHUD.isVisible()
     }

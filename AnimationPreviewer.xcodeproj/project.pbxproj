@@ -32,7 +32,7 @@
 		0003D8362DAA6B7100ACF034 /* RSColorFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 0003D80E2DAA6B7100ACF034 /* RSColorFunctions.m */; };
 		0003D8392DAA6FE300ACF034 /* DSSliderBoard.m in Sources */ = {isa = PBXBuildFile; fileRef = 0003D8382DAA6FE300ACF034 /* DSSliderBoard.m */; };
 		0003D83E2DAAAF1200ACF034 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0003D83D2DAAAF1200ACF034 /* UIImage+.swift */; };
-		001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */; };
+		001AB9392A9DC2F500C09045 /* JPHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB9382A9DC2F500C09045 /* JPHUD.swift */; };
 		001AB93C2A9EDEFF00C09045 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */; };
 		001AB93D2A9F1C9800C09045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
 		0045DC032DA626CD00346866 /* URL+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0045DC022DA626CD00346866 /* URL+.swift */; };
@@ -67,7 +67,7 @@
 		1A95CC972A0A05D9006E3102 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4B2A0A05D8006E3102 /* Buttons.swift */; };
 		1A95CC982A0A05D9006E3102 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */; };
 		1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */; };
-		1A95CC9A2A0A05D9006E3102 /* ImagePicker.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4F2A0A05D8006E3102 /* ImagePicker.API.swift */; };
+		1A95CC9A2A0A05D9006E3102 /* ImagePicker+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */; };
 		1A95CCA62A0A05D9006E3102 /* Literal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC5F2A0A05D8006E3102 /* Literal+.swift */; };
 		1A95CCA72A0A05D9006E3102 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC602A0A05D8006E3102 /* UIView+.swift */; };
 		1A95CCA92A0A05D9006E3102 /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC622A0A05D8006E3102 /* Bundle+.swift */; };
@@ -171,7 +171,7 @@
 		0003D8372DAA6FE300ACF034 /* DSSliderBoard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DSSliderBoard.h; sourceTree = "<group>"; };
 		0003D8382DAA6FE300ACF034 /* DSSliderBoard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DSSliderBoard.m; sourceTree = "<group>"; };
 		0003D83D2DAAAF1200ACF034 /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
-		001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPProgressHUD.swift; sourceTree = "<group>"; };
+		001AB9382A9DC2F500C09045 /* JPHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JPHUD.swift; sourceTree = "<group>"; };
 		001AB93B2A9EDEFF00C09045 /* UserDefaults+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+.swift"; sourceTree = "<group>"; };
 		0045DC022DA626CD00346866 /* URL+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+.swift"; sourceTree = "<group>"; };
 		0053162C2CF5BCA200EACB72 /* VideoMaker+SVGA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoMaker+SVGA.swift"; sourceTree = "<group>"; };
@@ -211,7 +211,7 @@
 		1A95CC4B2A0A05D8006E3102 /* Buttons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
 		1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
-		1A95CC4F2A0A05D8006E3102 /* ImagePicker.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.API.swift; sourceTree = "<group>"; };
+		1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImagePicker+.swift"; sourceTree = "<group>"; };
 		1A95CC5F2A0A05D8006E3102 /* Literal+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Literal+.swift"; sourceTree = "<group>"; };
 		1A95CC602A0A05D8006E3102 /* UIView+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		1A95CC622A0A05D8006E3102 /* Bundle+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
@@ -492,7 +492,7 @@
 			children = (
 				1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */,
 				1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */,
-				1A95CC4F2A0A05D8006E3102 /* ImagePicker.API.swift */,
+				1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */,
 			);
 			path = ImagePicker;
 			sourceTree = "<group>";
@@ -541,7 +541,7 @@
 				1A95CC882A0A05D8006E3102 /* File.swift */,
 				1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */,
 				1A95CC792A0A05D8006E3102 /* UserDefault.swift */,
-				001AB9382A9DC2F500C09045 /* JPProgressHUD.swift */,
+				001AB9382A9DC2F500C09045 /* JPHUD.swift */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
@@ -754,13 +754,13 @@
 				1A95CCCF2A0A05D9006E3102 /* Done.swift in Sources */,
 				1A95CCBE2A0A05D9006E3102 /* VideoMaker+Layer.swift in Sources */,
 				1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */,
-				001AB9392A9DC2F500C09045 /* JPProgressHUD.swift in Sources */,
+				001AB9392A9DC2F500C09045 /* JPHUD.swift in Sources */,
 				0045DC032DA626CD00346866 /* URL+.swift in Sources */,
 				1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */,
 				1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */,
 				1A95CCCC2A0A05D9006E3102 /* VideoMaker+ImageTest.swift in Sources */,
 				1A95CC952A0A05D9006E3102 /* Gradientable.swift in Sources */,
-				1A95CC9A2A0A05D9006E3102 /* ImagePicker.API.swift in Sources */,
+				1A95CC9A2A0A05D9006E3102 /* ImagePicker+.swift in Sources */,
 				1A95CCC92A0A05D9006E3102 /* File.swift in Sources */,
 				1A95CCBD2A0A05D9006E3102 /* UserDefault.swift in Sources */,
 				1A95CCB62A0A05D9006E3102 /* Bindable.swift in Sources */,

@@ -25,4 +25,9 @@ extension JP where Base == URL {
         
         return components.percentEncodedPath
     }
+    
+    /// 该路径是否为文件夹（不存在也会返回 false）
+    var isDirectory: Bool {
+        (try? base.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+    }
 }
