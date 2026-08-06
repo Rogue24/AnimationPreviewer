@@ -246,10 +246,13 @@ private extension AnimationStore {
     }
     
     static func loadDotLottieData(_ tmpFileURL: URL) throws -> AnimationStore {
-        let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: tmpFileURL.path)
+        let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: tmpFileURL.path, dotLottieCache: nil)
         switch result {
         case let .success(file):
-            return AnimationStore.dotLottie(file: file)
+            if file.animations.first != nil {
+                return AnimationStore.dotLottie(file: file)
+            }
+            throw Self.Error.decodeLottieFailed
         case let .failure(error):
             print("DotLottie 解析错误：\(error.localizedDescription)")
             throw Self.Error.decodeLottieFailed

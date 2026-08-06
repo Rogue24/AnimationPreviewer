@@ -131,6 +131,8 @@ extension AnimationImageView {
         }
         
         switch store {
+        case let .dotLottie(file):
+            replaceDotLottie(file)
         case let .lottie(animation, provider):
             replaceLottie(animation, provider)
         case let .svga(entity):
@@ -142,6 +144,16 @@ extension AnimationImageView {
 }
 
 private extension AnimationImageView {
+    func replaceDotLottie(_ file: DotLottieFile) {
+        hiddenSvgaView()
+        hiddenGifView()
+        
+        lottieView.loadAnimation(from: file)
+        lottieView.isHidden = false
+        
+        updateLayout()
+    }
+    
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
         hiddenSvgaView()
         hiddenGifView()
@@ -207,7 +219,7 @@ private extension AnimationImageView {
 
 // MARK: - 截取当前帧为图片
 extension AnimationImageView {
-    func getCurrentImage(completion: @escaping (_ result: GetImageResult) -> ()) {
+    func getCurrentImage(completion: @escaping (_ result: GetImageResult) -> Void) {
         guard let store else {
             completion(.failure(reason: "没有对象"))
             return
@@ -217,24 +229,56 @@ extension AnimationImageView {
         let task: Asyncs.BaseTask
         
         switch store {
-        case let .lottie(animation, provider):
-            let animationLayer = MainThreadAnimationLayer(animation: animation,
-                                                          imageProvider: provider,
-                                                          textProvider: DefaultTextProvider(),
-                                                          fontProvider: DefaultFontProvider(),
-                                                          maskAnimationToBounds: true,
-                                                          logger: LottieLogger.shared)
+        case let .dotLottie(file):
+            let dotLottieLayer = LottieAnimationLayer(
+                dotLottie: file,
+                configuration: LottieConfiguration(renderingEngine: .mainThread)
+            )
             
-            animationLayer.frame = animation.bounds
-            animationLayer.renderScale = UIScreen.mainScale
-            animationLayer.setNeedsDisplay()
-            
-            animationLayer.currentFrame = lottieView.currentFrame
-            animationLayer.display()
+            guard let animation = file.animations.first?.animation,
+                  let animationLayer = dotLottieLayer.animationLayer as? MainThreadAnimationLayer
+            else {
+                completion(.failure(reason: "图片截取失败"))
+                return
+            }
             
             let layer = animationLayer
             let size = animation.bounds.size
-            let scale = UIScreen.main.scale
+            let scale = UIScreen.mainScale
+            
+            dotLottieLayer.screenScale = scale
+            dotLottieLayer.currentFrame = lottieView.currentFrame
+            
+            task = {
+                let format = UIGraphicsImageRendererFormat()
+                format.opaque = false // false表示透明，这里需要透明背景
+                format.scale = scale
+                let renderer = UIGraphicsImageRenderer(size: size, format: format)
+                let pngData = renderer.pngData { ctx in
+                    DispatchQueue.main.sync {
+                        layer.render(in: ctx.cgContext)
+                    }
+                }
+                newImage = UIImage(data: pngData)
+            }
+            
+        case let .lottie(animation, provider):
+            let animationLayer = MainThreadAnimationLayer(
+                animation: animation,
+                imageProvider: provider,
+                textProvider: DefaultTextProvider(),
+                fontProvider: DefaultFontProvider(),
+                maskAnimationToBounds: true,
+                logger: LottieLogger.shared
+            )
+            
+            let layer = animationLayer
+            let size = animation.bounds.size
+            let scale = UIScreen.mainScale
+            
+            animationLayer.renderScale = scale
+            animationLayer.currentFrame = lottieView.currentFrame
+            animationLayer.display()
             
             task = {
                 let format = UIGraphicsImageRendererFormat()

@@ -432,9 +432,9 @@ private extension ViewController {
 
 // MARK: - 替换&移除·动画（Lottie/SVGA/GIF）
 extension ViewController {
-    func replaceAnimation(with data: Data) {
+    func replaceAnimation(with data: Data, fileExtension ext: String?) {
         JPHUD.show(withStatus: "Loding...")
-        AnimationStore.loadData(data) { [weak self] store in
+        AnimationStore.loadData(data, fileExtension: ext) { [weak self] store in
             JPHUD.dismiss()
             self?.replaceAnimation(store)
         } failure: { error in
@@ -461,6 +461,11 @@ extension ViewController {
         
         playBtn.isSelected = true
         switch store {
+        case let .dotLottie(file):
+            let animation = file.animations.first?.animation
+            volumeBtn.isHidden = true
+            slider.minimumValue = Float(animation?.startFrame ?? 0)
+            slider.maximumValue = Float(animation?.endFrame ?? 0)
         case let .lottie(animation, _):
             volumeBtn.isHidden = true
             slider.minimumValue = Float(animation.startFrame)

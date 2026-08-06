@@ -264,6 +264,8 @@ extension AnimationPlayView {
         }
         
         switch store {
+        case let .dotLottie(file):
+            replaceDotLottie(file)
         case let .lottie(animation, provider):
             replaceLottie(animation, provider)
         case let .svga(entity):
@@ -277,6 +279,17 @@ extension AnimationPlayView {
 }
 
 private extension AnimationPlayView {
+    func replaceDotLottie(_ file: DotLottieFile) {
+        placeholderView.isHidden = true
+        hiddenSvgaView()
+        hiddenGifView()
+        
+        lottieView.loadAnimation(from: file)
+        lottieView.isHidden = false
+        
+        updateLayout()
+    }
+    
     func replaceLottie(_ animation: LottieAnimation, _ provider: FilepathImageProvider) {
         placeholderView.isHidden = true
         hiddenSvgaView()
@@ -511,21 +524,29 @@ extension AnimationPlayView {
         }
         
         switch store {
+        case let .dotLottie(file):
+            completion(.failure(reason: "xxxx"))
+            
         case let .lottie(animation, provider):
             if animation.duration < 1 {
                 completion(.failure(reason: "动画时长过短，无法生成视频"))
                 return
             }
             
-            let picker = LottieImagePicker(animation: animation,
-                                           provider: provider,
-                                           bgColor: UIColor.black,
-                                           animSize: [720, 720],
-                                           renderScale: UIScreen.mainScale)
-            VideoMaker.makeVideo(framerate: 20,
-                                 frameInterval: 20,
-                                 duration: animation.duration,
-                                 size: [720, 720]) { currentFrame, currentTime, _ in
+            let picker = LottieImagePicker(
+                animation: animation,
+                provider: provider,
+                bgColor: UIColor.black,
+                animSize: [720, 720],
+                renderScale: UIScreen.mainScale
+            )
+            
+            VideoMaker.makeVideo(
+                framerate: 20,
+                frameInterval: 20,
+                duration: animation.duration,
+                size: [720, 720]
+            ) { _, currentTime, _ in
                 picker.update(currentTime)
                 return [picker.animLayer]
             } progress: { currentFrame, totalFrame in
