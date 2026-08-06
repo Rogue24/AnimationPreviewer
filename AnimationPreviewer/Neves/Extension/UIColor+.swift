@@ -10,7 +10,7 @@ import UIKit
 
 extension UIColor {
     /// 透明格子颜色
-    static var transparentGrid: UIColor {
+    @objc static var transparentGrid: UIColor {
         UIColor(patternImage: .transparentGrid)
     }
     

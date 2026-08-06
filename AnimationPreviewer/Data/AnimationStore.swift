@@ -17,13 +17,14 @@ enum AnimationType: Int {
 }
 
 enum AnimationStore {
+    case dotLottie(file: DotLottieFile)
     case lottie(animation: LottieAnimation, provider: FilepathImageProvider)
     case svga(entity: SVGAVideoEntity)
     case gif(images: [UIImage], duration: TimeInterval)
     
     var isLottie: Bool {
         switch self {
-        case .lottie:
+        case .dotLottie, .lottie:
             return true
         default:
             return false
@@ -53,6 +54,8 @@ enum AnimationStore {
         case unzipFailed
         /// 无法识别的文件
         case unrecognizedFile
+        /// `lottie`文件解码失败
+        case decodeLottieFailed
         /// `lottie`没有JSON文件
         case lottieWithoutJsonFile
         /// `lottie`没有图片文件夹
@@ -66,6 +69,8 @@ enum AnimationStore {
                 return "文件解压失败"
             case .unrecognizedFile:
                 return "无法识别的文件"
+            case .decodeLottieFailed:
+                return "lottie文件解码失败"
             case .lottieWithoutJsonFile:
                 return "lottie文件错误：没有动画json文件"
             case .lottieWithoutImagesDir:
@@ -96,11 +101,14 @@ extension AnimationStore {
         }
     }
     
-    static func loadData(_ data: Data,
-                         success: @escaping (_ store: AnimationStore) -> Void,
-                         failure: @escaping (_ error: Swift.Error) -> Void) {
+    static func loadData(
+        _ data: Data,
+        fileExtension ext: String?,
+        success: @escaping (_ store: AnimationStore) -> Void,
+        failure: @escaping (_ error: Swift.Error) -> Void
+    ) {
         guard isInMyQueue else {
-            myQueue.async { loadData(data, success: success, failure: failure) }
+            myQueue.async { loadData(data, fileExtension: ext, success: success, failure: failure) }
             return
         }
         
@@ -112,6 +120,25 @@ extension AnimationStore {
             let tmpFilePath = getTmpFilePath("jp123")
             let tmpFileURL = URL(fileURLWithPath: tmpFilePath)
             try data.write(to: tmpFileURL)
+            
+            if let ext, ext.count > 0 {
+                switch ext {
+                case "gif":
+                    let store = try loadGIFData(tmpFileURL)
+                    Asyncs.main { success(store) }
+                    return
+                case "svga":
+                    let store = try loadSVGAData(tmpFileURL)
+                    Asyncs.main { success(store) }
+                    return
+                case "lottie":
+                    let store = try loadDotLottieData(tmpFileURL)
+                    Asyncs.main { success(store) }
+                    return
+                default:
+                    break
+                }
+            }
             
             // 检查是不是zip
             guard data.jp.isZip else {
@@ -156,7 +183,7 @@ extension AnimationStore {
             }
             
             let store: AnimationStore
-            if fileURL.hasDirectoryPath {
+            if fileURL.jp.isDirectory {
                 // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
                 store = try loadLottieData(fileURL, isDir: true)
             } else {
@@ -218,12 +245,23 @@ private extension AnimationStore {
         return store
     }
     
+    static func loadDotLottieData(_ tmpFileURL: URL) throws -> AnimationStore {
+        let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: tmpFileURL.path)
+        switch result {
+        case let .success(file):
+            return AnimationStore.dotLottie(file: file)
+        case let .failure(error):
+            print("DotLottie 解析错误：\(error.localizedDescription)")
+            throw Self.Error.decodeLottieFailed
+        }
+    }
+    
     static func loadLottieData(_ tmpFileURL: URL, isDir: Bool? = nil) throws -> AnimationStore {
         let kIsDir: Bool
         if let isDir {
             kIsDir = isDir
         } else {
-            kIsDir = tmpFileURL.hasDirectoryPath
+            kIsDir = tmpFileURL.jp.isDirectory
         }
         guard let store = try _loadLottieData(tmpFileURL, isDir: kIsDir, isNested: false) else {
             throw Self.Error.unrecognizedFile
@@ -268,7 +306,9 @@ private extension AnimationStore {
             }
             
             if pathExtension == "json" {
-                isLottieDir.jsonFileName = fileURL.lastPathComponent
+                if isLottieDir.jsonFileName == nil {
+                    isLottieDir.jsonFileName = fileURL.lastPathComponent
+                }
             } else if fileURL.lastPathComponent.lowercased() == "images" {
                 isLottieDir.hadImagesDir = true
             }
@@ -308,7 +348,7 @@ private extension AnimationStore {
         
         if !isNested {
             // 或者是套了一层
-            for fileURL in fileURLs where fileURL.hasDirectoryPath {
+            for fileURL in fileURLs where fileURL.jp.isDirectory {
                 guard let store = try _loadLottieData(fileURL, isDir: true, isNested: true) else { continue }
                 return store
             }

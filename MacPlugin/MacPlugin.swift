@@ -9,9 +9,9 @@ import AppKit
 import UniformTypeIdentifiers
 
 class MacPlugin: NSObject, Channel {
-    var statusItem: NSStatusItem?
+    private var statusItem: NSStatusItem? = nil
     
-// MARK: - <Channel>
+    // MARK: - <Channel>
     
     required override init() {}
     
@@ -30,7 +30,7 @@ class MacPlugin: NSObject, Channel {
         self.statusItem = statusItem
     }
     
-    func saveImage(_ imageData: Data, completion: @escaping (_ isSuccess: Bool) -> ()) {
+    func saveImage(_ imageData: Data, completion: @escaping Channel.SaveCompletion) {
         guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             print("找不到下载文件夹")
             completion(false)
@@ -51,7 +51,7 @@ class MacPlugin: NSObject, Channel {
         }
     }
     
-    func saveVideo(_ videoPath: NSString, completion: @escaping (_ isSuccess: Bool) -> ()) {
+    func saveVideo(_ videoPath: NSString, completion: @escaping Channel.SaveCompletion) {
         guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
             print("找不到下载文件夹")
             completion(false)
@@ -72,99 +72,95 @@ class MacPlugin: NSObject, Channel {
         }
     }
     
-    func pickLottie(completion: @escaping (_ data: Data?) -> ()) {
-        let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true // 显示隐藏文件
-        openPanel.canChooseFiles = true // 可以选择文件
-        openPanel.canChooseDirectories = true // 可以选择文件夹
-        openPanel.allowsMultipleSelection = false // 单选
-        openPanel.allowedContentTypes = [.zip, .directory]
+    func pickLottie(completion: @escaping Channel.PickCompletion) {
+        let openPanel = getOpenPanel([
+            .zip,
+            .directory,
+            UTType(exportedAs: "lottie", conformingTo: .data),
+        ], canChooseDirectories: true)
         
         guard openPanel.runModal() == .OK else { return }
         
         guard let url = openPanel.url else {
             print("没有找到符合要求的文件或文件夹")
-            completion(nil)
+            completion(nil, nil)
             return
         }
         
         if isDirectory(at: url), let zipData = zipFolderWithLottieContents(folderURL: url) {
             print("成功获取zip文件的Data, 大小: \(zipData.count)字节")
-            completion(zipData)
+            completion(zipData, nil)
         }
         else if let data = try? Data(contentsOf: url) {
             print("成功获取Data, 大小: \(data.count)字节")
-            completion(data)
+            completion(data, url.pathExtension.lowercased())
         }
         else {
             print("没有找到符合要求的文件或文件夹")
-            completion(nil)
+            completion(nil, nil)
         }
     }
     
-    func pickSVGA(completion: @escaping (_ data: Data?) -> ()) {
-        let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true // 显示隐藏文件
-        openPanel.canChooseFiles = true // 可以选择文件
-        openPanel.canChooseDirectories = false // 不能选择文件夹
-        openPanel.allowsMultipleSelection = false // 单选
-        openPanel.allowedContentTypes = [UTType(exportedAs: "svga", conformingTo: .data)]
+    func pickSVGA(completion: @escaping Channel.PickCompletion) {
+        let openPanel = getOpenPanel([
+            UTType(exportedAs: "svga", conformingTo: .data),
+        ])
         
         guard openPanel.runModal() == .OK else { return }
         
         if let url = openPanel.url, let data = try? Data(contentsOf: url) {
             print("成功获取Data, 大小: \(data.count)字节")
-            completion(data)
+            completion(data, url.pathExtension.lowercased())
         }
         else {
             print("没有找到符合要求的文件")
-            completion(nil)
+            completion(nil, nil)
         }
     }
     
-    func pickGIF(completion: @escaping (_ data: Data?) -> ()) {
-        let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true // 显示隐藏文件
-        openPanel.canChooseFiles = true // 可以选择文件
-        openPanel.canChooseDirectories = false // 不能选择文件夹
-        openPanel.allowsMultipleSelection = false // 单选
-        openPanel.allowedContentTypes = [.gif]
+    func pickGIF(completion: @escaping Channel.PickCompletion) {
+        let openPanel = getOpenPanel([.gif])
         
         guard openPanel.runModal() == .OK else { return }
         
         if let url = openPanel.url, let data = try? Data(contentsOf: url) {
             print("成功获取Data, 大小: \(data.count)字节")
-            completion(data)
+            completion(data, url.pathExtension.lowercased())
         }
         else {
             print("没有找到符合要求的文件")
-            completion(nil)
+            completion(nil, nil)
         }
     }
     
-    func pickImage(completion: @escaping (_ data: Data?) -> ()) {
-        let openPanel = NSOpenPanel()
-        openPanel.showsHiddenFiles = true // 显示隐藏文件
-        openPanel.canChooseFiles = true // 可以选择文件
-        openPanel.canChooseDirectories = false // 不能选择文件夹
-        openPanel.allowsMultipleSelection = false // 单选
-        openPanel.allowedContentTypes = [.jpeg, .png]
+    func pickImage(completion: @escaping Channel.PickCompletion) {
+        let openPanel = getOpenPanel([.jpeg, .png])
         
         guard openPanel.runModal() == .OK else { return }
         
         if let url = openPanel.url, let data = try? Data(contentsOf: url) {
             print("成功获取Data, 大小: \(data.count)字节")
-            completion(data)
+            completion(data, url.pathExtension.lowercased())
         }
         else {
             print("没有找到符合要求的文件")
-            completion(nil)
+            completion(nil, nil)
         }
     }
 }
 
 // MARK: - 文件操作
 private extension MacPlugin {
+    func getOpenPanel(_ types: [UTType], canChooseDirectories: Bool = false) -> NSOpenPanel {
+        let openPanel = NSOpenPanel()
+        openPanel.showsHiddenFiles = true // 显示隐藏文件
+        openPanel.canChooseFiles = true // 可以选择文件
+        openPanel.canChooseDirectories = canChooseDirectories // 是否可以选择文件夹
+        openPanel.allowsMultipleSelection = false // 单选
+        openPanel.allowedContentTypes = types
+        return openPanel
+    }
+    
     /// 该路径是否文件夹
     func isDirectory(at url: URL) -> Bool {
         let fileManager = FileManager.default
@@ -185,13 +181,13 @@ private extension MacPlugin {
             let folderContents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil, options: [])
             
             // 检查文件夹中是否包含"data.json"和"images"文件夹
-            let dataFile = folderContents.first { $0.lastPathComponent == "data.json" }
+            let dataFile = folderContents.first { $0.pathExtension.lowercased() == "json" }
             guard let dataFileURL = dataFile else {
                 print("文件夹内容不符合要求，缺少 data.json")
                 return nil
             }
             
-            let imagesFolder = folderContents.first { $0.lastPathComponent == "images" && $0.hasDirectoryPath }
+            let imagesFolder = folderContents.first { $0.lastPathComponent == "images" && isDirectory(at: $0) }
             guard let imagesFolderURL = imagesFolder else {
                 print("文件夹内容不符合要求，缺少 images 文件夹")
                 return nil

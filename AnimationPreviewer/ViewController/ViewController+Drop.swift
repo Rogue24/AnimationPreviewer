@@ -30,9 +30,13 @@ extension ViewController: UIDropInteractionDelegate {
     
     // 加载数据
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
+        // 从拖拽项里取原始文件名，例如 "moon.lottie"
+        let fileName = session.items.first?.itemProvider.suggestedName
+        // 取后缀名，例如 "lottie"（注意统一小写方便比较）
+        let ext = (fileName as NSString?)?.pathExtension.lowercased()
         session.loadObjects(ofClass: AnimationData.self) { [weak self] items in
             guard let self = self, let animData = items.first as? AnimationData else { return }
-            self.replaceAnimation(with: animData.rawData)
+            self.replaceAnimation(with: animData.rawData, fileExtension: ext)
         }
     }
     

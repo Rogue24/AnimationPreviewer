@@ -10,33 +10,25 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    @objc var window: UIWindow? {
-        set {}
-        get {
-            guard let scene = UIApplication.shared.connectedScenes.first,
-                  let windowSceneDelegate = scene.delegate as? UIWindowSceneDelegate,
-                  let window = windowSceneDelegate.window
-            else {
-                return nil
-            }
-            return window
-        }
-    }
+//    @objc var window: UIWindow? {
+//        set {}
+//        get {
+//            guard let scene = UIApplication.shared.connectedScenes.first,
+//                  let windowSceneDelegate = scene.delegate as? UIWindowSceneDelegate,
+//                  let window = windowSceneDelegate.window
+//            else {
+//                return nil
+//            }
+//            return window
+//        }
+//    }
+    weak var window: UIWindow? = nil
     
     private var mainVC: ViewController? {
         window?.rootViewController as? ViewController
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        // 使用深色模式
-        if #available(macCatalyst 13.0, *) {
-            window?.overrideUserInterfaceStyle = .dark
-        }
-        
-        JPHUD.setMaxSupportedWindowLevel(.alert)
-        JPHUD.setMinimumDismissTimeInterval(1.3)
-        
         return true
     }
 
@@ -96,23 +88,23 @@ private extension AppDelegate {
     }
     
     @objc func openLottieFile() {
-        MacChannel.shared().pickLottie { [weak self] data in
+        MacChannel.shared().pickLottie { [weak self] data, ext in
             guard let data, let mainVC = self?.mainVC else { return }
-            mainVC.replaceAnimation(with: data)
+            mainVC.replaceAnimation(with: data, fileExtension: ext)
         }
     }
     
     @objc func openSVGAFile() {
-        MacChannel.shared().pickSVGA { [weak self] data in
+        MacChannel.shared().pickSVGA { [weak self] data, ext in
             guard let data, let mainVC = self?.mainVC else { return }
-            mainVC.replaceAnimation(with: data)
+            mainVC.replaceAnimation(with: data, fileExtension: ext)
         }
     }
     
     @objc func openGIFFile() {
-        MacChannel.shared().pickGIF { [weak self] data in
+        MacChannel.shared().pickGIF { [weak self] data, ext in
             guard let data, let mainVC = self?.mainVC else { return }
-            mainVC.replaceAnimation(with: data)
+            mainVC.replaceAnimation(with: data, fileExtension: ext)
         }
     }
 }
@@ -154,7 +146,7 @@ private extension AppDelegate {
     }
     
     func openImageFile() {
-        MacChannel.shared().pickImage { [weak self] data in
+        MacChannel.shared().pickImage { [weak self] data, _ in
             guard let data, let mainVC = self?.mainVC else { return }
             mainVC.setupCustomBgImage(data)
         }
