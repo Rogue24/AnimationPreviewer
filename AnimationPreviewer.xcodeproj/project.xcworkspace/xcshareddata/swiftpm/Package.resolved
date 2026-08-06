@@ -1,13 +1,13 @@
 {
-  "originHash" : "ec55f0fc60bff4e0aa6dac3bf13810eb298b86d9f168a7aa6600408b8cc457d4",
+  "originHash" : "07334c9f2a62942f06fdb88bf8ccb8b4145823e617ed1af35d12215cee37e47c",
   "pins" : [
     {
       "identity" : "lottie-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Rogue24/lottie-ios.git",
       "state" : {
-        "branch" : "JP_4.6.1",
-        "revision" : "06b46283c4de661c84bdba325d2be7b39bff7447"
+        "branch" : "JP_4.6.1.1",
+        "revision" : "af0a57e9b148a83aaadf86570431dfc2bdbcb031"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SnapKit/SnapKit.git",
       "state" : {
-        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
-        "version" : "5.6.0"
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Rogue24/SVGAPlayer-iOS.git",
       "state" : {
         "branch" : "SPM",
-        "revision" : "0c03484ddb17aa53363f38ff7c8beb42308b97bc"
+        "revision" : "8aa6c710cf0cc4a2c42cc4b556df8ebab92389a1"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/Rogue24/SVGAPlayer_Optimized.git",
       "state" : {
         "branch" : "SPM",
-        "revision" : "87050486d00b52c820ecd2985d8cca27694eba84"
+        "revision" : "e4fc092dd8d5c05e90d42014ecd7b58c2c239604"
       }
     },
     {
