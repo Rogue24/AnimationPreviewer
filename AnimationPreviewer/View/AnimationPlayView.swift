@@ -525,21 +525,24 @@ extension AnimationPlayView {
         
         switch store {
         case let .dotLottie(file):
-            completion(.failure(reason: "xxxx"))
+            guard let animation = file.animations.first?.animation else {
+                completion(.failure(reason: "Lottie文件读取失败"))
+                return
+            }
             
-        case let .lottie(animation, provider):
             if animation.duration < 1 {
                 completion(.failure(reason: "动画时长过短，无法生成视频"))
                 return
             }
             
-            let picker = LottieImagePicker(
-                animation: animation,
-                provider: provider,
-                bgColor: UIColor.black,
-                animSize: [720, 720],
-                renderScale: UIScreen.mainScale
+            let dotLottieLayer = LottieAnimationLayer(
+                dotLottie: file,
+                configuration: LottieConfiguration(renderingEngine: .mainThread)
             )
+            guard let animationLayer = dotLottieLayer.animationLayer as? MainThreadAnimationLayer else {
+                completion(.failure(reason: "视频生成失败"))
+                return
+            }
             
             VideoMaker.makeVideo(
                 framerate: 20,
@@ -547,8 +550,47 @@ extension AnimationPlayView {
                 duration: animation.duration,
                 size: [720, 720]
             ) { _, currentTime, _ in
-                picker.update(currentTime)
-                return [picker.animLayer]
+                dotLottieLayer.currentTime = currentTime
+                dotLottieLayer.forceDisplayUpdate()
+                return [animationLayer]
+            } progress: { currentFrame, totalFrame in
+                let progress = Float(currentFrame) / Float(totalFrame)
+                Asyncs.main { progressHandler(progress) }
+            } completion: { result in
+                switch result {
+                case let .success(path):
+                    completion(.success(videoPath: path))
+                case let .failure(error):
+                    completion(.failure(reason: error.localizedDescription))
+                }
+            }
+            
+        case let .lottie(animation, provider):
+            if animation.duration < 1 {
+                completion(.failure(reason: "动画时长过短，无法生成视频"))
+                return
+            }
+            
+            let animLayer = MainThreadAnimationLayer(
+                animation: animation,
+                imageProvider: provider,
+                textProvider: DefaultTextProvider(),
+                fontProvider: DefaultFontProvider(),
+                maskAnimationToBounds: true,
+                logger: LottieLogger.shared
+            )
+            
+            let converter = LottieFrameConverter(animation: animation)
+            
+            VideoMaker.makeVideo(
+                framerate: 20,
+                frameInterval: 20,
+                duration: animation.duration,
+                size: [720, 720]
+            ) { _, currentTime, _ in
+                animLayer.currentFrame = converter.frame(at: currentTime)
+                animLayer.display()
+                return [animLayer]
             } progress: { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
                 Asyncs.main { progressHandler(progress) }
@@ -567,7 +609,10 @@ extension AnimationPlayView {
                 return
             }
             
-            VideoMaker.makeVideo(withSVGAEntity: entity, size: [720, 720]) { currentFrame, totalFrame in
+            VideoMaker.makeVideo(
+                withSVGAEntity: entity,
+                size: [720, 720]
+            ) { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
                 Asyncs.main { progressHandler(progress) }
             } startMergeAudio: {
@@ -587,7 +632,11 @@ extension AnimationPlayView {
                 return
             }
             
-            VideoMaker.makeVideo(withImages: images, duration: duration, size: [720, 720]) { currentFrame, totalFrame in
+            VideoMaker.makeVideo(
+                withImages: images,
+                duration: duration,
+                size: [720, 720]
+            ) { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
                 Asyncs.main { progressHandler(progress) }
             } completion: { result in

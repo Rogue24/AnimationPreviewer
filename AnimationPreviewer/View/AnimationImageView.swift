@@ -242,24 +242,13 @@ extension AnimationImageView {
                 return
             }
             
-            let layer = animationLayer
-            let size = animation.bounds.size
-            let scale = UIScreen.mainScale
-            
-            dotLottieLayer.screenScale = scale
             dotLottieLayer.currentFrame = lottieView.currentFrame
+            dotLottieLayer.forceDisplayUpdate()
             
+            let size = animation.bounds.size
+            let layer = animationLayer
             task = {
-                let format = UIGraphicsImageRendererFormat()
-                format.opaque = false // false表示透明，这里需要透明背景
-                format.scale = scale
-                let renderer = UIGraphicsImageRenderer(size: size, format: format)
-                let pngData = renderer.pngData { ctx in
-                    DispatchQueue.main.sync {
-                        layer.render(in: ctx.cgContext)
-                    }
-                }
-                newImage = UIImage(data: pngData)
+                newImage = layer.image(size: size, scale: 1)
             }
             
         case let .lottie(animation, provider):
@@ -272,25 +261,13 @@ extension AnimationImageView {
                 logger: LottieLogger.shared
             )
             
-            let layer = animationLayer
-            let size = animation.bounds.size
-            let scale = UIScreen.mainScale
-            
-            animationLayer.renderScale = scale
             animationLayer.currentFrame = lottieView.currentFrame
             animationLayer.display()
             
+            let size = animation.bounds.size
+            let layer = animationLayer
             task = {
-                let format = UIGraphicsImageRendererFormat()
-                format.opaque = false // false表示透明，这里需要透明背景
-                format.scale = scale
-                let renderer = UIGraphicsImageRenderer(size: size, format: format)
-                let pngData = renderer.pngData { ctx in
-                    DispatchQueue.main.sync {
-                        layer.render(in: ctx.cgContext)
-                    }
-                }
-                newImage = UIImage(data: pngData)
+                newImage = layer.image(size: size, scale: 1)
             }
             
         case .svga:

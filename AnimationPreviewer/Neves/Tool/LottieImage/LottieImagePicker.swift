@@ -93,21 +93,22 @@ class LottieImagePicker {
     }
 }
 
-// MARK: - 截取Lottie动画的其中一帧生成图片
+// MARK: - 截取Lottie动画的所有帧生成图片
 extension LottieImagePicker {
-    
     func asyncPickAllImages(framerate: CGFloat? = nil, directoryPath: String, completion: @escaping (Bool) -> ()) {
+        let scale = animLayer.renderScale
+        let size = animLayer.bounds.size
+        let bounds = CGRect(origin: .zero, size: size)
+        
+        let framerateScale = (framerate ?? animFramerate) / animFramerate
+        if framerateScale <= 0 {
+            DispatchQueue.main.async { completion(false) }
+            return
+        }
+//        if framerateScale > 1 { framerateScale = 1 }
         
         Asyncs.async {
-            let framerateScale = (framerate ?? self.animFramerate) / self.animFramerate
-            if framerateScale <= 0 {
-                DispatchQueue.main.async { completion(false) }
-                return
-            }
-//            if framerateScale > 1 { framerateScale = 1 }
-            
-            UIGraphicsBeginImageContextWithOptions(self.animLayer.frame.size, false, self.animLayer.renderScale)
-            
+            UIGraphicsBeginImageContextWithOptions(size, false, scale)
             guard let ctx = UIGraphicsGetCurrentContext() else {
                 UIGraphicsEndImageContext()
                 DispatchQueue.main.async { completion(false) }
@@ -138,7 +139,7 @@ extension LottieImagePicker {
                     isSuccess = false
                     break
                 }
-                ctx.clear(CGRect(origin: .zero, size: self.animLayer.frame.size))
+                ctx.clear(bounds)
                 ctx.restoreGState()
                 
                 // 写
@@ -173,7 +174,7 @@ extension LottieImagePicker {
                 do {
                     try imgData.write(to: url)
                 } catch {
-                    JPrint("写入错误 ---", url.path)
+                    JPrint("写入错误 ---", url.path, error)
                     isSuccess = false
                     break
                 }
@@ -183,9 +184,7 @@ extension LottieImagePicker {
             UIGraphicsEndImageContext()
             DispatchQueue.main.async { completion(isSuccess) }
         }
-        
     }
-    
 }
 
 extension LottieImagePicker {

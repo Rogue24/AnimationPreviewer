@@ -38,13 +38,13 @@ extension VideoMaker {
             return
         }
         
-        UIGraphicsBeginImageContextWithOptions(size, false, 1)
-        defer { UIGraphicsEndImageContext() }
-        
-        guard let ctx = UIGraphicsGetCurrentContext() else {
-            Asyncs.main { completion(.failure(.writerError)) }
-            return
-        }
+//        UIGraphicsBeginImageContextWithOptions(size, false, 1)
+//        defer { UIGraphicsEndImageContext() }
+//        
+//        guard let ctx = UIGraphicsGetCurrentContext() else {
+//            Asyncs.main { completion(.failure(.writerError)) }
+//            return
+//        }
         
         let videoName = "\(Int(Date().timeIntervalSince1970)).mp4"
         let videoPath = File.tmpFilePath(videoName)
@@ -80,6 +80,8 @@ extension VideoMaker {
         var lastFrame: Int = -1
         var lastTime: CGFloat = -1
         var lastPixelBuffer: CVPixelBuffer? = nil
+        
+        let renderer = LayerImageRenderer(size: size, scale: 1)
         
         for i in 0 ... frameCount {
             // framerate和frameInterval不一样的情况，该处理有待考量
@@ -128,12 +130,16 @@ extension VideoMaker {
                 layers = layerProvider(currentFrame, currentTime, size)
             }
             autoreleasepool {
-                layers.forEach {
-                    guard let layer = $0 else { return }
-                    layer.render(in: ctx)
-                }
-                let image = UIGraphicsGetImageFromCurrentImageContext()
-                ctx.clear(CGRect(origin: .zero, size: size))
+//                layers.forEach {
+//                    guard let layer = $0 else { return }
+//                    layer.render(in: ctx)
+//                }
+//                let image = UIGraphicsGetImageFromCurrentImageContext()
+//                ctx.clear(CGRect(origin: .zero, size: size))
+                let image = layers.count > 0 ? renderer.image(of: layers.compactMap {
+                    guard let layer = $0 else { return nil }
+                    return (layer, .aspectFit)
+                }) : nil
                 
                 let pixelBuffer: CVPixelBuffer
                 if let image = image,
