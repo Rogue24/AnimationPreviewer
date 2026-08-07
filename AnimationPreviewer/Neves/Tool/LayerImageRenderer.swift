@@ -55,7 +55,7 @@ final class LayerImageRenderer {
             (layer, layer.fitRegion(in: size, mode: mode))
         })
     }
-
+    
     /// 按自定义区域渲染多个`layer`为`image`（复用同一`renderer`）
     /// 多个`layer`按数组顺序自下而上叠加（先画的在底层）。
     func image(of layers: [LayerWithRegion]) -> UIImage {

@@ -48,7 +48,7 @@ extension CALayer {
             draw(in: ctx, region: region)
         }
     }
-
+    
     /// 计算指定模式下`layer`在画布中的目标区域
     /// - Parameters:
     ///   - size: 画布尺寸
