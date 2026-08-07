@@ -9,35 +9,35 @@ import UIKit
 import Lottie
 
 struct LottieFrameConverter {
-    let animFramerate: CGFloat
-    let animStartFrame: CGFloat
-    let animEndFrame: CGFloat
-    let animTotalFrame: CGFloat
-    let animDuration: TimeInterval
+    let framerate: CGFloat
+    let startFrame: CGFloat
+    let endFrame: CGFloat
+    let totalFrame: CGFloat
+    let duration: TimeInterval
     
     init(animation: LottieAnimation) {
-        animFramerate = animation.framerate
-        animStartFrame = animation.startFrame
-        animEndFrame = animation.endFrame
-        animTotalFrame = animEndFrame - animStartFrame
-        animDuration = animation.duration
+        framerate = animation.framerate
+        startFrame = animation.startFrame
+        endFrame = animation.endFrame
+        totalFrame = endFrame - startFrame
+        duration = animation.duration
     }
     
-//        func fixFrame(of currentFrame: Int) -> CGFloat {
-//            let totalFrame = Int(animTotalFrame)
-//            var fixFrame = CGFloat(currentFrame % totalFrame)
-//            if fixFrame == 0 {
-//                fixFrame = currentFrame == 0 ? 0 : animTotalFrame
-//            }
-//            return animStartFrame + fixFrame
+//    func fixFrame(of currentFrame: Int) -> CGFloat {
+//        let totalFrame = Int(self.totalFrame)
+//        var fixFrame = CGFloat(currentFrame % totalFrame)
+//        if fixFrame == 0 {
+//            fixFrame = currentFrame == 0 ? 0 : self.totalFrame
 //        }
+//        return startFrame + fixFrame
+//    }
     
     func frame(at currentTime: TimeInterval) -> CGFloat {
         var fixTime = currentTime
-        if currentTime > animDuration {
-            let multiple = Int(currentTime / animDuration)
-            fixTime -= animDuration * TimeInterval(multiple)
+        if currentTime > duration {
+            let multiple = Int(currentTime / duration)
+            fixTime -= duration * TimeInterval(multiple)
         }
-        return animStartFrame + fixTime * animFramerate
+        return startFrame + fixTime * framerate
     }
 }

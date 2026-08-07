@@ -555,8 +555,8 @@
 				1A95CC932A0A05D9006E3102 /* ScreenRotator.swift */,
 				1A95CC792A0A05D8006E3102 /* UserDefault.swift */,
 				001AB9382A9DC2F500C09045 /* JPHUD.swift */,
-				00279275302595CB00405857 /* LayerImageRenderer.swift */,
 				0027927C3025EF4100405857 /* LottieFrameConverter.swift */,
+				00279275302595CB00405857 /* LayerImageRenderer.swift */,
 			);
 			path = Tool;
 			sourceTree = "<group>";
