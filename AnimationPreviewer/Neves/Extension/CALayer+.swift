@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - 👉🏻 UIImage
 extension CALayer {
     /// `layer`缩放适配画布的模式
     enum FitMode {
@@ -38,17 +39,89 @@ extension CALayer {
                region: CGRect,
                scale: CGFloat? = nil,
                background: UIColor? = nil) -> UIImage {
-        let format = UIGraphicsImageRendererFormat()
-        if let scale { format.scale = scale }
-        format.opaque = (background != nil && background != .clear)
-        
-        return UIGraphicsImageRenderer(size: size, format: format).image { context in
-            let ctx = context.cgContext
-            ctx.fill(background, size: size)
-            draw(in: ctx, region: region)
-        }
+        UIGraphicsImageRenderer(
+            size: size,
+            format: makeFormat(scale, background)
+        ).image(
+            actions: makeActions(size, region, background)
+        )
+    }
+}
+
+// MARK: - 👉🏻 PNG/JPEG Data
+extension CALayer {
+    /// 按指定模式将`layer`绘制到整个画布，生成`PNG data`（无损，支持透明）
+    /// - Parameters:
+    ///   - size: 画布（最终图片）尺寸，任意比例都能自动适配
+    ///   - mode: 适配模式，默认`aspectFit`
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    func pngData(size: CGSize,
+                 mode: FitMode = .aspectFit,
+                 scale: CGFloat? = nil,
+                 background: UIColor? = nil) -> Data {
+        pngData(size: size, region: fitRegion(in: size, mode: mode), scale: scale, background: background)
     }
     
+    /// 将`layer`拉伸铺满画布中的指定区域（不保持比例），超出画布的部分自动裁剪，生成`PNG data`（无损，支持透明）
+    /// - Parameters:
+    ///   - size: 画布（最终图片）尺寸
+    ///   - region: 目标区域（画布坐标系内，位置和大小均可自由指定）
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    func pngData(size: CGSize,
+                 region: CGRect,
+                 scale: CGFloat? = nil,
+                 background: UIColor? = nil) -> Data {
+        UIGraphicsImageRenderer(
+            size: size,
+            format: makeFormat(scale, background)
+        ).pngData(
+            actions: makeActions(size, region, background)
+        )
+    }
+    
+    /// 按指定模式将`layer`绘制到整个画布，生成`JPEG data`（有损，**不支持透明**）
+    /// - Note: JPEG 无 alpha 通道，未铺背景（`background`为`nil/.clear`）时透明区域会被填成黑色，需要透明请改用`pngData`
+    /// - Parameters:
+    ///   - size: 画布（最终图片）尺寸，任意比例都能自动适配
+    ///   - mode: 适配模式，默认`aspectFit`
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    ///   - quality: JPEG 压缩质量，`0`（最小体积） ~ `1`（最高质量），默认`0.9`
+    func jpegData(size: CGSize,
+                  mode: FitMode = .aspectFit,
+                  scale: CGFloat? = nil,
+                  background: UIColor? = nil,
+                  quality: CGFloat = 0.9) -> Data {
+        jpegData(size: size, region: fitRegion(in: size, mode: mode), scale: scale, background: background, quality: quality)
+    }
+    
+    /// 将`layer`拉伸铺满画布中的指定区域（不保持比例），超出画布的部分自动裁剪，生成`JPEG data`（有损，**不支持透明**）
+    /// - Note: JPEG 无 alpha 通道，未铺背景（`background`为`nil/.clear`）时透明区域会被填成黑色，需要透明请改用`pngData`
+    /// - Parameters:
+    ///   - size: 画布（最终图片）尺寸
+    ///   - region: 目标区域（画布坐标系内，位置和大小均可自由指定）
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    ///   - quality: JPEG 压缩质量，`0`（最小体积） ~ `1`（最高质量），默认`0.9`
+    func jpegData(size: CGSize,
+                  region: CGRect,
+                  scale: CGFloat? = nil,
+                  background: UIColor? = nil,
+                  quality: CGFloat = 0.9) -> Data {
+        UIGraphicsImageRenderer(
+            size: size,
+            format: makeFormat(scale, background)
+        ).jpegData(
+            withCompressionQuality: quality,
+            actions: makeActions(size, region, background)
+        )
+    }
+}
+
+// MARK: - 计算&绘制
+extension CALayer {
     /// 计算指定模式下`layer`在画布中的目标区域
     /// - Parameters:
     ///   - size: 画布尺寸
@@ -98,5 +171,23 @@ extension CALayer {
         
         // ⚠️`region`超出画布（size）的部分会被上下文自动裁剪掉，无需手动`clip`
         render(in: ctx)
+    }
+}
+
+// MARK: - 私有方法
+private extension CALayer {
+    func makeFormat(_ scale: CGFloat?, _ background: UIColor?) -> UIGraphicsImageRendererFormat {
+        let format = UIGraphicsImageRendererFormat()
+        if let scale { format.scale = scale }
+        format.opaque = (background != nil && background != .clear)
+        return format
+    }
+    
+    func makeActions(_ size: CGSize, _ region: CGRect, _ background: UIColor?) -> (UIGraphicsImageRendererContext) -> Void {
+        return { context in
+            let ctx = context.cgContext
+            ctx.fill(background, size: size)
+            self.draw(in: ctx, region: region)
+        }
     }
 }
