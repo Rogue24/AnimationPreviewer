@@ -526,7 +526,7 @@ extension AnimationPlayView {
         switch store {
         case let .dotLottie(file):
             guard let animation = file.animations.first?.animation else {
-                completion(.failure(reason: "Lottie文件读取失败"))
+                completion(.failure(reason: "lottie文件读取失败"))
                 return
             }
             

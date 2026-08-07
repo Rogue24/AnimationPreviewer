@@ -11,9 +11,10 @@ import ZipArchive
 import Lottie
 
 enum AnimationType: Int {
-    case lottie = 1
-    case svga = 2
-    case gif = 3
+    case dotLottie = 1
+    case lottie = 2
+    case svga = 3
+    case gif = 4
 }
 
 enum AnimationStore {
@@ -168,7 +169,12 @@ extension AnimationStore {
             }
             
             // 是文件夹
-            let fileURLs = try FileManager.default.contentsOfDirectory(at: unzipDirURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            let fileURLs = try FileManager.default.contentsOfDirectory(
+                at: unzipDirURL,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+            )
+            
             // 取出文件夹里面的第一个文件
             guard let fileURL = fileURLs.first(where: {
                 // 没有后缀，有可能是文件夹
@@ -202,57 +208,22 @@ extension AnimationStore {
 
 // MARK: - lottie/SVGA/GIF数据加载
 private extension AnimationStore {
-    static func loadGIFData(_ tmpFileURL: URL) throws -> AnimationStore {
-        let tmpData = try Data(contentsOf: tmpFileURL)
-        
-        guard tmpData.jp.isGIF else {
-            return try loadSVGAData(tmpFileURL)
-        }
-        
-        guard let gif = decodeGIF(tmpData) else {
-            throw Self.Error.decodeGIFFailed
-        }
-        
-        try cacheFile(tmpFileURL, for: .gif)
-        
-        let store = AnimationStore.gif(images: gif.0, duration: gif.1)
-        cache = store
-        
-        return store
-    }
-    
-    static func loadSVGAData(_ tmpFileURL: URL) throws -> AnimationStore {
-        let tmpData = try Data(contentsOf: tmpFileURL)
-        
-        if tmpData.jp.isJSON {
-            return try loadLottieData(tmpFileURL, isDir: false)
-        }
-        
-        if tmpData.jp.isGIF {
-            return try loadGIFData(tmpFileURL)
-        }
-        
-        guard let entity = parseSVGA(tmpData) else {
-            // 不是svga，去看看是不是lottie
-            return try loadLottieData(tmpFileURL)
-        }
-        
-        try cacheFile(tmpFileURL, for: .svga)
-        
-        let store = AnimationStore.svga(entity: entity)
-        cache = store
-        
-        return store
-    }
-    
     static func loadDotLottieData(_ tmpFileURL: URL) throws -> AnimationStore {
         let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: tmpFileURL.path, dotLottieCache: nil)
         switch result {
         case let .success(file):
-            if file.animations.first != nil {
-                return AnimationStore.dotLottie(file: file)
+            guard file.animations.first != nil else {
+                print("DotLottie file.animations 为空！")
+                throw Self.Error.decodeLottieFailed
             }
-            throw Self.Error.decodeLottieFailed
+            
+            try cacheFile(tmpFileURL, for: .dotLottie)
+            
+            let store = AnimationStore.dotLottie(file: file)
+            cache = store
+            
+            return store
+            
         case let .failure(error):
             print("DotLottie 解析错误：\(error.localizedDescription)")
             throw Self.Error.decodeLottieFailed
@@ -288,9 +259,11 @@ private extension AnimationStore {
         }
         
         // 是文件夹，遍历找出lottie文件
-        let fileURLs = try FileManager.default.contentsOfDirectory(at: tmpFileURL,
-                                                                   includingPropertiesForKeys: nil,
-                                                                   options: .skipsHiddenFiles)
+        let fileURLs = try FileManager.default.contentsOfDirectory(
+            at: tmpFileURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        )
         
         var isLottieDir: (jsonFileName: String?, hadImagesDir: Bool) = (nil, false)
         for fileURL in fileURLs {
@@ -360,6 +333,49 @@ private extension AnimationStore {
         // 已经嵌入一层去找了，还是找不着，没招了
         return nil
     }
+    
+    static func loadSVGAData(_ tmpFileURL: URL) throws -> AnimationStore {
+        let tmpData = try Data(contentsOf: tmpFileURL)
+        
+        if tmpData.jp.isJSON {
+            return try loadLottieData(tmpFileURL, isDir: false)
+        }
+        
+        if tmpData.jp.isGIF {
+            return try loadGIFData(tmpFileURL)
+        }
+        
+        guard let entity = parseSVGA(tmpData) else {
+            // 不是svga，去看看是不是lottie
+            return try loadLottieData(tmpFileURL)
+        }
+        
+        try cacheFile(tmpFileURL, for: .svga)
+        
+        let store = AnimationStore.svga(entity: entity)
+        cache = store
+        
+        return store
+    }
+    
+    static func loadGIFData(_ tmpFileURL: URL) throws -> AnimationStore {
+        let tmpData = try Data(contentsOf: tmpFileURL)
+        
+        guard tmpData.jp.isGIF else {
+            return try loadSVGAData(tmpFileURL)
+        }
+        
+        guard let gif = decodeGIF(tmpData) else {
+            throw Self.Error.decodeGIFFailed
+        }
+        
+        try cacheFile(tmpFileURL, for: .gif)
+        
+        let store = AnimationStore.gif(images: gif.0, duration: gif.1)
+        cache = store
+        
+        return store
+    }
 }
 
 // MARK: - 缓存管理
@@ -393,6 +409,14 @@ private extension AnimationStore {
         }
         
         switch cacheType {
+        case .dotLottie:
+            let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: filePath, dotLottieCache: nil)
+            guard case let .success(file) = result, file.animations.first != nil else {
+                clearCacheFile()
+                return
+            }
+            cache = .dotLottie(file: file)
+            
         case .lottie:
             var isDirectory: ObjCBool = false
             guard FileManager.default.fileExists(atPath: filePath, isDirectory: &isDirectory) else {
@@ -401,7 +425,19 @@ private extension AnimationStore {
             }
             
             // 文件夹是lottie_dir（自带图片的动画），非文件夹则是lottie_json（纯矢量动画）
-            let jsonPath = isDirectory.boolValue ? "\(filePath)/data.json" : filePath
+            let jsonPath: String
+            if isDirectory.boolValue {
+                guard let fileName = File.manager.list(filePath).first(where: {
+                    ($0 as NSString).pathExtension.lowercased() == "json"
+                }) else {
+                    clearCacheFile()
+                    return // 找不到动画json文件
+                }
+                jsonPath = "\(filePath)/\(fileName)"
+            } else {
+                jsonPath = filePath
+            }
+            
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
                 clearCacheFile()
                 return
