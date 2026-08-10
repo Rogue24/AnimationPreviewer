@@ -17,6 +17,7 @@ extension VideoMaker {
                           frameInterval: Int,
                           duration: TimeInterval,
                           size: CGSize,
+                          isAsyncRender: Bool = false,
                           audioPath: String? = nil,
                           animLayer: VideoAnimationLayer? = nil,
                           layerProvider: @escaping LayerProvider,
@@ -29,6 +30,7 @@ extension VideoMaker {
                           frameInterval: frameInterval,
                           duration: duration,
                           size: size,
+                          isAsyncRender: isAsyncRender,
                           audioPath: audioPath,
                           animLayer: animLayer,
                           layerProvider: layerProvider,
@@ -125,21 +127,30 @@ extension VideoMaker {
                 return
             }
             
-            var layers: [CALayer?] = []
-            DispatchQueue.main.sync {
-                layers = layerProvider(currentFrame, currentTime, size)
-            }
             autoreleasepool {
+                var layers: [CALayer?] = []
+                var image: UIImage? = nil
+                DispatchQueue.main.sync {
+                    layers = layerProvider(currentFrame, currentTime, size)
+                    if !isAsyncRender, layers.count > 0 {
+                        image = renderer.image(of: layers.compactMap {
+                            guard let layer = $0 else { return nil }
+                            return (layer, .aspectFit)
+                        })
+                    }
+                }
 //                layers.forEach {
 //                    guard let layer = $0 else { return }
 //                    layer.render(in: ctx)
 //                }
-//                let image = UIGraphicsGetImageFromCurrentImageContext()
+//                image = UIGraphicsGetImageFromCurrentImageContext()
 //                ctx.clear(CGRect(origin: .zero, size: size))
-                let image = layers.count > 0 ? renderer.image(of: layers.compactMap {
-                    guard let layer = $0 else { return nil }
-                    return (layer, .aspectFit)
-                }) : nil
+                if isAsyncRender, layers.count > 0 {
+                    image = renderer.image(of: layers.compactMap {
+                        guard let layer = $0 else { return nil }
+                        return (layer, .aspectFit)
+                    })
+                }
                 
                 let pixelBuffer: CVPixelBuffer
                 if let image = image,

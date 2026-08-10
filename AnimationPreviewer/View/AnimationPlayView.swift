@@ -535,11 +535,11 @@ extension AnimationPlayView {
                 return
             }
             
-            let dotLottieLayer = LottieAnimationLayer(
+            let lottieLayer = LottieAnimationLayer(
                 dotLottie: file,
                 configuration: LottieConfiguration(renderingEngine: .mainThread)
             )
-            guard let animationLayer = dotLottieLayer.animationLayer as? MainThreadAnimationLayer else {
+            guard let animationLayer = lottieLayer.animationLayer as? MainThreadAnimationLayer else {
                 completion(.failure(reason: "视频生成失败"))
                 return
             }
@@ -550,8 +550,8 @@ extension AnimationPlayView {
                 duration: animation.duration,
                 size: [720, 720]
             ) { _, currentTime, _ in
-                dotLottieLayer.currentTime = currentTime
-                dotLottieLayer.forceDisplayUpdate()
+                lottieLayer.currentTime = currentTime
+                lottieLayer.forceDisplayUpdate()
                 return [animationLayer]
             } progress: { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
@@ -571,16 +571,25 @@ extension AnimationPlayView {
                 return
             }
             
-            let animLayer = MainThreadAnimationLayer(
+            let lottieLayer = LottieAnimationLayer(
                 animation: animation,
                 imageProvider: provider,
-                textProvider: DefaultTextProvider(),
-                fontProvider: DefaultFontProvider(),
-                maskAnimationToBounds: true,
-                logger: LottieLogger.shared
+                configuration: LottieConfiguration(renderingEngine: .mainThread)
             )
+            guard let animationLayer = lottieLayer.animationLayer as? MainThreadAnimationLayer else {
+                completion(.failure(reason: "视频生成失败"))
+                return
+            }
             
-            let converter = LottieFrameConverter(animation: animation)
+//            let animationLayer = MainThreadAnimationLayer(
+//                animation: animation,
+//                imageProvider: provider,
+//                textProvider: DefaultTextProvider(),
+//                fontProvider: DefaultFontProvider(),
+//                maskAnimationToBounds: true,
+//                logger: LottieLogger.shared
+//            )
+//            let converter = LottieFrameConverter(animation: animation)
             
             VideoMaker.makeVideo(
                 framerate: 20,
@@ -588,9 +597,11 @@ extension AnimationPlayView {
                 duration: animation.duration,
                 size: [720, 720]
             ) { _, currentTime, _ in
-                animLayer.currentFrame = converter.frame(at: currentTime)
-                animLayer.display()
-                return [animLayer]
+//                animationLayer.currentFrame = converter.frame(at: currentTime)
+//                animationLayer.display()
+                lottieLayer.currentTime = currentTime
+                lottieLayer.forceDisplayUpdate()
+                return [animationLayer]
             } progress: { currentFrame, totalFrame in
                 let progress = Float(currentFrame) / Float(totalFrame)
                 Asyncs.main { progressHandler(progress) }

@@ -225,26 +225,28 @@ extension AnimationImageView {
             return
         }
         
+        var delay: TimeInterval = 0
         var newImage: UIImage? = nil
         let task: Asyncs.BaseTask
         
         switch store {
         case let .dotLottie(file):
-            let dotLottieLayer = LottieAnimationLayer(
+            let lottieLayer = LottieAnimationLayer(
                 dotLottie: file,
                 configuration: LottieConfiguration(renderingEngine: .mainThread)
             )
             
             guard let animation = file.animations.first?.animation,
-                  let animationLayer = dotLottieLayer.animationLayer as? MainThreadAnimationLayer
+                  let animationLayer = lottieLayer.animationLayer as? MainThreadAnimationLayer
             else {
                 completion(.failure(reason: "图片截取失败"))
                 return
             }
             
-            dotLottieLayer.currentFrame = lottieView.currentFrame
-            dotLottieLayer.forceDisplayUpdate()
+            lottieLayer.currentFrame = lottieView.currentFrame
+            lottieLayer.forceDisplayUpdate()
             
+            delay = 0.01 // 延迟一下等lottieLayer把画面渲染好
             let size = animation.bounds.size
             let layer = animationLayer
             task = {
@@ -252,18 +254,21 @@ extension AnimationImageView {
             }
             
         case let .lottie(animation, provider):
-            let animationLayer = MainThreadAnimationLayer(
+            let lottieLayer = LottieAnimationLayer(
                 animation: animation,
                 imageProvider: provider,
-                textProvider: DefaultTextProvider(),
-                fontProvider: DefaultFontProvider(),
-                maskAnimationToBounds: true,
-                logger: LottieLogger.shared
+                configuration: LottieConfiguration(renderingEngine: .mainThread)
             )
             
-            animationLayer.currentFrame = lottieView.currentFrame
-            animationLayer.display()
+            guard let animationLayer = lottieLayer.animationLayer as? MainThreadAnimationLayer else {
+                completion(.failure(reason: "图片截取失败"))
+                return
+            }
             
+            lottieLayer.currentFrame = lottieView.currentFrame
+            lottieLayer.forceDisplayUpdate()
+            
+            delay = 0.01 // 延迟一下等lottieLayer把画面渲染好
             let size = animation.bounds.size
             let layer = animationLayer
             task = {
@@ -287,7 +292,7 @@ extension AnimationImageView {
             }
         }
         
-        Asyncs.async(task) {
+        Asyncs.asyncDelay(delay, task) {
             if let newImage {
                 completion(.success(image: newImage))
             } else {
