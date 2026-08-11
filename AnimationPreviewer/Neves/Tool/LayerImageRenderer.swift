@@ -13,7 +13,7 @@ import UIKit
 /// 说明：
 /// - 复用的是`context`配置，每次`image(of:)`仍返回各自独立的`UIImage`（像素内存不共享，这是必须的）。
 /// - 每次`image(of:)`系统都会给一块干净画布，**无需手动 clear**；绘制中的坐标变换由`CALayer.draw`内部`save/restore`复位，**无需外部恢复状态**。
-/// - ⚠️ 非线程安全:创建后请始终在同一线程调用。
+/// - ⚠️ 非线程安全：创建后请始终在同一线程调用。
 final class LayerImageRenderer {
     typealias LayerWithMode = (layer: CALayer, mode: CALayer.FitMode)
     typealias LayerWithRegion = (layer: CALayer, region: CGRect)
