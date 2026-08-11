@@ -72,7 +72,7 @@
 		1A95CC972A0A05D9006E3102 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4B2A0A05D8006E3102 /* Buttons.swift */; };
 		1A95CC982A0A05D9006E3102 /* ImagePickerObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */; };
 		1A95CC992A0A05D9006E3102 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */; };
-		1A95CC9A2A0A05D9006E3102 /* ImagePicker+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */; };
+		1A95CC9A2A0A05D9006E3102 /* ImagePicker+API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC4F2A0A05D8006E3102 /* ImagePicker+API.swift */; };
 		1A95CCA62A0A05D9006E3102 /* Literal+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC5F2A0A05D8006E3102 /* Literal+.swift */; };
 		1A95CCA72A0A05D9006E3102 /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC602A0A05D8006E3102 /* UIView+.swift */; };
 		1A95CCA92A0A05D9006E3102 /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CC622A0A05D8006E3102 /* Bundle+.swift */; };
@@ -221,7 +221,7 @@
 		1A95CC4B2A0A05D8006E3102 /* Buttons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerObject.swift; sourceTree = "<group>"; };
 		1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
-		1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImagePicker+.swift"; sourceTree = "<group>"; };
+		1A95CC4F2A0A05D8006E3102 /* ImagePicker+API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ImagePicker+API.swift"; sourceTree = "<group>"; };
 		1A95CC5F2A0A05D8006E3102 /* Literal+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Literal+.swift"; sourceTree = "<group>"; };
 		1A95CC602A0A05D8006E3102 /* UIView+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		1A95CC622A0A05D8006E3102 /* Bundle+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+.swift"; sourceTree = "<group>"; };
@@ -500,9 +500,9 @@
 		1A95CC4C2A0A05D8006E3102 /* ImagePicker */ = {
 			isa = PBXGroup;
 			children = (
-				1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */,
 				1A95CC4E2A0A05D8006E3102 /* ImagePicker.swift */,
-				1A95CC4F2A0A05D8006E3102 /* ImagePicker+.swift */,
+				1A95CC4F2A0A05D8006E3102 /* ImagePicker+API.swift */,
+				1A95CC4D2A0A05D8006E3102 /* ImagePickerObject.swift */,
 			);
 			path = ImagePicker;
 			sourceTree = "<group>";
@@ -776,7 +776,7 @@
 				1A95CCD32A0A05D9006E3102 /* ScreenRotator.swift in Sources */,
 				1A95CCCC2A0A05D9006E3102 /* VideoMaker+ImageTest.swift in Sources */,
 				1A95CC952A0A05D9006E3102 /* Gradientable.swift in Sources */,
-				1A95CC9A2A0A05D9006E3102 /* ImagePicker+.swift in Sources */,
+				1A95CC9A2A0A05D9006E3102 /* ImagePicker+API.swift in Sources */,
 				1A95CCC92A0A05D9006E3102 /* File.swift in Sources */,
 				1A95CCBD2A0A05D9006E3102 /* UserDefault.swift in Sources */,
 				1A95CCB62A0A05D9006E3102 /* Bindable.swift in Sources */,

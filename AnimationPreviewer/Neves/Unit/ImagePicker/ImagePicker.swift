@@ -131,12 +131,12 @@ extension ImagePicker {
 
 // MARK: - Open album
 extension ImagePicker.Controller {
-    static func openAlbum<T: ImagePickerObject>(_ mediaType: ImagePicker.PickType) async throws -> T {
+    static func openAlbum(_ mediaType: ImagePicker.PickType) async throws -> T {
         let picker: ImagePicker.Controller<T> = try showAlbumPicker(mediaType: mediaType)
         return try await picker.pickObject()
     }
     
-    static func openAlbum<T: ImagePickerObject>(_ mediaType: ImagePicker.PickType, completion: @escaping ImagePicker.Completion<T>) {
+    static func openAlbum(_ mediaType: ImagePicker.PickType, completion: @escaping ImagePicker.Completion<T>) {
         do {
             let picker: ImagePicker.Controller<T> = try showAlbumPicker(mediaType: mediaType)
             picker.pickObject(completion: completion)
@@ -169,7 +169,7 @@ extension ImagePicker.Controller {
 
 // MARK: - Show picker
 private extension ImagePicker.Controller {
-    static func showAlbumPicker<T>(mediaType: ImagePicker.PickType) throws -> ImagePicker.Controller<T> {
+    static func showAlbumPicker(mediaType: ImagePicker.PickType) throws -> ImagePicker.Controller<T> {
         let parentVC = try getParentVC()
         let picker = ImagePicker.Controller<T>()
         picker.modalPresentationStyle = .overFullScreen
