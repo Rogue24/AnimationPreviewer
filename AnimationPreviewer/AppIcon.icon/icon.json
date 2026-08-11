@@ -1,0 +1,42 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.96000,0.96000,0.97000,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "glass" : false,
+          "hidden" : false,
+          "image-name" : "cat.png",
+          "name" : "cat",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -7.1796875,
+              -23.2421875
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : [
+      "iOS",
+      "macOS"
+    ]
+  }
+}

@@ -60,6 +60,7 @@
 		1A64F9552A085DE7000F979B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A64F9542A085DE7000F979B /* ViewController.swift */; };
 		1A64F9582A085DE7000F979B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9562A085DE7000F979B /* Main.storyboard */; };
 		1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F9592A085DE9000F979B /* Assets.xcassets */; };
+		AAA1C0110000000000000002 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AAA1C0110000000000000001 /* AppIcon.icon */; };
 		1A64F95D2A085DE9000F979B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A64F95B2A085DE9000F979B /* LaunchScreen.storyboard */; };
 		1A880DB32A0B6C7A00BE7F16 /* ViewController+Drop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A880DB22A0B6C7A00BE7F16 /* ViewController+Drop.swift */; };
 		1A95CC3B2A093C44006E3102 /* MacPlugin.bundle in Embed PlugIns */ = {isa = PBXBuildFile; fileRef = 1A95CC372A093B90006E3102 /* MacPlugin.bundle */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -205,6 +206,7 @@
 		1A64F9542A085DE7000F979B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		1A64F9572A085DE7000F979B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1A64F9592A085DE9000F979B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AAA1C0110000000000000001 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		1A64F95C2A085DE9000F979B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1A64F95E2A085DE9000F979B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1A64F9642A085F9E000F979B /* AnimationPreviewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AnimationPreviewer.entitlements; sourceTree = "<group>"; };
@@ -602,6 +604,7 @@
 				1A95CD942A0B6134006E3102 /* background1.jpg */,
 				1ADCAD7C2A9FA8B800D939FC /* background2.jpg */,
 				1A64F9592A085DE9000F979B /* Assets.xcassets */,
+				AAA1C0110000000000000001 /* AppIcon.icon */,
 				1A64F95E2A085DE9000F979B /* Info.plist */,
 				1A64F95B2A085DE9000F979B /* LaunchScreen.storyboard */,
 				1A64F9562A085DE7000F979B /* Main.storyboard */,
@@ -710,6 +713,7 @@
 				00F96ED62F5176E100E6B0F8 /* SVProgressHUD.bundle in Resources */,
 				1A95CD952A0B6134006E3102 /* background1.jpg in Resources */,
 				1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */,
+				AAA1C0110000000000000002 /* AppIcon.icon in Resources */,
 				1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */,
 				1A64F9582A085DE7000F979B /* Main.storyboard in Resources */,
 			);
