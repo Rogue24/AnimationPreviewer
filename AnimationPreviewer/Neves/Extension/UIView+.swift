@@ -152,6 +152,18 @@ extension UIView {
         image(size: size, region: fitRegion(in: size, mode: mode), scale: scale, background: background, afterScreenUpdates: afterScreenUpdates)
     }
     
+    /// 按`view`自身尺寸（`bounds`）原样生成`image`（内容 1:1，不缩放、不留白）
+    /// - Important: 必须在主线程调用；视图需在窗口上，离屏可能截到空白
+    /// - Parameters:
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    ///   - afterScreenUpdates: 是否等视图刷新后再截，默认`true`（所见即所得，稍慢）
+    func image(scale: CGFloat? = nil,
+               background: UIColor? = nil,
+               afterScreenUpdates: Bool = true) -> UIImage {
+        image(size: bounds.size, region: CGRect(origin: .zero, size: bounds.size), scale: scale, background: background, afterScreenUpdates: afterScreenUpdates)
+    }
+    
     /// 将`view`拉伸铺满画布中的指定区域（不保持比例），超出画布的部分自动裁剪，生成`image`
     /// - Important: 必须在主线程调用；视图需在窗口上，离屏可能截到空白
     /// - Parameters:
@@ -192,6 +204,18 @@ extension UIView {
         pngData(size: size, region: fitRegion(in: size, mode: mode), scale: scale, background: background, afterScreenUpdates: afterScreenUpdates)
     }
     
+    /// 按`view`自身尺寸（`bounds`）原样生成`PNG data`（内容 1:1，不缩放、不留白）
+    /// - Important: 必须在主线程调用；视图需在窗口上，离屏可能截到空白
+    /// - Parameters:
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    ///   - afterScreenUpdates: 是否等视图刷新后再截，默认`true`（所见即所得，稍慢）
+    func pngData(scale: CGFloat? = nil,
+                 background: UIColor? = nil,
+                 afterScreenUpdates: Bool = true) -> Data {
+        pngData(size: bounds.size, region: CGRect(origin: .zero, size: bounds.size), scale: scale, background: background, afterScreenUpdates: afterScreenUpdates)
+    }
+    
     /// 将`view`拉伸铺满画布中的指定区域（不保持比例），超出画布的部分自动裁剪，生成`PNG data`（无损，支持透明）
     /// - Important: 必须在主线程调用；视图需在窗口上，离屏可能截到空白
     /// - Parameters:
@@ -230,6 +254,21 @@ extension UIView {
                   quality: CGFloat = 0.9,
                   afterScreenUpdates: Bool = true) -> Data {
         jpegData(size: size, region: fitRegion(in: size, mode: mode), scale: scale, background: background, quality: quality, afterScreenUpdates: afterScreenUpdates)
+    }
+    
+    /// 按`view`自身尺寸（`bounds`）原样生成`JPEG data`（内容 1:1，不缩放、不留白）
+    /// - Note: JPEG 无 alpha 通道，未铺背景（`background`为`nil/.clear`）时透明区域会被填成黑色，需要透明请改用`pngData`
+    /// - Important: 必须在主线程调用；视图需在窗口上，离屏可能截到空白
+    /// - Parameters:
+    ///   - scale: 像素倍率。`nil` = 跟随屏幕（高清）；`1` = 严格按点=像素导出
+    ///   - background: 画布底色，`nil`为透明
+    ///   - quality: JPEG 压缩质量，`0`（最小体积） ~ `1`（最高质量），默认`0.9`
+    ///   - afterScreenUpdates: 是否等视图刷新后再截，默认`true`（所见即所得，稍慢）
+    func jpegData(scale: CGFloat? = nil,
+                  background: UIColor? = nil,
+                  quality: CGFloat = 0.9,
+                  afterScreenUpdates: Bool = true) -> Data {
+        jpegData(size: bounds.size, region: CGRect(origin: .zero, size: bounds.size), scale: scale, background: background, quality: quality, afterScreenUpdates: afterScreenUpdates)
     }
     
     /// 将`view`拉伸铺满画布中的指定区域（不保持比例），超出画布的部分自动裁剪，生成`JPEG data`（有损，**不支持透明**）
