@@ -1,6 +1,9 @@
 # OS X
 .DS_Store
 
+# DMG 打包产物与工作区
+dist/
+
 # Xcode
 build/
 *.pbxuser
