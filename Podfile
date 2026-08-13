@@ -6,10 +6,10 @@ target 'AnimationPreviewer' do
   use_frameworks!
   
   # 升级了pb的SVGAPlayer源仓库（fork）
-  pod 'SVGAPlayer', :git => 'https://github.com/Rogue24/SVGAPlayer-iOS.git', :tag => '2.5.8'
+  pod 'SVGAPlayer', :git => 'https://github.com/Rogue24/SVGAPlayer-iOS.git', :tag => '2.5.9'
   
   # 封装并优化后的SVGA播放器
-  pod 'SVGAPlayer_Optimized', :git => 'https://github.com/Rogue24/SVGAPlayer_Optimized.git', :tag => '0.1.4'
+  pod 'SVGAPlayer_Optimized', :git => 'https://github.com/Rogue24/SVGAPlayer_Optimized.git', :tag => '0.1.5'
   
   pod 'SnapKit'
   
