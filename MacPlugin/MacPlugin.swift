@@ -12,25 +12,34 @@ class MacPlugin: NSObject, Channel {
     private var statusItem: NSStatusItem? = nil
     
     /// UIKit 原本的`NSApplication`代理
-    ///
-    /// Catalyst 底层跑的是 AppKit，UIKit 会装一个 shim 当`NSApplication.delegate`，
-    /// 负责把 AppKit 事件——尤其是「打开文件」——转发给 UIScene。
-    /// 这里为了实现「关掉最后一个窗口就退出」必须把自己设成代理，
-    /// 但得把没实现的方法原样转回去，否则打开文件的事件就没人接，
-    /// AppKit 会回落到`NSDocumentController`，弹出「cannot open files in the “XXX” format」。
-    private var uikitDelegate: NSApplicationDelegate?
+//    private var uikitDelegate: NSApplicationDelegate?
+    
+    /// `setup`可能被调多次，窗口通知只注册一次
+    private var isObservingWindows = false
     
     // MARK: - <Channel>
     
     required override init() {}
     
     func setup() {
-        // `setup`每个场景都会调一次，只在第一次接管，
-        // 否则第二次会把`uikitDelegate`指向自己，转发时无限递归。
-        if NSApplication.shared.delegate !== self {
-            uikitDelegate = NSApplication.shared.delegate
-            NSApplication.shared.delegate = self
-        }
+        // 注意：不要去接管`NSApplication.shared.delegate`。
+        // Catalyst 底层跑的是 AppKit，UIKit 装了一个 shim 当这个代理，
+        // 负责把 AppKit 事件转发给 UIScene；把它顶掉，「双击文件打开」就没人接了，
+        // AppKit 会回落到`NSDocumentController`，弹出
+        // 「cannot open files in the “XXX” format」。
+        // 状态栏图标和下面的关闭按钮接管都不需要代理身份，别为它们动这个代理。
+//        if NSApplication.shared.delegate !== self {
+//            // `setup`每个场景都会调一次，只在第一次接管，
+//            // 否则第二次会把`uikitDelegate`指向自己，转发时无限递归。
+//            uikitDelegate = NSApplication.shared.delegate
+//            NSApplication.shared.delegate = self
+//        }
+        
+        // 关闭按钮改成「收起App」，这样点关闭才不会退出
+        observeWindowAppearance()
+        
+        // 场景可能断开又重连，`setup`会再跑一次，状态栏图标别重复创建
+        guard statusItem == nil else { return }
         
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
@@ -269,38 +278,53 @@ private extension MacPlugin {
     }
 }
 
-// MARK: - 打开主窗口
-private extension MacPlugin {
-    @objc func openMainWindow() {
-        NSApplication.shared.mainWindow?.windowController?.showWindow(NSApplication.shared.mainWindow)
-        NSApplication.shared.activate(ignoringOtherApps: true)
-    }
-}
-
-// MARK: - <NSApplicationDelegate>
-extension MacPlugin: NSApplicationDelegate {
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        // 返回true确保点击关闭后app真的死掉，否则只是隐藏
-        return true
-    }
-}
-
-// MARK: - 把自己没实现的代理方法转回 UIKit
+// MARK: - 点关闭按钮只收起App，不退出
 //
-// 只接管上面那一个方法，其余（`application(_:openURLs:)` 等）统统交还给 UIKit 的 shim，
-// 让「双击文件打开」照原路走到 UIScene。
-extension MacPlugin {
-    override func responds(to aSelector: Selector!) -> Bool {
-        if super.responds(to: aSelector) {
-            return true
-        }
-        return uikitDelegate?.responds(to: aSelector) ?? false
+// 试过无效、别再走的两条路：
+// 1.`applicationShouldTerminateAfterLastWindowClosed`返回false
+//  — Catalyst下窗口一旦真的关闭，UIKit 就断开场景并终止进程，它不问这个 AppKit 回调。
+// 2.窗口代理的`windowShouldClose` —— UIKit 同样不经过它。
+// 所以改成接管关闭按钮的动作，从源头上不让窗口走进关闭流程。
+private extension MacPlugin {
+    /// 窗口是 UIKit 建的，`setup`时可能还不存在，所以监听通知等它出现
+    func observeWindowAppearance() {
+        guard !isObservingWindows else { return }
+        isObservingWindows = true
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(takeOverCloseButton(_:)),
+            name: NSWindow.didBecomeMainNotification,
+            object: nil
+        )
     }
     
-    override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        if let uikitDelegate, uikitDelegate.responds(to: aSelector) {
-            return uikitDelegate
-        }
-        return super.forwardingTarget(for: aSelector)
+    @objc func takeOverCloseButton(_ note: Notification) {
+        guard let window = note.object as? NSWindow,
+              let closeButton = window.standardWindowButton(.closeButton),
+              closeButton.target !== self
+        else { return }
+        
+        closeButton.target = self
+        closeButton.action = #selector(hideWindow(_:))
+    }
+    
+    /// 点关闭按钮：收起整个App（等同 Cmd+H）
+    ///
+    /// 必须是`NSApp.hide`而不是`window.orderOut`：前者是系统认得的「应用已隐藏」状态，
+    /// 系统激活App时会自己把窗口恢复回来；后者只是把窗口挪出屏幕，
+    /// 而 Catalyst 下窗口归 UIKit 管，想再显示回来就得跟 UIKit 抢，试过多种写法都不稳。
+    @objc func hideWindow(_ sender: Any?) {
+        NSApplication.shared.hide(nil)
+    }
+    
+    /// 点状态栏图标：请系统「打开」本App，走和点Dock图标同一条路
+    ///
+    /// 不能自己调`activate`：App 自己抢激活会被系统随后撤销（表现为闪一下又切回去，延迟到1秒也没用）。
+    /// Dock点击好使正是因为激活由系统发起，这里把它交还给系统。
+    @objc func openMainWindow() {
+        let config = NSWorkspace.OpenConfiguration()
+        config.activates = true
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: config)
     }
 }
