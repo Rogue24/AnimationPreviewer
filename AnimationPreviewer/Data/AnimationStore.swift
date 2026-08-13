@@ -238,12 +238,11 @@ private extension AnimationStore {
             }
             
             let cached = try cacheFile(tmpFileURL, for: .dotLottie)
+            let dirName = cached.dirName
             
             let store = AnimationStore.dotLottie(file: file)
-            cache = store
-            cacheDirName = cached.dirName
             
-            return (store, cached.dirName)
+            return (store, dirName)
             
         case let .failure(error):
             print("DotLottie 解析错误：\(error.localizedDescription)")
@@ -271,13 +270,12 @@ private extension AnimationStore {
             let animation = try LottieAnimation.from(data: tmpData)
             
             let cached = try cacheFile(tmpFileURL, for: .lottie)
+            let dirName = cached.dirName
             
             let provider = FilepathImageProvider(filepath: cached.filePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
-            cache = store
-            cacheDirName = cached.dirName
             
-            return (store, cached.dirName)
+            return (store, dirName)
         }
         
         // 是文件夹，遍历找出lottie文件
@@ -321,13 +319,12 @@ private extension AnimationStore {
                 let animation = try LottieAnimation.from(data: tmpData)
                 
                 let cached = try cacheFile(jsonURL, for: .lottie)
+                let dirName = cached.dirName
                 
                 let provider = FilepathImageProvider(filepath: cached.filePath)
                 let store = AnimationStore.lottie(animation: animation, provider: provider)
-                cache = store
-                cacheDirName = cached.dirName
                 
-                return (store, cached.dirName)
+                return (store, dirName)
             }
             
             // 还有images目录（自带图片的动画）
@@ -337,13 +334,12 @@ private extension AnimationStore {
             }
             
             let cached = try cacheFile(tmpFileURL, for: .lottie)
+            let dirName = cached.dirName
             
             let provider = FilepathImageProvider(filepath: cached.filePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
-            cache = store
-            cacheDirName = cached.dirName
             
-            return (store, cached.dirName)
+            return (store, dirName)
         }
         
         if !isNested {
@@ -375,12 +371,11 @@ private extension AnimationStore {
         }
         
         let cached = try cacheFile(tmpFileURL, for: .svga)
+        let dirName = cached.dirName
         
         let store = AnimationStore.svga(entity: entity)
-        cache = store
-        cacheDirName = cached.dirName
         
-        return (store, cached.dirName)
+        return (store, dirName)
     }
     
     static func loadGIFData(_ tmpFileURL: URL) throws -> LoadResult {
@@ -395,12 +390,11 @@ private extension AnimationStore {
         }
         
         let cached = try cacheFile(tmpFileURL, for: .gif)
+        let dirName = cached.dirName
         
         let store = AnimationStore.gif(images: gif.0, duration: gif.1)
-        cache = store
-        cacheDirName = cached.dirName
         
-        return (store, cached.dirName)
+        return (store, dirName)
     }
 }
 
@@ -450,11 +444,6 @@ private extension AnimationStore {
     static func getTmpFilePath(_ fileName: String) -> String { tmpDirPath + "/" + fileName }
     static func getCacheFilePath(_ fileName: String) -> String { cacheDirPath + "/" + fileName }
     
-    /// 上次退出前最后加载的动画（启动时恢复，经`loadCache`回调交出去）
-    static var cache: AnimationStore? = nil
-    /// `cache`所在的缓存目录名
-    static var cacheDirName: String? = nil
-    
     /// 最后一次加载的动画类型（留给下次启动恢复）
     @UserDefault(.animationType) static var lastCacheType: AnimationType.RawValue = 0
     /// 最后一次加载的动画所在的缓存目录名（留给下次启动恢复）
@@ -466,8 +455,6 @@ private extension AnimationStore {
     }
     
     static func resetCacheRecord() {
-        cache = nil
-        cacheDirName = nil
         lastCacheType = 0
         lastCacheDirName = ""
     }
@@ -564,9 +551,6 @@ private extension AnimationStore {
             
             store = .gif(images: gif.0, duration: gif.1)
         }
-        
-        cache = store
-        cacheDirName = dirName
         
         return (store, dirName)
     }

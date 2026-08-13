@@ -164,7 +164,7 @@ private extension ViewController {
         // 等这一下的关键收益不只是不显示上次的动画：解析缓存和加载双击的文件
         // 共用同一条串行队列，抢先解析缓存会把双击的文件堵在后面，
         // 文件越大、旧动画就在画面上停留越久。
-        Asyncs.mainDelay(0.25) { [weak self] in
+        Asyncs.mainDelay(0.3) { [weak self] in
             guard let self, !self.didLoadExternalFile else { return }
             self.restoreLastAnimation()
         }
