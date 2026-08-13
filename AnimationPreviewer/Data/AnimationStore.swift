@@ -63,6 +63,8 @@ enum AnimationStore {
         case lottieWithoutImagesDir
         /// `GIF`解码失败
         case decodeGIFFailed
+        /// 缓存目录创建失败
+        case cacheDirCreateFailed
         
         var errorDescription: String? {
             switch self {
@@ -78,6 +80,8 @@ enum AnimationStore {
                 return "lottie文件错误：没有images目录"
             case .decodeGIFFailed:
                 return "GIF解码失败"
+            case .cacheDirCreateFailed:
+                return "缓存目录创建失败"
             }
         }
     }
@@ -85,27 +89,43 @@ enum AnimationStore {
 
 // MARK: - 公开API
 extension AnimationStore {
-    static private(set) var cache: AnimationStore? = nil
+    /// 加载结果：动画 + 它独占的缓存目录名
+    typealias LoadResult = (store: AnimationStore, cacheDirName: String)
     
-    static func setup(completion: @escaping () -> Void) {
+    /// 只准备目录，很快。`loadData`之前必须先调用
+    static func prepare(completion: @escaping () -> Void) {
         doInMyQueue {
             File.manager.createDirectory(tmpDirPath)
             File.manager.createDirectory(cacheDirPath)
-            loadCacheData()
             Asyncs.main { completion() }
         }
     }
     
-    static func clearCache() {
+    /// 解析上次留下的动画
+    ///
+    /// 从`prepare`里拆出来单独调用：解析可能很慢，而它和`loadData`共用同一条串行队列。
+    /// 双击文件启动时要是先解析缓存，双击的文件就被堵在后面，
+    /// 窗口会先显示上次的动画、隔一会儿才换成双击的那个 —— 所以这种情况直接别调用它。
+    static func loadCache(completion: @escaping (_ result: LoadResult?) -> Void) {
         doInMyQueue {
-            clearCacheFile()
+            let result = loadCacheData()
+            Asyncs.main { completion(result) }
         }
+    }
+    
+    /// 清掉「下次启动恢复」的记录（主线程调用）
+    ///
+    /// 只清记录，不直接删目录：别的窗口可能还在用自己的那份，不能一把清空整个缓存目录，
+    /// 无人引用的目录由`collectGarbage`回收。
+    static func clearCache() {
+        resetCacheRecord()
+        collectGarbage()
     }
     
     static func loadData(
         _ data: Data,
         fileExtension ext: String?,
-        success: @escaping (_ store: AnimationStore) -> Void,
+        success: @escaping (_ result: LoadResult) -> Void,
         failure: @escaping (_ error: Swift.Error) -> Void
     ) {
         guard isInMyQueue else {
@@ -125,16 +145,16 @@ extension AnimationStore {
             if let ext, ext.count > 0 {
                 switch ext {
                 case "gif":
-                    let store = try loadGIFData(tmpFileURL)
-                    Asyncs.main { success(store) }
+                    let result = try loadGIFData(tmpFileURL)
+                    Asyncs.main { success(result) }
                     return
                 case "svga":
-                    let store = try loadSVGAData(tmpFileURL)
-                    Asyncs.main { success(store) }
+                    let result = try loadSVGAData(tmpFileURL)
+                    Asyncs.main { success(result) }
                     return
                 case "lottie":
-                    let store = try loadDotLottieData(tmpFileURL)
-                    Asyncs.main { success(store) }
+                    let result = try loadDotLottieData(tmpFileURL)
+                    Asyncs.main { success(result) }
                     return
                 default:
                     break
@@ -144,8 +164,8 @@ extension AnimationStore {
             // 检查是不是zip
             guard data.jp.isZip else {
                 // 不是，先去看看是不是svga（不是的话其内部会去看看是不是lottie）
-                let store = try loadSVGAData(tmpFileURL)
-                Asyncs.main { success(store) }
+                let result = try loadSVGAData(tmpFileURL)
+                Asyncs.main { success(result) }
                 return
             }
             
@@ -163,8 +183,8 @@ extension AnimationStore {
             guard isDirectory.boolValue else {
                 // 不是，去看看是不是svga
                 // 内部会先看看是不是lottie_json，再看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie_dir
-                let store = try loadSVGAData(unzipDirURL)
-                Asyncs.main { success(store) }
+                let result = try loadSVGAData(unzipDirURL)
+                Asyncs.main { success(result) }
                 return
             }
             
@@ -188,17 +208,17 @@ extension AnimationStore {
                 throw Self.Error.unrecognizedFile
             }
             
-            let store: AnimationStore
+            let result: LoadResult
             if fileURL.jp.isDirectory {
                 // 还是文件夹，看看是不是lottie（其内部会检查有没有svga/gif文件）
-                store = try loadLottieData(fileURL, isDir: true)
+                result = try loadLottieData(fileURL, isDir: true)
             } else {
                 // 不是文件夹，看看是不是svga
                 // 内部会先看看是不是lottie_json，再看看是不是gif，接着解析svga，如果连svga都不是就去看看是不是lottie_dir
-                store = try loadSVGAData(fileURL)
+                result = try loadSVGAData(fileURL)
             }
             
-            Asyncs.main { success(store) }
+            Asyncs.main { success(result) }
             
         } catch {
             Asyncs.main { failure(error) }
@@ -208,7 +228,7 @@ extension AnimationStore {
 
 // MARK: - lottie/SVGA/GIF数据加载
 private extension AnimationStore {
-    static func loadDotLottieData(_ tmpFileURL: URL) throws -> AnimationStore {
+    static func loadDotLottieData(_ tmpFileURL: URL) throws -> LoadResult {
         let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: tmpFileURL.path, dotLottieCache: nil)
         switch result {
         case let .success(file):
@@ -217,12 +237,13 @@ private extension AnimationStore {
                 throw Self.Error.decodeLottieFailed
             }
             
-            try cacheFile(tmpFileURL, for: .dotLottie)
+            let cached = try cacheFile(tmpFileURL, for: .dotLottie)
             
             let store = AnimationStore.dotLottie(file: file)
             cache = store
+            cacheDirName = cached.dirName
             
-            return store
+            return (store, cached.dirName)
             
         case let .failure(error):
             print("DotLottie 解析错误：\(error.localizedDescription)")
@@ -230,32 +251,33 @@ private extension AnimationStore {
         }
     }
     
-    static func loadLottieData(_ tmpFileURL: URL, isDir: Bool? = nil) throws -> AnimationStore {
+    static func loadLottieData(_ tmpFileURL: URL, isDir: Bool? = nil) throws -> LoadResult {
         let kIsDir: Bool
         if let isDir {
             kIsDir = isDir
         } else {
             kIsDir = tmpFileURL.jp.isDirectory
         }
-        guard let store = try _loadLottieData(tmpFileURL, isDir: kIsDir, isNested: false) else {
+        guard let result = try _loadLottieData(tmpFileURL, isDir: kIsDir, isNested: false) else {
             throw Self.Error.unrecognizedFile
         }
-        return store
+        return result
     }
     
-    static func _loadLottieData(_ tmpFileURL: URL, isDir: Bool, isNested: Bool) throws -> AnimationStore? {
+    static func _loadLottieData(_ tmpFileURL: URL, isDir: Bool, isNested: Bool) throws -> LoadResult? {
         guard isDir else {
             // 非文件夹就是lottie_json（纯矢量动画）
             let tmpData = try Data(contentsOf: tmpFileURL)
             let animation = try LottieAnimation.from(data: tmpData)
             
-            try cacheFile(tmpFileURL, for: .lottie)
+            let cached = try cacheFile(tmpFileURL, for: .lottie)
             
-            let provider = FilepathImageProvider(filepath: cacheFilePath)
+            let provider = FilepathImageProvider(filepath: cached.filePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
             cache = store
+            cacheDirName = cached.dirName
             
-            return store
+            return (store, cached.dirName)
         }
         
         // 是文件夹，遍历找出lottie文件
@@ -298,13 +320,14 @@ private extension AnimationStore {
                 let tmpData = try Data(contentsOf: jsonURL)
                 let animation = try LottieAnimation.from(data: tmpData)
                 
-                try cacheFile(jsonURL, for: .lottie)
+                let cached = try cacheFile(jsonURL, for: .lottie)
                 
-                let provider = FilepathImageProvider(filepath: cacheFilePath)
+                let provider = FilepathImageProvider(filepath: cached.filePath)
                 let store = AnimationStore.lottie(animation: animation, provider: provider)
                 cache = store
+                cacheDirName = cached.dirName
                 
-                return store
+                return (store, cached.dirName)
             }
             
             // 还有images目录（自带图片的动画）
@@ -313,20 +336,21 @@ private extension AnimationStore {
                 throw Self.Error.lottieWithoutJsonFile
             }
             
-            try cacheFile(tmpFileURL, for: .lottie)
+            let cached = try cacheFile(tmpFileURL, for: .lottie)
             
-            let provider = FilepathImageProvider(filepath: cacheFilePath)
+            let provider = FilepathImageProvider(filepath: cached.filePath)
             let store = AnimationStore.lottie(animation: animation, provider: provider)
             cache = store
+            cacheDirName = cached.dirName
             
-            return store
+            return (store, cached.dirName)
         }
         
         if !isNested {
             // 或者是套了一层
             for fileURL in fileURLs where fileURL.jp.isDirectory {
-                guard let store = try _loadLottieData(fileURL, isDir: true, isNested: true) else { continue }
-                return store
+                guard let result = try _loadLottieData(fileURL, isDir: true, isNested: true) else { continue }
+                return result
             }
         }
         
@@ -334,7 +358,7 @@ private extension AnimationStore {
         return nil
     }
     
-    static func loadSVGAData(_ tmpFileURL: URL) throws -> AnimationStore {
+    static func loadSVGAData(_ tmpFileURL: URL) throws -> LoadResult {
         let tmpData = try Data(contentsOf: tmpFileURL)
         
         if tmpData.jp.isJSON {
@@ -350,15 +374,16 @@ private extension AnimationStore {
             return try loadLottieData(tmpFileURL)
         }
         
-        try cacheFile(tmpFileURL, for: .svga)
+        let cached = try cacheFile(tmpFileURL, for: .svga)
         
         let store = AnimationStore.svga(entity: entity)
         cache = store
+        cacheDirName = cached.dirName
         
-        return store
+        return (store, cached.dirName)
     }
     
-    static func loadGIFData(_ tmpFileURL: URL) throws -> AnimationStore {
+    static func loadGIFData(_ tmpFileURL: URL) throws -> LoadResult {
         let tmpData = try Data(contentsOf: tmpFileURL)
         
         guard tmpData.jp.isGIF else {
@@ -369,12 +394,51 @@ private extension AnimationStore {
             throw Self.Error.decodeGIFFailed
         }
         
-        try cacheFile(tmpFileURL, for: .gif)
+        let cached = try cacheFile(tmpFileURL, for: .gif)
         
         let store = AnimationStore.gif(images: gif.0, duration: gif.1)
         cache = store
+        cacheDirName = cached.dirName
         
-        return store
+        return (store, cached.dirName)
+    }
+}
+
+// MARK: - 缓存目录的引用管理（多窗口预埋）
+extension AnimationStore {
+    /// 各窗口当前正在引用的缓存目录名（只在主线程读写）
+    private static var retainedDirNames: [ObjectIdentifier: String] = [:]
+    
+    /// 声明`owner`正在使用某个缓存目录，使其不被`collectGarbage`回收
+    ///
+    /// 传`nil`表示`owner`当前没有引用任何目录。
+    static func retainCacheDir(_ dirName: String?, for owner: AnyObject) {
+        let key = ObjectIdentifier(owner)
+        if let dirName {
+            retainedDirNames[key] = dirName
+        } else {
+            retainedDirNames.removeValue(forKey: key)
+        }
+    }
+    
+    static func releaseCacheDir(for owner: AnyObject) {
+        retainedDirNames.removeValue(forKey: ObjectIdentifier(owner))
+    }
+    
+    /// 回收没有窗口在引用、又不需要留给下次启动的缓存目录
+    ///
+    /// 必须在主线程调用（要读`retainedDirNames`），实际的删除回到`myQueue`执行，
+    /// 与`loadData`串行，不会删到正在写入的目录。
+    static func collectGarbage() {
+        var aliveDirNames = Set(retainedDirNames.values)
+        if !lastCacheDirName.isEmpty {
+            aliveDirNames.insert(lastCacheDirName)
+        }
+        myQueue.async {
+            for dirName in File.manager.list(cacheDirPath) where !aliveDirNames.contains(dirName) {
+                File.manager.deleteFile(getCacheFilePath(dirName))
+            }
+        }
     }
 }
 
@@ -386,42 +450,75 @@ private extension AnimationStore {
     static func getTmpFilePath(_ fileName: String) -> String { tmpDirPath + "/" + fileName }
     static func getCacheFilePath(_ fileName: String) -> String { cacheDirPath + "/" + fileName }
     
-    @UserDefault(.animationType) static var cacheType: AnimationType.RawValue = 0
-    static var cacheFilePath: String { getCacheFilePath("jp_animation") }
+    /// 上次退出前最后加载的动画（启动时恢复，经`loadCache`回调交出去）
+    static var cache: AnimationStore? = nil
+    /// `cache`所在的缓存目录名
+    static var cacheDirName: String? = nil
     
-    static func clearCacheFile() {
+    /// 最后一次加载的动画类型（留给下次启动恢复）
+    @UserDefault(.animationType) static var lastCacheType: AnimationType.RawValue = 0
+    /// 最后一次加载的动画所在的缓存目录名（留给下次启动恢复）
+    @UserDefault(.animationCacheDirName) static var lastCacheDirName: String = ""
+    
+    /// 每个缓存目录里的动画文件都叫这个名（可能是文件，也可能是 lottie 的目录）
+    static func animationFilePath(inDir dirName: String) -> String {
+        getCacheFilePath(dirName) + "/jp_animation"
+    }
+    
+    static func resetCacheRecord() {
         cache = nil
-        cacheType = 0
-        File.manager.clearDirectory(cacheDirPath)
+        cacheDirName = nil
+        lastCacheType = 0
+        lastCacheDirName = ""
     }
     
-    static func cacheFile(_ fileURL: URL, for type: AnimationType) throws {
-        clearCacheFile()
-        try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: cacheFilePath))
-        cacheType = type.rawValue
-    }
-    
-    static func loadCacheData() {
-        let filePath = cacheFilePath
-        guard let cacheType = AnimationType(rawValue: cacheType), File.manager.fileExists(filePath) else {
-            clearCacheFile()
-            return
+    /// 把动画文件搬进一个**新建的独立目录**，并记录为「最后一次加载」
+    ///
+    /// 每次加载都用新目录，而不是复用同一个固定路径，这样多个窗口各自的动画文件不会被后来者覆盖
+    /// ——尤其是带`images`目录的lottie，它的`FilepathImageProvider`是按需从磁盘读图的，
+    /// 文件一旦被删，已经在播的动画就会缺图
+    static func cacheFile(_ fileURL: URL, for type: AnimationType) throws -> (dirName: String, filePath: String) {
+        let dirName = UUID().uuidString
+        guard File.manager.createDirectory(getCacheFilePath(dirName)) else {
+            throw Self.Error.cacheDirCreateFailed
         }
         
+        let filePath = animationFilePath(inDir: dirName)
+        try FileManager.default.moveItem(at: fileURL, to: URL(fileURLWithPath: filePath))
+        
+        lastCacheType = type.rawValue
+        lastCacheDirName = dirName
+        
+        return (dirName, filePath)
+    }
+    
+    static func loadCacheData() -> LoadResult? {
+        let dirName = lastCacheDirName
+        let filePath = animationFilePath(inDir: dirName)
+        guard let cacheType = AnimationType(rawValue: lastCacheType),
+              !dirName.isEmpty,
+              File.manager.fileExists(filePath)
+        else {
+            resetCacheRecord()
+            return nil
+        }
+        
+        let store: AnimationStore
         switch cacheType {
         case .dotLottie:
             let result = DotLottieFile.SynchronouslyBlockingCurrentThread.loadedFrom(filepath: filePath, dotLottieCache: nil)
             guard case let .success(file) = result, file.animations.first != nil else {
-                clearCacheFile()
-                return
+                resetCacheRecord()
+                return nil
             }
-            cache = .dotLottie(file: file)
+            
+            store = .dotLottie(file: file)
             
         case .lottie:
             var isDirectory: ObjCBool = false
             guard FileManager.default.fileExists(atPath: filePath, isDirectory: &isDirectory) else {
-                clearCacheFile()
-                return
+                resetCacheRecord()
+                return nil
             }
             
             // 文件夹是lottie_dir（自带图片的动画），非文件夹则是lottie_json（纯矢量动画）
@@ -430,8 +527,8 @@ private extension AnimationStore {
                 guard let fileName = File.manager.list(filePath).first(where: {
                     ($0 as NSString).pathExtension.lowercased() == "json"
                 }) else {
-                    clearCacheFile()
-                    return // 找不到动画json文件
+                    resetCacheRecord()
+                    return nil // 找不到动画json文件
                 }
                 jsonPath = "\(filePath)/\(fileName)"
             } else {
@@ -439,32 +536,39 @@ private extension AnimationStore {
             }
             
             guard let animation = LottieAnimation.filepath(jsonPath, animationCache: DefaultAnimationCache.sharedCache) else {
-                clearCacheFile()
-                return
+                resetCacheRecord()
+                return nil
             }
             
             // animation 和 provider 是必须的
             let provider = FilepathImageProvider(filepath: filePath)
-            cache = .lottie(animation: animation, provider: provider)
+            store = .lottie(animation: animation, provider: provider)
             
         case .svga:
             guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)),
                   let entity = parseSVGA(data)
             else {
-                clearCacheFile()
-                return
+                resetCacheRecord()
+                return nil
             }
-            cache = .svga(entity: entity)
+            
+            store = .svga(entity: entity)
             
         case .gif:
             guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)),
                   let gif = decodeGIF(data)
             else {
-                clearCacheFile()
-                return
+                resetCacheRecord()
+                return nil
             }
-            cache = .gif(images: gif.0, duration: gif.1)
+            
+            store = .gif(images: gif.0, duration: gif.1)
         }
+        
+        cache = store
+        cacheDirName = dirName
+        
+        return (store, dirName)
     }
 }
 
@@ -492,16 +596,24 @@ private extension AnimationStore {
 // MARK: - SVGA相关
 private extension AnimationStore {
     static func parseSVGA(_ data: Data) -> SVGAVideoEntity? {
-        var entity: SVGAVideoEntity?
-        let lock = DispatchSemaphore(value: 0)
-        SVGAParser().parse(with: data, cacheKey: "") {
-            entity = $0
-            lock.signal()
-        } failureBlock: { _ in
-            lock.signal()
-        }
-        lock.wait()
-        return entity
+//        var entity: SVGAVideoEntity?
+//        let lock = DispatchSemaphore(value: 0)
+//        // `cacheKey`每次都得是新的：`SVGAParser`解析前会先拿它查内存缓存，
+//        // 命中就直接把缓存里那一份`entity`原样返回。
+//        // 这里原本传空字符串，等于所有svga共用一个键：
+//        // 只要前一个`entity`还被某个窗口持有着（多窗口下必然如此），
+//        // 后打开的svga就会拿到前一个的画面（文件、缓存目录都是对的，只有画面不对）。
+//        SVGAParser().parse(with: data, cacheKey: UUID().uuidString) {
+//            entity = $0
+//            lock.signal()
+//        } failureBlock: { _ in
+//            lock.signal()
+//        }
+//        lock.wait()
+//        return entity
+        
+        // 使用新API：直接同步解析，不经SVGAParser内部缓存获取。
+        SVGAParser.parse(with: data)
     }
 }
 

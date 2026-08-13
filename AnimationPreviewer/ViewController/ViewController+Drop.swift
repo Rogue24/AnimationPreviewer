@@ -10,7 +10,6 @@ import UniformTypeIdentifiers
 
 // MARK: - <UIDropInteractionDelegate>
 extension ViewController: UIDropInteractionDelegate {
-    
     // 确定传入的物体是否为`AnimationData`对象
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
         return session.canLoadObjects(ofClass: AnimationData.self)
@@ -44,7 +43,6 @@ extension ViewController: UIDropInteractionDelegate {
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidExit session: UIDropSession) {
         
     }
-    
 }
 
 

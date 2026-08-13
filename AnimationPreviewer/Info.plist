@@ -4,8 +4,13 @@
 <dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
+		<!-- 单窗口。开启多场景后，系统会自行增建/恢复/销毁窗口：
+		     冷启动会莫名建出两个空场景、多余空窗口被关掉又会触发
+		     「关掉最后一个窗口就退出」把整个App重启掉，
+		     双击的文件因此落到不确定的窗口里。
+		     改成单窗口后，双击的文件一律替换当前窗口的动画 -->
 		<key>UIApplicationSupportsMultipleScenes</key>
-		<true/>
+		<false/>
 		<key>UISceneConfigurations</key>
 		<dict>
 			<key>UIWindowSceneSessionRoleApplication</key>
@@ -27,5 +32,120 @@
     <true/>
     <key>UIFileSharingEnabled</key>
     <true/>
+
+    <!-- 自定义格式的UTI声明：svga和lottie系统不认识，得自己定义 -->
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>zhoujianping.animationpreviewer.svga</string>
+            <key>UTTypeDescription</key>
+            <string>SVGA Animation</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>svga</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
+
+    <!-- dotLottie有事实标准的UTI（`io.dotlottie.lottie`，LottieFiles等App都用它），
+         所以这里用Imported声明「我也认识这个别人定义的类型」，
+         而不是另造一个自己的——否则两个UTI争抢`.lottie`扩展名，
+         谁都可能匹配不上，App连「打开方式」列表都进不去 -->
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>io.dotlottie.lottie</string>
+            <key>UTTypeDescription</key>
+            <string>Lottie Animation</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.archive</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>lottie</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
+
+    <!-- 可双击打开的文件类型 -->
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <!-- 自有格式，声明为Owner，双击直接进本App -->
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>SVGA Animation</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>zhoujianping.animationpreviewer.svga</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Lottie Animation</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>io.dotlottie.lottie</string>
+            </array>
+        </dict>
+        <!-- 通用格式，系统已有默认程序，声明为Alternate只出现在「打开方式」里，不抢默认权 -->
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>GIF Image</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.compuserve.gif</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Lottie JSON</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.json</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Animation Archive</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.pkware.zip-archive</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

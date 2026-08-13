@@ -11,7 +11,21 @@ import SnapKit
 class ViewController: UIViewController {
     @IBOutlet weak var contentView: UIView!
     
-    lazy var dropInteraction = UIDropInteraction(delegate: self)
+    private lazy var dropInteraction = UIDropInteraction(delegate: self)
+    
+    /// 待加载的外部文件（双击文件、拖到Dock图标、右键「打开方式」）
+    ///
+    /// 冷启动时`SceneDelegate`拿到URL的时机早于`viewDidLoad`，先存下来延后消费，
+    /// 免得和「恢复上次动画」的异步回调打架
+    var pendingFileURL: URL?
+    
+    /// 本窗口是否已经接手过外部文件，用来取消「延迟恢复上次动画」
+    private var didLoadExternalFile = false
+    
+    /// 当前画面是不是启动时从缓存恢复的「上次的残留」
+    ///
+    /// 双击进来的文件会顶掉这种画面；用户主动打开的动画则不该被无声清掉
+    private var isShowingRestoredCache = false
     
     private let sfConfig = UIImage.SymbolConfiguration(pointSize: 31, weight: .medium, scale: .default)
     
@@ -111,15 +125,87 @@ class ViewController: UIViewController {
         addSubviews()
         setupSubviewsLayout()
         addSubviewsTarget()
-        // 初始化缓存
-        AnimationStore.setup() { [weak self] in
-            guard let self, let store = AnimationStore.cache else { return }
-            self.replaceAnimation(store)
+        // 只准备目录，先别碰缓存：要不要解析缓存，得等下面判断完
+        AnimationStore.prepare { [weak self] in
+            self?.loadInitialAnimation()
         }
     }
     
+    deinit {
+        // 本窗口占用的缓存目录可以回收了
+        AnimationStore.releaseCacheDir(for: self)
+        AnimationStore.collectGarbage()
+    }
+    
+    // 窗口变化
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         JPHUD.positionHUD()
+    }
+}
+
+// MARK: - 首次加载动画（外部点击打开的动画 or 上次退出前最后加载的动画）
+private extension ViewController {
+    /// 决定窗口初始显示什么：双击进来的文件，还是上次留下的动画
+    func loadInitialAnimation() {
+        // 冷启动双击：URL已经在手上了
+        if let fileURL = pendingFileURL {
+            pendingFileURL = nil
+            openAnimationFile(at: fileURL)
+            return
+        }
+        
+        // 顺手回收上次运行残留的缓存目录
+        AnimationStore.collectGarbage()
+        
+        // 双击文件启动时，系统建场景的那一刻还不知道有文件要开，
+        // URL要晚一步才通过`scene(_:openURLContexts:)`送来（实测20~120ms不定），
+        // 所以先等一个窗口期再决定，期间来了文件就以文件为准。
+        //
+        // 等这一下的关键收益不只是不显示上次的动画：解析缓存和加载双击的文件
+        // 共用同一条串行队列，抢先解析缓存会把双击的文件堵在后面，
+        // 文件越大、旧动画就在画面上停留越久。
+        Asyncs.mainDelay(0.25) { [weak self] in
+            guard let self, !self.didLoadExternalFile else { return }
+            self.restoreLastAnimation()
+        }
+    }
+    
+    /// 恢复上次留下的动画（只有确认不是双击文件启动时才走到这里）
+    func restoreLastAnimation() {
+        AnimationStore.loadCache { [weak self] result in
+            // 解析期间也可能来了文件，再确认一次
+            guard let result, let self, !self.didLoadExternalFile else { return }
+            self._replaceAnimation(result.store, cacheDirName: result.cacheDirName, isRestoredCache: true)
+        }
+    }
+}
+
+// MARK: - 打开外部文件（双击文件、拖到Dock图标、右键「打开方式」）
+extension ViewController {
+    func openAnimationFile(at url: URL) {
+        // 读取失败也算「接手过」：用户明确双击了文件，
+        // 此时该显示错误，而不是莫名其妙冒出上次的动画。
+        didLoadExternalFile = true
+        
+        // 「上次的残留」即将被这个文件取代，先清掉画面：
+        // 万一文件读取或解析失败，也不该让用户对着上次的动画，
+        // 误以为打开的就是自己双击的那个。
+        if isShowingRestoredCache {
+            _replaceAnimation(nil)
+        }
+        
+        // 沙盒下由系统递过来的文件是security-scoped资源，要成对开关才读得到
+        let isScoped = url.startAccessingSecurityScopedResource()
+        defer {
+            if isScoped { url.stopAccessingSecurityScopedResource() }
+        }
+        
+        guard let data = try? Data(contentsOf: url) else {
+            JPHUD.showError(withStatus: "文件读取失败：\(url.lastPathComponent)")
+            return
+        }
+        
+        replaceAnimation(with: data, fileExtension: url.pathExtension.lowercased())
     }
 }
 
@@ -376,7 +462,7 @@ private extension ViewController {
     // MARK: - 删除
     @objc func deleteAction(_ sender: UIButton) {
         guard playView.isEnable else { return }
-        replaceAnimation(nil)
+        _replaceAnimation(nil)
         AnimationStore.clearCache()
     }
     
@@ -434,15 +520,22 @@ private extension ViewController {
 extension ViewController {
     func replaceAnimation(with data: Data, fileExtension ext: String?) {
         JPHUD.show(withStatus: "Loding...")
-        AnimationStore.loadData(data, fileExtension: ext) { [weak self] store in
+        AnimationStore.loadData(data, fileExtension: ext) { [weak self] store, cacheDirName in
             JPHUD.dismiss()
-            self?.replaceAnimation(store)
+            self?._replaceAnimation(store, cacheDirName: cacheDirName)
         } failure: { error in
             JPHUD.showError(withStatus: error.localizedDescription)
         }
     }
     
-    private func replaceAnimation(_ store: AnimationStore?) {
+    private func _replaceAnimation(_ store: AnimationStore?, cacheDirName: String? = nil, isRestoredCache: Bool = false) {
+        // 除了「启动时恢复上次动画」，其余入口（双击文件、拖拽、菜单）都是用户主动行为
+        isShowingRestoredCache = isRestoredCache
+        
+        // 登记本窗口正在用的缓存目录，别的窗口加载新动画时才不会把它清掉
+        AnimationStore.retainCacheDir(cacheDirName, for: self)
+        AnimationStore.collectGarbage()
+        
         playView.replaceAnimation(store)
         imageView.replaceAnimation(store)
         

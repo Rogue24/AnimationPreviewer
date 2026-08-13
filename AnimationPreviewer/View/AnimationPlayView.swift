@@ -129,7 +129,7 @@ class AnimationPlayView: UIView {
     private var delayDoneWorkItem: DispatchWorkItem? = nil
     
     private let placeholderView = UIView()
-    private let lottieView = LottieAnimationView(animation: nil, imageProvider: nil)
+    private let lottieView = LottieAnimationView(animation: nil)
     private let svgaView = SVGAExPlayer()
     private let gifView = UIImageView()
     private var gif: (images: [UIImage], duration: TimeInterval) = ([], 0)

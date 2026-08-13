@@ -11,6 +11,7 @@ extension UserDefaults {
     /// 在这里注册`Key`
     enum Key: String, CaseIterable {
         case animationType
+        case animationCacheDirName
         case isSVGAMute
         case bgImageType
     }

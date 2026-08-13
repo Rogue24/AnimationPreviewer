@@ -11,12 +11,26 @@ import UniformTypeIdentifiers
 class MacPlugin: NSObject, Channel {
     private var statusItem: NSStatusItem? = nil
     
+    /// UIKit 原本的`NSApplication`代理
+    ///
+    /// Catalyst 底层跑的是 AppKit，UIKit 会装一个 shim 当`NSApplication.delegate`，
+    /// 负责把 AppKit 事件——尤其是「打开文件」——转发给 UIScene。
+    /// 这里为了实现「关掉最后一个窗口就退出」必须把自己设成代理，
+    /// 但得把没实现的方法原样转回去，否则打开文件的事件就没人接，
+    /// AppKit 会回落到`NSDocumentController`，弹出「cannot open files in the “XXX” format」。
+    private var uikitDelegate: NSApplicationDelegate?
+    
     // MARK: - <Channel>
     
     required override init() {}
     
     func setup() {
-        NSApplication.shared.delegate = self
+        // `setup`每个场景都会调一次，只在第一次接管，
+        // 否则第二次会把`uikitDelegate`指向自己，转发时无限递归。
+        if NSApplication.shared.delegate !== self {
+            uikitDelegate = NSApplication.shared.delegate
+            NSApplication.shared.delegate = self
+        }
         
         let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
@@ -268,5 +282,25 @@ extension MacPlugin: NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         // 返回true确保点击关闭后app真的死掉，否则只是隐藏
         return true
+    }
+}
+
+// MARK: - 把自己没实现的代理方法转回 UIKit
+//
+// 只接管上面那一个方法，其余（`application(_:openURLs:)` 等）统统交还给 UIKit 的 shim，
+// 让「双击文件打开」照原路走到 UIScene。
+extension MacPlugin {
+    override func responds(to aSelector: Selector!) -> Bool {
+        if super.responds(to: aSelector) {
+            return true
+        }
+        return uikitDelegate?.responds(to: aSelector) ?? false
+    }
+    
+    override func forwardingTarget(for aSelector: Selector!) -> Any? {
+        if let uikitDelegate, uikitDelegate.responds(to: aSelector) {
+            return uikitDelegate
+        }
+        return super.forwardingTarget(for: aSelector)
     }
 }
