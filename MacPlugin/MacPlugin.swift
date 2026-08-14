@@ -22,12 +22,11 @@ class MacPlugin: NSObject, Channel {
     required override init() {}
     
     func setup() {
-        // 注意：不要去接管`NSApplication.shared.delegate`。
-        // Catalyst 底层跑的是 AppKit，UIKit 装了一个 shim 当这个代理，
-        // 负责把 AppKit 事件转发给 UIScene；把它顶掉，「双击文件打开」就没人接了，
-        // AppKit 会回落到`NSDocumentController`，弹出
-        // 「cannot open files in the “XXX” format」。
-        // 状态栏图标和下面的关闭按钮接管都不需要代理身份，别为它们动这个代理。
+        /// 📢 注意：不要去接管`NSApplication.shared.delegate`。
+        /// Catalyst 底层跑的是 AppKit，UIKit 装了一个 shim 当这个代理，
+        /// 负责把 AppKit 事件转发给 UIScene；把它顶掉，「双击文件打开」就没人接了，
+        /// AppKit 会回落到`NSDocumentController`，弹出`cannot open files in the “XXX” format`。
+        /// 状态栏图标和下面的关闭按钮接管都不需要代理身份，别为它们动这个代理。
 //        if NSApplication.shared.delegate !== self {
 //            // `setup`每个场景都会调一次，只在第一次接管，
 //            // 否则第二次会把`uikitDelegate`指向自己，转发时无限递归。
@@ -280,11 +279,12 @@ private extension MacPlugin {
 
 // MARK: - 点关闭按钮只收起App，不退出
 //
-// 试过无效、别再走的两条路：
+// 试过无效，别再走的两条路：
 // 1.`applicationShouldTerminateAfterLastWindowClosed`返回false
 //  — Catalyst下窗口一旦真的关闭，UIKit 就断开场景并终止进程，它不问这个 AppKit 回调。
 // 2.窗口代理的`windowShouldClose` —— UIKit 同样不经过它。
-// 所以改成接管关闭按钮的动作，从源头上不让窗口走进关闭流程。
+//
+// 所以改成：接管【关闭按钮】的动作，从源头上不让窗口走进关闭流程。
 private extension MacPlugin {
     /// 窗口是 UIKit 建的，`setup`时可能还不存在，所以监听通知等它出现
     func observeWindowAppearance() {
