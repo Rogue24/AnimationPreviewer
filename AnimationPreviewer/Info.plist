@@ -26,6 +26,12 @@
 			</array>
 		</dict>
 	</dict>
+    <!-- Mac App Store 必需：缺这个键，archive 在验证阶段就会被判无效
+         （"The product archive is invalid. The Info.plist must contain a
+         LSApplicationCategoryType key"）。iOS 不需要，所以只在上架 Mac 时才暴露 -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.developer-tools</string>
+
     <key>UISupportsDocumentBrowser</key>
     <true/>
     <key>LSSupportsOpeningDocumentsInPlace</key>
