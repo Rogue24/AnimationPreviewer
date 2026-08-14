@@ -44,7 +44,7 @@
     <array>
         <dict>
             <key>UTTypeIdentifier</key>
-            <string>zhoujianping.animationpreviewer.svga</string>
+            <string>com.zhoujianping.animationpreviewer.svga</string>
             <key>UTTypeDescription</key>
             <string>SVGA Animation</string>
             <key>UTTypeConformsTo</key>
@@ -64,7 +64,9 @@
     <!-- dotLottie有事实标准的UTI（`io.dotlottie.lottie`，LottieFiles等App都用它），
          所以这里用Imported声明「我也认识这个别人定义的类型」，
          而不是另造一个自己的——否则两个UTI争抢`.lottie`扩展名，
-         谁都可能匹配不上，App连「打开方式」列表都进不去 -->
+         谁都可能匹配不上，App连「打开方式」列表都进不去。
+         `.lot`同理，是LottieFiles声明的`public.lot`（纯JSON动画数据，
+         和`.json`内容一致，只是换了个后缀），一并导入 -->
     <key>UTImportedTypeDeclarations</key>
     <array>
         <dict>
@@ -85,6 +87,23 @@
                 </array>
             </dict>
         </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>public.lot</string>
+            <key>UTTypeDescription</key>
+            <string>Lottie JSON</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.json</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>lot</string>
+                </array>
+            </dict>
+        </dict>
     </array>
 
     <!-- 可双击打开的文件类型 -->
@@ -100,7 +119,7 @@
             <string>Owner</string>
             <key>LSItemContentTypes</key>
             <array>
-                <string>zhoujianping.animationpreviewer.svga</string>
+                <string>com.zhoujianping.animationpreviewer.svga</string>
             </array>
         </dict>
         <dict>
@@ -138,6 +157,18 @@
             <key>LSItemContentTypes</key>
             <array>
                 <string>public.json</string>
+            </array>
+        </dict>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Lottie JSON (.lot)</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Alternate</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.lot</string>
             </array>
         </dict>
         <dict>
