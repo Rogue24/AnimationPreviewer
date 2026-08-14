@@ -305,6 +305,9 @@ private extension MacPlugin {
               closeButton.target !== self
         else { return }
         
+        // 可以在这里设置窗口初始化大小：
+        // window.setContentSize(NSSize(width: 1280, height: 800))
+        
         closeButton.target = self
         closeButton.action = #selector(hideWindow(_:))
     }
