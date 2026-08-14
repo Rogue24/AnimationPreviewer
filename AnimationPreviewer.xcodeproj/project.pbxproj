@@ -104,6 +104,16 @@
 		AAA1C0110000000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AAA1C0110000000000000004 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AAA1C0110000000000000006 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A64F9452A085DE7000F979B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A95CC362A093B90006E3102;
+			remoteInfo = MacPlugin;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		004CA8D82F753D2F004A6616 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -640,6 +650,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				AAA1C0110000000000000005 /* PBXTargetDependency */,
 			);
 			name = AnimationPreviewer;
 			productName = LottiePreviewer;
@@ -831,6 +842,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AAA1C0110000000000000005 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A95CC362A093B90006E3102 /* MacPlugin */;
+			targetProxy = AAA1C0110000000000000006 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		1A64F9562A085DE7000F979B /* Main.storyboard */ = {
