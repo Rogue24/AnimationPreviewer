@@ -100,7 +100,6 @@
 		1A95CD872A0AA1B9006E3102 /* AnimationImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A95CD862A0AA1B9006E3102 /* AnimationImageView.swift */; };
 		1A95CD952A0B6134006E3102 /* background1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1A95CD942A0B6134006E3102 /* background1.jpg */; };
 		1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1ADCAD7C2A9FA8B800D939FC /* background2.jpg */; };
-		AAA1C0110000000000000002 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = AAA1C0110000000000000001 /* AppIcon.icon */; };
 		AAA1C0110000000000000003 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AAA1C0110000000000000004 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -728,7 +727,6 @@
 				00F96ED62F5176E100E6B0F8 /* SVProgressHUD.bundle in Resources */,
 				1A95CD952A0B6134006E3102 /* background1.jpg in Resources */,
 				1A64F95A2A085DE9000F979B /* Assets.xcassets in Resources */,
-				AAA1C0110000000000000002 /* AppIcon.icon in Resources */,
 				1ADCAD7D2A9FA8B800D939FC /* background2.jpg in Resources */,
 				1A64F9582A085DE7000F979B /* Main.storyboard in Resources */,
 			);
