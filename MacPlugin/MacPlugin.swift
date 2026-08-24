@@ -199,32 +199,12 @@ private extension MacPlugin {
             savePanel.allowedContentTypes = [type]
         }
 
-        // 默认落在「下载」，保持和以前一样的手感：敲回车就存到老位置
-        if let downloadsURL = Self.realDownloadsURL {
-            savePanel.directoryURL = downloadsURL
-        }
-
+        // 📢 千万别给面板设`directoryURL`（曾经预设过「下载」目录）：
+        // App Store 审核指南 2.4.5(i) 明令禁止 App 预设保存位置
+        // （2026-08-22 就是因为这个被拒，Submission f4055943）。
+        // 不设的话，`NSSavePanel`会自动沿用系统为本App记住的上次位置，
+        // 首次则落在系统默认位置——这才是 Apple 要求的「由用户在标准面板里自己选」。
         completion(savePanel.runModal() == .OK ? savePanel.url : nil)
-    }
-
-    /// 用户真实的「下载」目录
-    ///
-    /// 📢 不能用`FileManager.urls(for: .downloadsDirectory)`：本App已经没有
-    /// `com.apple.security.files.downloads.read-write`权限，沙箱会把它重定向到容器内的
-    /// `~/Library/Containers/<id>/Data/Downloads`，不是用户看到的那个「下载」。
-    /// `getpwuid`取的是真实home，不受容器重定向影响。
-    ///
-    /// 这里只用来给面板设初始目录：面板跑在App之外的powerbox进程，不要求本App对该目录
-    /// 有访问权；万一路径不对，面板自己会退回系统记住的上次位置，不影响保存本身。
-    ///
-    /// 📢 别在这里加`fileExists`兜底：没有权限的路径，沙箱连`stat`都不放行，
-    /// 这个检查在沙箱里几乎总是false，等于把整个默认目录功能否决掉。
-    static var realDownloadsURL: URL? {
-        guard let pw = getpwuid(getuid()) else { return nil }
-        let home = String(cString: pw.pointee.pw_dir)
-        guard !home.isEmpty else { return nil }
-        return URL(fileURLWithPath: home, isDirectory: true)
-            .appendingPathComponent("Downloads", isDirectory: true)
     }
 
     /// 目标已存在就先删掉

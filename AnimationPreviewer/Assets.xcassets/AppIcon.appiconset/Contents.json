@@ -13,7 +13,7 @@
       "size" : "16x16"
     },
     {
-      "filename" : "cat_32 1.png",
+      "filename" : "cat_32_1x.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
@@ -37,7 +37,7 @@
       "size" : "128x128"
     },
     {
-      "filename" : "cat_256 1.png",
+      "filename" : "cat_256_1x.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
@@ -49,7 +49,7 @@
       "size" : "256x256"
     },
     {
-      "filename" : "cat_512 1.png",
+      "filename" : "cat_512_1x.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
