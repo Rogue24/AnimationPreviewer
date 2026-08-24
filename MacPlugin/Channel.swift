@@ -9,7 +9,10 @@ import Foundation
 
 @objc(Channel)
 protocol Channel: NSObjectProtocol {
-    typealias SaveCompletion = (_ isSuccess: Bool) -> Void
+    /// 保存结果回调
+    /// - isSuccess: 是否保存成功
+    /// - isCancelled: 用户在保存面板点了「取消」（此时`isSuccess`为false，但不该提示错误）
+    typealias SaveCompletion = (_ isSuccess: Bool, _ isCancelled: Bool) -> Void
     typealias PickCompletion = (_ data: Data?, _ ext: String?) -> Void
     
     /// 初始化
@@ -18,10 +21,10 @@ protocol Channel: NSObjectProtocol {
     /// 初始化配置
     func setup()
     
-    /// 保存图片到下载文件夹
+    /// 弹保存面板，由用户选择位置保存图片
     func saveImage(_ imageData: Data, completion: @escaping SaveCompletion)
-    
-    /// 保存视频到下载文件夹
+
+    /// 弹保存面板，由用户选择位置保存视频
     func saveVideo(_ videoPath: NSString, completion: @escaping SaveCompletion)
     
     /// 打开Lottie文件夹或zip文件

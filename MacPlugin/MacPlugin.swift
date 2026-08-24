@@ -53,44 +53,48 @@ class MacPlugin: NSObject, Channel {
     }
     
     func saveImage(_ imageData: Data, completion: @escaping Channel.SaveCompletion) {
-        guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            print("找不到下载文件夹")
-            completion(false)
-            return
-        }
-        
         let fileName = "jp_\(Int(Date().timeIntervalSince1970)).png"
-        let fileURL = url.appendingPathComponent(fileName)
-        
-        do {
-            try imageData.write(to: fileURL)
-            // 打开文件所在目录
-            NSWorkspace.shared.activateFileViewerSelecting([fileURL])
-            completion(true)
-        } catch {
-            print("保存失败 \(error)")
-            completion(false)
+
+        runSavePanel(suggestedName: fileName) { fileURL in
+            guard let fileURL else {
+                completion(false, true)
+                return
+            }
+
+            do {
+                // 面板已让用户确认过覆盖，同名文件先清掉
+                try Self.removeItemIfExists(at: fileURL)
+                try imageData.write(to: fileURL)
+                // 打开文件所在目录
+                NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+                completion(true, false)
+            } catch {
+                print("保存失败 \(error)")
+                completion(false, false)
+            }
         }
     }
-    
+
     func saveVideo(_ videoPath: NSString, completion: @escaping Channel.SaveCompletion) {
-        guard let url = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first else {
-            print("找不到下载文件夹")
-            completion(false)
-            return
-        }
-        
         let fileName = "jp_\(videoPath.lastPathComponent)" // 替换为您保存的文件名
-        let fileURL = url.appendingPathComponent(fileName)
-        
-        do {
-            try FileManager.default.moveItem(atPath: videoPath as String, toPath: fileURL.path)
-            // 打开文件所在目录
-            NSWorkspace.shared.activateFileViewerSelecting([fileURL])
-            completion(true)
-        } catch {
-            print("保存失败 \(error)")
-            completion(false)
+
+        runSavePanel(suggestedName: fileName) { fileURL in
+            guard let fileURL else {
+                completion(false, true)
+                return
+            }
+
+            do {
+                // 面板已让用户确认过覆盖，同名文件先清掉，否则`moveItem`会直接失败
+                try Self.removeItemIfExists(at: fileURL)
+                try FileManager.default.moveItem(atPath: videoPath as String, toPath: fileURL.path)
+                // 打开文件所在目录
+                NSWorkspace.shared.activateFileViewerSelecting([fileURL])
+                completion(true, false)
+            } catch {
+                print("保存失败 \(error)")
+                completion(false, false)
+            }
         }
     }
     
@@ -173,6 +177,62 @@ class MacPlugin: NSObject, Channel {
 
 // MARK: - 文件操作
 private extension MacPlugin {
+    /// 弹出保存面板拿目标URL，用户点「取消」则回调nil
+    ///
+    /// 📢 `NSSavePanel`只能在主线程弹，而`makeVideo`的完成回调在后台线程（那边只把
+    /// `progressHandler`切了主队列，`completion`没切），所以这里统一兜一次主线程。
+    func runSavePanel(suggestedName: String, completion: @escaping (URL?) -> Void) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async {
+                self.runSavePanel(suggestedName: suggestedName, completion: completion)
+            }
+            return
+        }
+
+        let savePanel = NSSavePanel()
+        savePanel.nameFieldStringValue = suggestedName
+        savePanel.canCreateDirectories = true
+
+        // 按后缀限定类型，面板会负责补全扩展名
+        let ext = (suggestedName as NSString).pathExtension
+        if !ext.isEmpty, let type = UTType(filenameExtension: ext) {
+            savePanel.allowedContentTypes = [type]
+        }
+
+        // 默认落在「下载」，保持和以前一样的手感：敲回车就存到老位置
+        if let downloadsURL = Self.realDownloadsURL {
+            savePanel.directoryURL = downloadsURL
+        }
+
+        completion(savePanel.runModal() == .OK ? savePanel.url : nil)
+    }
+
+    /// 用户真实的「下载」目录
+    ///
+    /// 📢 不能用`FileManager.urls(for: .downloadsDirectory)`：本App已经没有
+    /// `com.apple.security.files.downloads.read-write`权限，沙箱会把它重定向到容器内的
+    /// `~/Library/Containers/<id>/Data/Downloads`，不是用户看到的那个「下载」。
+    /// `getpwuid`取的是真实home，不受容器重定向影响。
+    ///
+    /// 这里只用来给面板设初始目录：面板跑在App之外的powerbox进程，不要求本App对该目录
+    /// 有访问权；万一路径不对，面板自己会退回系统记住的上次位置，不影响保存本身。
+    ///
+    /// 📢 别在这里加`fileExists`兜底：没有权限的路径，沙箱连`stat`都不放行，
+    /// 这个检查在沙箱里几乎总是false，等于把整个默认目录功能否决掉。
+    static var realDownloadsURL: URL? {
+        guard let pw = getpwuid(getuid()) else { return nil }
+        let home = String(cString: pw.pointee.pw_dir)
+        guard !home.isEmpty else { return nil }
+        return URL(fileURLWithPath: home, isDirectory: true)
+            .appendingPathComponent("Downloads", isDirectory: true)
+    }
+
+    /// 目标已存在就先删掉
+    static func removeItemIfExists(at url: URL) throws {
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        try FileManager.default.removeItem(at: url)
+    }
+
     func getOpenPanel(_ types: [UTType], canChooseDirectories: Bool = false) -> NSOpenPanel {
         let openPanel = NSOpenPanel()
         openPanel.showsHiddenFiles = true // 显示隐藏文件

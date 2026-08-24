@@ -490,24 +490,27 @@ private extension ViewController {
 // MARK: - 保存视频/图片
 private extension ViewController {
     static func saveVideo(_ videoPath: String) {
-        MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess in
+        MacChannel.shared().saveVideo(videoPath as NSString) { isSuccess, isCancelled in
             if isSuccess {
                 JPHUD.showSuccess(withStatus: "视频制作成功")
+            } else if isCancelled {
+                // 用户自己放弃保存，不是出错
+                JPHUD.dismiss()
             } else {
                 JPHUD.showError(withStatus: "视频保存失败")
             }
             File.manager.deleteFile(videoPath)
         }
     }
-    
+
     static func saveImage(_ image: UIImage) {
         guard let data = image.pngData() else {
             JPHUD.showError(withStatus: "图片生成失败")
             return
         }
-        
-        MacChannel.shared().saveImage(data) { isSuccess in
-            if isSuccess {
+
+        MacChannel.shared().saveImage(data) { isSuccess, isCancelled in
+            if isSuccess || isCancelled {
                 JPHUD.dismiss()
             } else {
                 JPHUD.showError(withStatus: "图片保存失败")
