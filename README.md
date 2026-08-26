@@ -2,6 +2,8 @@
 
 ![icon](https://github.com/Rogue24/JPCover/raw/master/AnimationPreviewer/icon.png) 一个用于快速预览`Lottie`&`SVGA`&`GIF`的Mac小工具。
 
+[![App_Store](https://github.com/Rogue24/JPCover/raw/master/Shared/Download_on_the_App_Store_Badge.svg)](https://apps.apple.com/cn/app/animation-previewer/id6801531648?mt=12)
+
     Feature：
         ✅ 可立即预览 Lottie & SVGA & GIF 的动画效果；
         ✅ 可截取动画任意一帧生成图片；
